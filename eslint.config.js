@@ -1,4 +1,4 @@
-import { defineConfig } from 'eslint/config'
+import { defineConfig, globalIgnores } from 'eslint/config'
 import globals from 'globals'
 import js from '@eslint/js'
 import tseslint from 'typescript-eslint'
@@ -10,5 +10,13 @@ export default defineConfig([
 	{ files: ['**/*.{js,mjs,cjs,ts,vue}'], plugins: { js }, extends: ['js/recommended'] },
 	tseslint.configs.recommended,
 	pluginVue.configs['flat/essential'],
-	{ files: ['**/*.vue'], languageOptions: { parserOptions: { parser: tseslint.parser } } }
+	{ files: ['**/*.vue'], languageOptions: { parserOptions: { parser: tseslint.parser } } },
+	{
+		rules: {
+			'vue/multi-word-component-names': 0,
+			'vue/no-reserved-component-names': 0,
+			'@typescript-eslint/no-unused-vars': 1
+		}
+	},
+	globalIgnores(['node_modules', 'dist', '*.css', '*.jpg', '*.jpeg', '*.png', '*.gif', '*.d.ts'])
 ])
