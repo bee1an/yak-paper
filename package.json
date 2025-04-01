@@ -3,6 +3,7 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
+		"dev": "pnpm -C app dev",
 		"prepare": "husky"
 	},
 	"keywords": [
