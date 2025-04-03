@@ -1,7 +1,7 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({
-	name: 'Text',
+	name: 'PText',
 	render() {
 		return <span>{this.$slots.default?.()}</span>
 	}
