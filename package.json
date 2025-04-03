@@ -4,7 +4,8 @@
 	"type": "module",
 	"scripts": {
 		"dev": "pnpm -C app dev",
-		"prepare": "husky"
+		"prepare": "husky",
+		"prettier": "prettier --write ."
 	},
 	"keywords": [
 		"vue",
