@@ -115,6 +115,6 @@ export default defineConfig({
 		defaultBody: '',
 		defaultIssues: '',
 		defaultSubject: '',
-		defaultScope: scopeComplete
+		defaultScope: scopeComplete ? scopeComplete : 'app' // 默认scope
 	}
 })

@@ -1,13 +1,7 @@
-<script setup lang="ts">
-import { PText } from '@yak/paper'
-</script>
+<script setup lang="ts"></script>
 
 <template>
-	<div class="w-7xl m-auto">
-		<div class="h-xs bg-cyan-1"></div>
-
-		<PText>hah1ha</PText>
-	</div>
+	<div class="w-7xl m-auto"><PPaperboard /></div>
 </template>
 
 <style scoped></style>

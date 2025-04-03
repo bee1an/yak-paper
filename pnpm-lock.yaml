@@ -11,6 +11,9 @@ importers:
       '@paper/core':
         specifier: workspace:*
         version: link:packages/core
+      '@paper/utils':
+        specifier: workspace:*
+        version: link:packages/utils
       '@yak/paper':
         specifier: workspace:*
         version: link:packages/yak-paper
@@ -49,7 +52,7 @@ importers:
         specifier: 9.1.7
         version: 9.1.7
       jsdom:
-        specifier: ^26.0.0
+        specifier: 26.0.0
         version: 26.0.0
       lint-staged:
         specifier: 15.5.0
