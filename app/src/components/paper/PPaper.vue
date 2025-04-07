@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PText } from '@yak/paper'
+import { PText } from 'yak-paper'
 </script>
 
 <template>

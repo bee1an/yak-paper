@@ -1,1 +1,1 @@
-export * from '@paper/utils'
+export * from '@yak-paper/utils'

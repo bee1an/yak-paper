@@ -16,9 +16,9 @@
 	"author": "bee1an",
 	"license": "MIT",
 	"dependencies": {
-		"@paper/core": "workspace:*",
-		"@paper/utils": "workspace:*",
-		"@yak/paper": "workspace:*",
+		"@yak-paper/core": "workspace:*",
+		"@yak-paper/utils": "workspace:*",
+		"yak-paper": "workspace:*",
 		"vue": "3.5.13"
 	},
 	"devDependencies": {

@@ -8,18 +8,18 @@ importers:
 
   .:
     dependencies:
-      '@paper/core':
+      '@yak-paper/core':
         specifier: workspace:*
         version: link:packages/core
-      '@paper/utils':
+      '@yak-paper/utils':
         specifier: workspace:*
         version: link:packages/utils
-      '@yak/paper':
-        specifier: workspace:*
-        version: link:packages/yak-paper
       vue:
         specifier: 3.5.13
         version: 3.5.13(typescript@5.8.2)
+      yak-paper:
+        specifier: workspace:*
+        version: link:packages/yak-paper
     devDependencies:
       '@commitlint/cli':
         specifier: 19.8.0
