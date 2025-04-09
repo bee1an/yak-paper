@@ -5,10 +5,12 @@
 	"scripts": {
 		"dev": "pnpm -C app dev",
 		"build": "pnpm -C build build",
-		"build-all": "pnpm -C build build-all",
+		"build-pulse": "pnpm -C build build-pulse",
+		"build-app": "pnpm -C app build",
 		"prepare": "husky",
 		"prettier": "prettier --write .",
-		"test": "vitest"
+		"test": "vitest",
+		"cleanup": "tsx scripts/cleanup.ts"
 	},
 	"keywords": [
 		"vue",

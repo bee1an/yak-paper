@@ -1,9 +1,10 @@
 {
 	"name": "@yak-paper/build",
 	"type": "module",
+	"description": "@yak-paper/build",
 	"scripts": {
 		"build": "tsx ./src/build.ts --yak-paper",
-		"build-all": "tsx ./src/build.ts"
+		"build-pulse": "tsx ./src/build.ts"
 	},
 	"license": "MIT",
 	"devDependencies": {

@@ -3,6 +3,7 @@
 	"private": true,
 	"version": "0.0.0",
 	"type": "module",
+	"description": "@yak-paper/app",
 	"scripts": {
 		"dev": "vite",
 		"build:dev": "vue-tsc -b && vite build --mode development",

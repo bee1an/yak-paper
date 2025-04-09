@@ -5,6 +5,7 @@ import { pkgDir, rootDir } from './paths'
 interface PackagesCfg {
 	name: string
 	description: string
+	path: string
 }
 
 interface GetPulsePackagesOpts {
@@ -23,11 +24,10 @@ export const getPulsePackages = ({ useCache = true }: GetPulsePackagesOpts = {})
 		.readdirSync(pkgDir)
 		.filter((name) => name !== 'yak-paper')
 		.map((name) => {
-			const pkgJson = JSON.parse(
-				fs.readFileSync(path.join(pkgDir, name, 'package.json')).toString()
-			)
+			const pakPath = path.join(pkgDir, name)
+			const pkgJson = JSON.parse(fs.readFileSync(path.join(pakPath, 'package.json')).toString())
 
-			return { name, description: pkgJson.description }
+			return { name, description: pkgJson.description, path: pakPath }
 		})
 
 	pulsePkgCache.length = 0
@@ -58,12 +58,14 @@ export const getAllPackages = ({ useCache = true }: GetAllPackagesOpts = {}) => 
 			?.filter((item) => !item.includes('packages'))
 			.map((item) => {
 				const name = item.replace(/(- ')/g, '')
-				const pkgJson = JSON.parse(
-					fs.readFileSync(path.join(rootDir, name, 'package.json')).toString()
-				)
-				return { name, description: pkgJson.description }
+				const pakPath = path.join(rootDir, name)
+				const pkgJson = JSON.parse(fs.readFileSync(path.join(pakPath, 'package.json')).toString())
+				return { name, description: pkgJson.description, path: pakPath }
 			}) ?? []
 
-	return pulsePkgs.push(...otherPkgs)
+	pkgCache.length = 0
+	pkgCache.push(...pulsePkgs, ...otherPkgs)
+
+	return pkgCache
 }
 getAllPackages()

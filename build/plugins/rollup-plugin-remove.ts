@@ -1,6 +1,6 @@
 import type { Plugin } from 'rollup'
 import fs from 'fs'
-import { pkgDir, rootDir } from '../utils/paths'
+import { pkgDir, rootDir } from '../utils'
 import path from 'path'
 import shelljs from 'shelljs'
 
