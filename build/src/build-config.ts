@@ -1,10 +1,8 @@
-import { paperEntry, paperOutputDir, pkgDir } from '../utils/paths'
+import { getPulsePackages, mergeOutput, paperEntry, paperOutputDir, pkgDir } from '../utils'
 import type { ModuleFormat } from 'rollup'
-import { mergeOutput } from '../utils/merge-output'
 import fs from 'fs-extra'
 import path from 'path'
 import picocolors from 'picocolors'
-import { getPulsePackages } from '../utils/packages'
 
 /**
  * @description 打包格式

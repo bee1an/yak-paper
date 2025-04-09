@@ -1,10 +1,9 @@
-import { createBuilder, writeBuilder } from '../utils/create-builder'
+import { camelcase, createBuilder, writeBuilder } from '../utils'
 import getConfig from '../rollup.config'
 
 import picocolors from 'picocolors'
 import { entrysAndOutput } from './build-config'
 import { getCmdOpts } from './build-cmd-opts'
-import { camelcase } from '../utils/name-case'
 
 const cmdOpts = getCmdOpts()
 

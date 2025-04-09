@@ -1,5 +1,5 @@
 import { program } from 'commander'
-import { getPulsePackages } from '../utils/packages'
+import { getPulsePackages } from '../utils'
 
 /**
  * @description 获取命令行参数
