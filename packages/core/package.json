@@ -1,7 +1,9 @@
 {
 	"name": "@yak-paper/core",
 	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
-	"license": "MIT"
+	"description": "@yak-paper/core",
+	"license": "MIT",
+	"buildOptions": {
+		"entryPath": "src/index.ts"
+	}
 }

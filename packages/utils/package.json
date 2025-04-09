@@ -1,4 +1,9 @@
 {
 	"name": "@yak-paper/utils",
-	"license": "MIT"
+	"version": "1.0.0",
+	"description": "@yak-paper/utils",
+	"license": "MIT",
+	"buildOptions": {
+		"entryPath": "src/index.ts"
+	}
 }

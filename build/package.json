@@ -1,0 +1,16 @@
+{
+	"name": "@yak-paper/build",
+	"type": "module",
+	"scripts": {
+		"build": "tsx ./src/build.ts --yak-paper",
+		"build-all": "tsx ./src/build.ts"
+	},
+	"license": "MIT",
+	"devDependencies": {
+		"@rollup/plugin-node-resolve": "16.0.1",
+		"rollup": "4.39.0",
+		"rollup-plugin-esbuild": "6.2.1",
+		"unplugin-vue": "6.0.1",
+		"unplugin-vue-jsx": "0.6.1"
+	}
+}

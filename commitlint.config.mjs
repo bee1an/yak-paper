@@ -8,12 +8,12 @@ const scopeComplete = execSync('git status --porcelain || true')
 	.split('\n')
 	.find(
 		(r) =>
-			~r.indexOf('M  packages/core') ||
-			~r.indexOf('M packages/core') ||
-			~r.indexOf('A  packages/core') ||
-			~r.indexOf('A packages/core')
+			~r.indexOf('M  packages') ||
+			~r.indexOf('M packages') ||
+			~r.indexOf('A  packages') ||
+			~r.indexOf('A packages')
 	)
-	?.replace(/(\/core\/)/g, '%%')
+	?.replace(/(packages\/)/g, 'packages%%')
 	?.match(/packages%%((\w|-)*)/)?.[1]
 
 /** @type {import('cz-git').UserConfig} */

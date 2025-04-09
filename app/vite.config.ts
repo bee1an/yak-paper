@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => {
 		build: { minify: !isDev },
 		resolve: {
 			alias: {
-				'yak-paper': path.resolve(__dirname, '../packages/yak-paper/index.ts'),
+				'yak-paper': path.resolve(__dirname, '../packages/yak-paper/src/index.ts'),
 				'@': path.resolve(__dirname, 'src')
 			}
 		}
