@@ -1,7 +1,7 @@
 {
-	"name": "@yak-paper/core",
+	"name": "@yak-paper/material",
 	"version": "1.0.0",
-	"description": "@yak-paper/core",
+	"description": "@yak-paper/material",
 	"license": "MIT",
 	"buildOptions": {
 		"entryPath": "src/index.ts"
