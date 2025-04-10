@@ -11,6 +11,9 @@ importers:
       '@yak-paper/build':
         specifier: workspace:*
         version: link:build
+      '@yak-paper/core':
+        specifier: workspace:*
+        version: link:packages/core
       '@yak-paper/material':
         specifier: workspace:*
         version: link:packages/material
@@ -145,6 +148,8 @@ importers:
       unplugin-vue-jsx:
         specifier: 0.6.1
         version: 0.6.1(vue@3.5.13(typescript@5.8.2))
+
+  packages/core: {}
 
   packages/material: {}
 

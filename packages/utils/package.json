@@ -4,6 +4,6 @@
 	"description": "@yak-paper/utils",
 	"license": "MIT",
 	"buildOptions": {
-		"entryPath": "src/index.ts"
+		"entryPath": "index.ts"
 	}
 }

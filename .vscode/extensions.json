@@ -1,0 +1,10 @@
+{
+	"recommendations": [
+		"vue.volar",
+		"clinyong.vscode-css-modules",
+		"antfu.unocss",
+		"dbaeumer.vscode-eslint",
+		"esbenp.prettier-vscode",
+		"vitest.explorer"
+	]
+}

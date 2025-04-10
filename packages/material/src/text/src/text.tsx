@@ -1,8 +1,9 @@
 import { defineComponent } from 'vue'
+import style from '../style/text.module.scss'
 
 export default defineComponent({
 	name: 'PText',
 	render() {
-		return <span>{this.$slots.default?.()}</span>
+		return <div contenteditable={true} class={style.wrapper}></div>
 	}
 })

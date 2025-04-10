@@ -1,7 +1,7 @@
 import PPaper from './PPaper.vue'
 import { withInstall } from 'yak-paper'
 
-const PPaperInstaller = withInstall(PPaper)
+const PPaperInstaller = withInstall(PPaper, 'PPaper')
 export { PPaper, PPaperInstaller }
 
 declare module 'vue' {

@@ -4,7 +4,8 @@ import { PText } from 'yak-paper'
 
 <template>
 	<div>
-		<PText>text</PText>
+		<PText></PText>
+		<PText></PText>
 	</div>
 </template>
 
