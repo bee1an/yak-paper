@@ -15,20 +15,22 @@ interface GetPulsePackagesOpts {
 const pulsePkgCache: PackagesCfg[] = []
 
 /**
- * @description 获取除主包外的其他核心包
+ * @description 获取核心包
  */
 export const getPulsePackages = ({ useCache = true }: GetPulsePackagesOpts = {}) => {
 	if (useCache && pulsePkgCache.length) return pulsePkgCache
 
 	const paksCfg = fs
 		.readdirSync(pkgDir)
-		.filter((name) => name !== 'yak-paper')
 		.map((name) => {
 			const pakPath = path.join(pkgDir, name)
 			const pkgJson = JSON.parse(fs.readFileSync(path.join(pakPath, 'package.json')).toString())
 
+			if (!pkgJson.buildOptions) return null
+
 			return { name, description: pkgJson.description, path: pakPath }
 		})
+		.filter((item) => item !== null)
 
 	pulsePkgCache.length = 0
 	pulsePkgCache.push(...paksCfg)

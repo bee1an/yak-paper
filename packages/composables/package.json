@@ -1,0 +1,7 @@
+{
+	"name": "@yak-paper/composables",
+	"version": "1.0.0",
+	"description": "@yak-paper/composables",
+	"main": "index.js",
+	"license": "MIT"
+}

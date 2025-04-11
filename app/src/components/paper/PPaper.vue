@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { PText } from 'yak-paper'
+import { PPage } from 'yak-paper'
 </script>
 
 <template>
 	<div>
-		<PText></PText>
-		<PText></PText>
+		<PPage></PPage>
 	</div>
 </template>
 

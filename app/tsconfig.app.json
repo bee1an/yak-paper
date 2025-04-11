@@ -11,7 +11,7 @@
 		"noUncheckedSideEffectImports": true,
 		"baseUrl": "./",
 		"paths": {
-			"yak-paper": ["../packages/yak-paper/src/index.ts"], // 根据实际路径调整
+			"yak-paper": ["../packages/yak-paper"], // 根据实际路径调整
 			"@/*": ["./src/*"]
 		}
 	},

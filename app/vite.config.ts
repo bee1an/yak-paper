@@ -17,8 +17,15 @@ export default defineConfig(({ mode }) => {
 		build: { minify: !isDev },
 		resolve: {
 			alias: {
-				'yak-paper': path.resolve(__dirname, '../packages/yak-paper/src/index.ts'),
+				'yak-paper': path.resolve(__dirname, '../packages/yak-paper'),
 				'@': path.resolve(__dirname, 'src')
+			}
+		},
+		css: {
+			preprocessorOptions: {
+				scss: {
+					additionalData: "@use '@yak-paper/style-utils/style' as *;"
+				}
 			}
 		}
 	}
