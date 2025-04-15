@@ -1,6 +1,10 @@
-import { createThemeOption } from '@yak-paper/utils'
+import theme from '../../../../style'
+import common from './common'
 
-export default () => {
-	const theme = {}
-	return createThemeOption(theme)
-}
+export default theme.fastTheme('dark', function () {
+	return {
+		...common,
+		width: this.width,
+		color: this.primaryColor
+	}
+})

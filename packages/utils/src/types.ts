@@ -1,17 +1,15 @@
-import * as CSS from 'csstype'
+/**
+ * @description 返回string类型并且不丢失ts提示
+ * @example
+ * const includeString: IncludeString<'a' | 'b'> = 'c' // 不报错
+ * 对 includeString 赋值时，ts会提示 'a' | 'b'
+ */
+export type IncludeString<T extends string> = T | (string & {})
 
-export type KeyIncludeString<T extends Record<string, any>> = T & Record<string & {}, any>
-
-export interface CSSProperties
-	extends CSS.Properties<string | number>,
-		CSS.PropertiesHyphen<string | number> {
-	/**
-	 * The index signature was removed to enable closed typing for style
-	 * using CSSType. You're able to use type assertion or module augmentation
-	 * to add properties or an index signature of your own.
-	 *
-	 * For examples and more information, visit:
-	 * https://github.com/frenic/csstype#what-should-i-do-when-i-get-type-errors
-	 */
-	[v: `--${string}`]: string | number | undefined
-}
+/**
+ * @description 将对象的键替换为string类型并且不丢失ts提示
+ * @example
+ * const includeString: KeyIncludeString<'a' | 'b'> = { a: 1, b: 2, c: 3 } // 不报错
+ * 对 includeString[key] 赋值时，ts会提示 'a' | 'b'
+ */
+export type KeyIncludeString<T extends string> = Record<T | (string & {}), any>

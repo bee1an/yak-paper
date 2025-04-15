@@ -24,7 +24,7 @@ export default defineConfig(({ mode }) => {
 		css: {
 			preprocessorOptions: {
 				scss: {
-					additionalData: "@use '@yak-paper/style-utils/style' as *;"
+					additionalData: "@use '@yak-paper/theme-utils/style' as *;"
 				}
 			}
 		}

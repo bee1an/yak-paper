@@ -20,9 +20,9 @@ importers:
       '@yak-paper/material':
         specifier: workspace:*
         version: link:packages/material
-      '@yak-paper/style-utils':
+      '@yak-paper/theme-utils':
         specifier: workspace:*
-        version: link:packages/style-utils
+        version: link:packages/theme-utils
       '@yak-paper/utils':
         specifier: workspace:*
         version: link:packages/utils
@@ -170,7 +170,7 @@ importers:
 
   packages/material: {}
 
-  packages/style-utils: {}
+  packages/theme-utils: {}
 
   packages/utils: {}
 

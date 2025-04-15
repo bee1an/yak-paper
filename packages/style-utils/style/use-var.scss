@@ -1,5 +1,0 @@
-@mixin useVar($names...) {
-	@each $name in $names {
-		#{$name}: var(--p-#{$name});
-	}
-}

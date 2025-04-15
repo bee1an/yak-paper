@@ -1,0 +1,13 @@
+@use 'sass:meta';
+
+@mixin useVar($names...) {
+	@each $name in $names {
+		@if meta.type-of($name) == map {
+			@each $key, $value in $name {
+				#{$key}: var(--p-#{$value});
+			}
+		} @else {
+			#{$name}: var(--p-#{$name});
+		}
+	}
+}

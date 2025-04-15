@@ -14,7 +14,7 @@ function autoUseScss(): Plugin {
 					return {
 						code:
 							`@use '${path
-								.relative(path.dirname(id), path.join(pkgDir, 'style-utils/style'))
+								.relative(path.dirname(id), path.join(pkgDir, 'theme-utils/style'))
 								.replaceAll('\\', '/')}' as *;` + code
 					}
 				}

@@ -1,4 +1,4 @@
 .wrapper {
 	outline-width: 0;
-	@include useVar(height, line-height);
+	@include useVar(height, width);
 }

@@ -9,7 +9,7 @@
 		"build-app": "pnpm -C app build",
 		"prepare": "husky",
 		"prettier": "prettier --write .",
-		"test": "vitest",
+		"test": "vitest --typecheck",
 		"cleanup": "tsx scripts/cleanup.ts",
 		"typecheck": "vue-tsc -p tsconfig.json --noEmit"
 	},
@@ -25,7 +25,7 @@
 		"@yak-paper/composables": "workspace:*",
 		"@yak-paper/core": "workspace:*",
 		"@yak-paper/material": "workspace:*",
-		"@yak-paper/style-utils": "workspace:*",
+		"@yak-paper/theme-utils": "workspace:*",
 		"@yak-paper/utils": "workspace:*",
 		"vue": "3.5.13",
 		"yak-paper": "workspace:*"

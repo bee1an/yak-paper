@@ -1,9 +1,10 @@
-import { camelcase, createBuilder, writeBuilder } from '../utils'
+import { createBuilder, writeBuilder } from '../utils'
 import getConfig from '../rollup.config'
 
 import picocolors from 'picocolors'
 import { entrysAndOutput } from './build-config'
 import { getCmdOpts } from './build-cmd-opts'
+import { camelcase } from '@yak-paper/utils'
 
 const cmdOpts = getCmdOpts()
 

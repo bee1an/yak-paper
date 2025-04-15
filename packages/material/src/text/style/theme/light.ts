@@ -1,3 +1,10 @@
-const theme = {}
+import theme from '../../../../style'
+import common from './common'
 
-export default {}
+export default theme.fastTheme('light', function () {
+	return {
+		...common,
+		width: this.width,
+		color: this.primaryColor
+	}
+})
