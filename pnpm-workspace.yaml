@@ -1,4 +1,7 @@
 packages:
+  # 核心包
   - 'packages/*'
+  # 应用
   - 'app'
-  - 'build'
+  # 内部包
+  - 'internal/*'

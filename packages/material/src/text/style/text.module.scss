@@ -1,4 +1,9 @@
-.wrapper {
+.block {
 	outline-width: 0;
 	@include useVar(height, width);
+
+	&:empty::before {
+		content: attr(data-placeholder);
+		cursor: text;
+	}
 }

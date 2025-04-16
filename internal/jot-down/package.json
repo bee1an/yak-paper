@@ -1,0 +1,11 @@
+{
+	"name": "@yak-paper/jot-down",
+	"version": "1.0.0",
+	"description": "@yak-paper/jot-down",
+	"license": "MIT",
+	"scripts": {
+		"dev": "vitepress dev",
+		"build": "vitepress build",
+		"preview": "vitepress preview"
+	}
+}

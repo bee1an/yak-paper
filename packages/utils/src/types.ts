@@ -13,3 +13,8 @@ export type IncludeString<T extends string> = T | (string & {})
  * 对 includeString[key] 赋值时，ts会提示 'a' | 'b'
  */
 export type KeyIncludeString<T extends string> = Record<T | (string & {}), any>
+
+/**
+ * @description 可能是一个数组
+ */
+export type MaybeArray<T> = T | T[]

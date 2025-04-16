@@ -1,13 +1,12 @@
 import { defineComponent } from 'vue'
-import { PText } from 'yak-paper'
+import { PBlock } from '../../block'
 
 export default defineComponent({
-	name: 'Page',
+	name: 'PPage',
 	render() {
 		return (
 			<div>
-				<PText />
-				<PText />
+				<PBlock />
 			</div>
 		)
 	}

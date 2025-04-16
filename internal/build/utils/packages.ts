@@ -1,6 +1,7 @@
 import fs from 'fs-extra'
 import path from 'path'
 import { pkgDir, rootDir } from './paths'
+import fg from 'fast-glob'
 
 interface PackagesCfg {
 	name: string
@@ -56,18 +57,25 @@ export const getAllPackages = ({ useCache = true }: GetAllPackagesOpts = {}) => 
 
 	const otherPkgs =
 		workspaceYaml
-			.match(/(- '\w*)/g)
+			.match(/('([^']*)')/g)
 			?.filter((item) => !item.includes('packages'))
-			.map((item) => {
-				const name = item.replace(/(- ')/g, '')
-				const pakPath = path.join(rootDir, name)
-				const pkgJson = JSON.parse(fs.readFileSync(path.join(pakPath, 'package.json')).toString())
-				return { name, description: pkgJson.description, path: pakPath }
-			}) ?? []
+			.reduce((pre, item) => {
+				const pkgs = fg
+					.globSync(item.slice(1, -1), { cwd: rootDir, onlyDirectories: true })
+					.map((name) => {
+						const pakPath = path.join(rootDir, name)
+						console.log('pakPath', pakPath)
+						const pkgJson = JSON.parse(
+							fs.readFileSync(path.join(pakPath, 'package.json')).toString()
+						)
+						return { name, description: pkgJson.description, path: pakPath }
+					})
+
+				return pre.concat(pkgs)
+			}, [] as PackagesCfg[]) ?? []
 
 	pkgCache.length = 0
 	pkgCache.push(...pulsePkgs, ...otherPkgs)
 
 	return pkgCache
 }
-getAllPackages()
