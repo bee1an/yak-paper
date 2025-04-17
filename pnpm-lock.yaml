@@ -23,6 +23,9 @@ importers:
       '@yak-paper/theme-utils':
         specifier: workspace:*
         version: link:packages/theme-utils
+      '@yak-paper/transforms':
+        specifier: workspace:*
+        version: link:packages/transforms
       '@yak-paper/utils':
         specifier: workspace:*
         version: link:packages/utils
@@ -39,9 +42,6 @@ importers:
       '@commitlint/config-conventional':
         specifier: 19.8.0
         version: 19.8.0
-      '@css-render/plugin-bem':
-        specifier: 0.15.14
-        version: 0.15.14(css-render@0.15.14)
       '@eslint/js':
         specifier: 9.23.0
         version: 9.23.0
@@ -53,16 +53,13 @@ importers:
         version: 0.8.15
       '@vitejs/plugin-vue':
         specifier: 5.2.1
-        version: 5.2.1(vite@5.4.18(@types/node@22.13.15)(sass-embedded@1.86.3)(sass@1.86.1))(vue@3.5.13(typescript@5.8.2))
+        version: 5.2.1(vite@6.2.0(@types/node@22.13.15)(jiti@2.4.2)(sass-embedded@1.86.3)(sass@1.86.1)(tsx@4.19.3)(yaml@2.7.1))(vue@3.5.13(typescript@5.8.2))
       '@vitejs/plugin-vue-jsx':
         specifier: 4.1.2
-        version: 4.1.2(vite@5.4.18(@types/node@22.13.15)(sass-embedded@1.86.3)(sass@1.86.1))(vue@3.5.13(typescript@5.8.2))
+        version: 4.1.2(vite@6.2.0(@types/node@22.13.15)(jiti@2.4.2)(sass-embedded@1.86.3)(sass@1.86.1)(tsx@4.19.3)(yaml@2.7.1))(vue@3.5.13(typescript@5.8.2))
       commander:
         specifier: 13.1.0
         version: 13.1.0
-      css-render:
-        specifier: 0.15.14
-        version: 0.15.14
       csstype:
         specifier: 3.1.3
         version: 3.1.3
@@ -184,7 +181,11 @@ importers:
 
   packages/material: {}
 
+  packages/renderer: {}
+
   packages/theme-utils: {}
+
+  packages/transforms: {}
 
   packages/utils: {}
 
@@ -462,11 +463,6 @@ packages:
     resolution: {integrity: sha512-LRjP623jPyf3Poyfb0ohMj8I3ORyBDOwXAgxxVPbSD0unJuW2mJWeiRfaQinjtccMqC5Wy1HOMfa4btKjbNxbg==}
     engines: {node: '>=v18'}
 
-  '@css-render/plugin-bem@0.15.14':
-    resolution: {integrity: sha512-QK513CJ7yEQxm/P3EwsI+d+ha8kSOcjGvD6SevM41neEMxdULE+18iuQK6tEChAWMOQNQPLG/Rw3Khb69r5neg==}
-    peerDependencies:
-      css-render: ~0.15.14
-
   '@csstools/color-helpers@5.0.2':
     resolution: {integrity: sha512-JqWH1vsgdGcw2RR6VliXXdA0/59LttzlU8UlRT/iUUsEeWfYq8I+K0yhihEUTTHLRm1EXvpsCx3083EU15ecsA==}
     engines: {node: '>=18'}
@@ -517,9 +513,6 @@ packages:
         optional: true
       search-insights:
         optional: true
-
-  '@emotion/hash@0.8.0':
-    resolution: {integrity: sha512-kBJtf7PH6aWwZ6fka3zQ0p6SBYzx4fl1LoZXE2RrnYST9Xljm7WfKJrU4g/Xr3Beg72MLrp1AWNUmuYJTL7Cow==}
 
   '@esbuild/aix-ppc64@0.21.5':
     resolution: {integrity: sha512-1SDgH6ZSPTlggy1yI6+Dbkiz8xzpHJEVAlF/AM1tHPLsf5STom9rwtjE4hKAF20FfXXNTFqEYXyJNWh1GiZedQ==}
@@ -1829,9 +1822,6 @@ packages:
     peerDependencies:
       postcss: ^8.0.9
 
-  css-render@0.15.14:
-    resolution: {integrity: sha512-9nF4PdUle+5ta4W5SyZdLCCmFd37uVimSjg1evcTqKJCyvCEEj12WKzOSBNak6r4im4J4iYXKH1OWpUV5LBYFg==}
-
   css-select@4.3.0:
     resolution: {integrity: sha512-wPpOYtnsVontu2mODhA19JrqWxNsfdatRKd64kmpRbQgh1KtItko5sTnEpPdpSaJszTOhEMlF/RPz28qj4HqhQ==}
 
@@ -1877,9 +1867,6 @@ packages:
   cssstyle@4.3.0:
     resolution: {integrity: sha512-6r0NiY0xizYqfBvWp1G7WXJ06/bZyrk7Dc6PHql82C/pKGUTKu4yAX4Y8JPamb1ob9nBKuxWzCGTRuGwU3yxJQ==}
     engines: {node: '>=18'}
-
-  csstype@3.0.11:
-    resolution: {integrity: sha512-sa6P2wJ+CAbgyy4KFssIb/JNMLxFvKF1pCYCSXS8ZMuqZnMsrxqI2E5sPyoTpxoPU/gVZMzr2zjOfg8GIZOMsw==}
 
   csstype@3.1.3:
     resolution: {integrity: sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==}
@@ -4325,10 +4312,6 @@ snapshots:
       '@types/conventional-commits-parser': 5.0.1
       chalk: 5.4.1
 
-  '@css-render/plugin-bem@0.15.14(css-render@0.15.14)':
-    dependencies:
-      css-render: 0.15.14
-
   '@csstools/color-helpers@5.0.2': {}
 
   '@csstools/css-calc@2.1.2(@csstools/css-parser-algorithms@3.0.4(@csstools/css-tokenizer@3.0.3))(@csstools/css-tokenizer@3.0.3)':
@@ -4372,8 +4355,6 @@ snapshots:
       search-insights: 2.17.3
     transitivePeerDependencies:
       - '@algolia/client-search'
-
-  '@emotion/hash@0.8.0': {}
 
   '@esbuild/aix-ppc64@0.21.5':
     optional: true
@@ -5101,16 +5082,6 @@ snapshots:
     transitivePeerDependencies:
       - vue
 
-  '@vitejs/plugin-vue-jsx@4.1.2(vite@5.4.18(@types/node@22.13.15)(sass-embedded@1.86.3)(sass@1.86.1))(vue@3.5.13(typescript@5.8.2))':
-    dependencies:
-      '@babel/core': 7.26.10
-      '@babel/plugin-transform-typescript': 7.27.0(@babel/core@7.26.10)
-      '@vue/babel-plugin-jsx': 1.4.0(@babel/core@7.26.10)
-      vite: 5.4.18(@types/node@22.13.15)(sass-embedded@1.86.3)(sass@1.86.1)
-      vue: 3.5.13(typescript@5.8.2)
-    transitivePeerDependencies:
-      - supports-color
-
   '@vitejs/plugin-vue-jsx@4.1.2(vite@6.2.0(@types/node@22.13.15)(jiti@2.4.2)(sass-embedded@1.86.3)(sass@1.86.1)(tsx@4.19.3)(yaml@2.7.1))(vue@3.5.13(typescript@5.7.2))':
     dependencies:
       '@babel/core': 7.26.10
@@ -5118,6 +5089,16 @@ snapshots:
       '@vue/babel-plugin-jsx': 1.4.0(@babel/core@7.26.10)
       vite: 6.2.0(@types/node@22.13.15)(jiti@2.4.2)(sass-embedded@1.86.3)(sass@1.86.1)(tsx@4.19.3)(yaml@2.7.1)
       vue: 3.5.13(typescript@5.7.2)
+    transitivePeerDependencies:
+      - supports-color
+
+  '@vitejs/plugin-vue-jsx@4.1.2(vite@6.2.0(@types/node@22.13.15)(jiti@2.4.2)(sass-embedded@1.86.3)(sass@1.86.1)(tsx@4.19.3)(yaml@2.7.1))(vue@3.5.13(typescript@5.8.2))':
+    dependencies:
+      '@babel/core': 7.26.10
+      '@babel/plugin-transform-typescript': 7.27.0(@babel/core@7.26.10)
+      '@vue/babel-plugin-jsx': 1.4.0(@babel/core@7.26.10)
+      vite: 6.2.0(@types/node@22.13.15)(jiti@2.4.2)(sass-embedded@1.86.3)(sass@1.86.1)(tsx@4.19.3)(yaml@2.7.1)
+      vue: 3.5.13(typescript@5.8.2)
     transitivePeerDependencies:
       - supports-color
 
@@ -5130,6 +5111,11 @@ snapshots:
     dependencies:
       vite: 6.2.0(@types/node@22.13.15)(jiti@2.4.2)(sass-embedded@1.86.3)(sass@1.86.1)(tsx@4.19.3)(yaml@2.7.1)
       vue: 3.5.13(typescript@5.7.2)
+
+  '@vitejs/plugin-vue@5.2.1(vite@6.2.0(@types/node@22.13.15)(jiti@2.4.2)(sass-embedded@1.86.3)(sass@1.86.1)(tsx@4.19.3)(yaml@2.7.1))(vue@3.5.13(typescript@5.8.2))':
+    dependencies:
+      vite: 6.2.0(@types/node@22.13.15)(jiti@2.4.2)(sass-embedded@1.86.3)(sass@1.86.1)(tsx@4.19.3)(yaml@2.7.1)
+      vue: 3.5.13(typescript@5.8.2)
 
   '@vitest/expect@3.1.1':
     dependencies:
@@ -5697,11 +5683,6 @@ snapshots:
     dependencies:
       postcss: 8.5.3
 
-  css-render@0.15.14:
-    dependencies:
-      '@emotion/hash': 0.8.0
-      csstype: 3.0.11
-
   css-select@4.3.0:
     dependencies:
       boolbase: 1.0.0
@@ -5776,8 +5757,6 @@ snapshots:
     dependencies:
       '@asamuzakjp/css-color': 3.1.1
       rrweb-cssom: 0.8.0
-
-  csstype@3.0.11: {}
 
   csstype@3.1.3: {}
 
