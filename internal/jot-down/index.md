@@ -3,8 +3,8 @@
 layout: home
 
 hero:
-  name: 开发笔记
-  text: 关于富文本编辑器
+  name: 富文本编辑器开发笔记
+  text: 从0到1开发一款富文本编辑器
   tagline: 🚀 也可能啥都记
   actions:
     - theme: brand
