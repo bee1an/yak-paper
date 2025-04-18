@@ -18,3 +18,11 @@ export type KeyIncludeString<T extends string> = Record<T | (string & {}), any>
  * @description 可能是一个数组
  */
 export type MaybeArray<T> = T | T[]
+
+/**
+ * @description 任意函数
+ *
+ * 第一泛型参数可以指定函数的参数类型
+ * 第二泛型参数可以指定函数的返回值类型
+ */
+export type AnyFn<T extends any[] = any[], R = any> = (...args: T) => R
