@@ -1,7 +1,6 @@
-import { onInput } from '@yak-paper/composables'
 import { TextHyper } from '@yak-paper/material'
 import { defineComponent } from 'vue'
-import { editableWhenKeydown } from '../../event-coordinator/src/editable-keydown-handler'
+import { editableWhenInput, editableWhenKeydown } from '../../event-coordinator'
 
 export default defineComponent({
 	name: 'PBlock',
@@ -11,7 +10,7 @@ export default defineComponent({
 			type: 'text'
 		})
 
-		text.mergeProps({ onInput, onKeydown: editableWhenKeydown })
+		text.mergeProps({ onInput: editableWhenInput, onKeydown: editableWhenKeydown })
 
 		return { text }
 	},

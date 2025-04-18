@@ -13,7 +13,7 @@ interface Hander {
 	handle: (event: KeyboardEvent) => void
 }
 
-export class EditableKeydownBaseHandler implements Hander {
+export abstract class EditableKeydownBaseHandler implements Hander {
 	private _nextHandler: Hander | null = null
 
 	setNext(handler: Hander): Hander {
@@ -26,4 +26,21 @@ export class EditableKeydownBaseHandler implements Hander {
 			this._nextHandler.handle(event)
 		}
 	}
+}
+
+/**
+ * @description 检查是否仅按下了指定的修饰键
+ * 该函数会验证事件对象中是否只有指定的修饰键被按下，其他修饰键未被按下
+ *
+ * @param event - 键盘事件对象，包含按键状态信息
+ * @param key - 需要检查的修饰键，可以是 'ctrlKey'、'shiftKey'、'altKey' 或 'metaKey' 之一
+ * @returns 如果仅按下了指定的修饰键且其他修饰键未被按下，则返回 true；否则返回 false
+ */
+export const isOnlyModifierKeyPressed = (
+	event: KeyboardEvent,
+	key: 'ctrlKey' | 'shiftKey' | 'altKey' | 'metaKey'
+) => {
+	const keys = ['ctrlKey', 'shiftKey', 'altKey', 'metaKey'] as const
+
+	return keys.every((k) => (k === key ? event[k] : !event[k]))
 }

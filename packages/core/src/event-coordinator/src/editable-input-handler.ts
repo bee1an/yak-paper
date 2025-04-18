@@ -1,7 +1,7 @@
-export const onInput = (payload: Event) => {
-	if (!(payload.target instanceof HTMLElement)) return
+export const editableWhenInput = (event: Event) => {
+	if (!(event.target instanceof HTMLElement)) return
 
-	const target = payload.target
+	const target = event.target
 
 	// 每次输入检查当前元素的内容
 	console.log('target', target.textContent)
