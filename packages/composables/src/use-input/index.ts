@@ -25,3 +25,5 @@ export const useInput = (target: MaybeRefOrGetter<HTMLElement | null>) => {
 		stopWatcher()
 	}, true)
 }
+
+export * from './on-input'

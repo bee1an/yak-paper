@@ -1,1 +1,1 @@
-export * from './src/event-coordinator'
+export * from './src/document-keydown-binder'

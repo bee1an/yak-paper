@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { KeyBinding } from '../src/event-coordinator'
+import { DocumentKeydownBinder } from '../src/document-keydown-binder'
 
-describe('key-binding.text.ts', () => {
+describe('document-keydown-binder.ts', () => {
 	it('Singleton', () => {
-		expect(KeyBinding.getInstance()).toBe(KeyBinding.getInstance())
+		expect(DocumentKeydownBinder.getInstance()).toBe(DocumentKeydownBinder.getInstance())
 	})
 })

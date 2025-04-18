@@ -1,4 +1,4 @@
-import { defineComponent, nextTick, useTemplateRef } from 'vue'
+import { defineComponent, useTemplateRef } from 'vue'
 import { PBlock } from '../../block'
 
 export default defineComponent({

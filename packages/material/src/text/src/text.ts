@@ -5,7 +5,8 @@ import {
 	jsonDeserializer,
 	type DataAgreer,
 	type JsonDeserializerOption,
-	type HyperAgreer
+	type HyperAgreer,
+	type HPropsType
 } from '@yak-paper/transforms'
 import themeDefined from '../style/theme'
 import themeManager from '../../../style'
@@ -47,6 +48,15 @@ export class TextHyper implements HyperAgreer {
 		this.templateRef = useTemplateRef<HTMLElement>(this.props.ref)
 
 		return reactive(this) as TextHyper
+	}
+
+	/**
+	 * 合并属性到当前组件的props对象
+	 *
+	 * @param props - 需要合并的属性对象，类型为包含任意值的键值对集合（Record<string, any>）。
+	 */
+	mergeProps(props: HPropsType) {
+		Object.assign(this.props, props)
 	}
 
 	/**

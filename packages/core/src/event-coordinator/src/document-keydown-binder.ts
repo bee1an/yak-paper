@@ -1,31 +1,31 @@
 import type { AnyFn } from '@yak-paper/utils'
 
-interface BindOption {
+interface DocumentKeydownBindOption {
 	when: (event: KeyboardEvent) => boolean
 	action: AnyFn
 }
 
-export class KeyBinding {
-	private static instance: KeyBinding | null = null
+export class DocumentKeydownBinder {
+	private static instance: DocumentKeydownBinder | null = null
 
 	/**
-	 * @description 获取 KeyBinding 类的单例实例
+	 * @description 获取 DocumentKeydownBinder 类的单例实例
 	 *
 	 * 实现单例模式的核心方法，当实例不存在时创建新实例，
 	 * 保证整个应用生命周期中只存在一个实例对象
 	 *
 	 * @static
-	 * @returns {KeyBinding} 返回 KeyBinding 类的单例实例
+	 * @returns {DocumentKeydownBinder} 返回 DocumentKeydownBinder 类的单例实例
 	 */
-	static getInstance(): KeyBinding {
+	static getInstance(): DocumentKeydownBinder {
 		// 单例检查：当实例不存在时初始化新实例
 		if (!this.instance) {
-			this.instance = new KeyBinding()
+			this.instance = new DocumentKeydownBinder()
 		}
 		return this.instance
 	}
 
-	private _keyMap: Set<BindOption> = new Set()
+	private _keySet: Set<DocumentKeydownBindOption> = new Set()
 
 	private _boundHandler: ((e: KeyboardEvent) => void) | null = null
 
@@ -52,14 +52,14 @@ export class KeyBinding {
 	 */
 	private _whenDocumentKeydown(e: KeyboardEvent) {
 		// 顺序遍历所有注册的键盘事件处理器
-		for (const element of this._keyMap) {
+		for (const element of this._keySet) {
 			// 执行条件判断，检测当前按键组合是否匹配
 			if (element.when(e)) {
 				// 触发匹配成功的处理器动作，并传递原始事件对象
 				try {
 					element.action(e)
 				} catch (error) {
-					console.error('[KeyBinding] Action execution failed:', error)
+					console.error('[DocumentKeydownBinder] Action execution failed:', error)
 				}
 				// 短路逻辑：首个匹配成功后终止后续处理
 				break
@@ -73,15 +73,15 @@ export class KeyBinding {
 	 * @param option - 需要绑定的键盘配置选项对象（BindOption 类型）
 	 * @param HighPrior - 是否高优先级插入（默认false）
 	 */
-	bind(option: BindOption, HighPrior = false) {
+	bind(option: DocumentKeydownBindOption, HighPrior = false) {
 		// 处理高优先级插入逻辑：创建新集合并将当前选项置于最前
 		if (HighPrior) {
-			this._keyMap = new Set([option, ...this._keyMap])
+			this._keySet = new Set([option, ...this._keySet])
 		}
 
 		// 常规插入逻辑：将选项追加到集合末尾
 		else {
-			this._keyMap.add(option)
+			this._keySet.add(option)
 		}
 	}
 
@@ -90,8 +90,8 @@ export class KeyBinding {
 	 *
 	 * @param option - 需要解除绑定的配置选项对象，该对象应包含绑定相关的元数据信息，
 	 */
-	unbind(option: BindOption) {
-		this._keyMap.delete(option)
+	unbind(option: DocumentKeydownBindOption) {
+		this._keySet.delete(option)
 	}
 
 	/**
@@ -107,12 +107,8 @@ export class KeyBinding {
 			this._boundHandler = null
 		}
 
-		this._keyMap = new Set()
+		this._keySet = new Set()
 
-		KeyBinding.instance = null
+		DocumentKeydownBinder.instance = null
 	}
 }
-
-const keyBinding = KeyBinding.getInstance()
-
-export default keyBinding

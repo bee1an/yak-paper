@@ -7,6 +7,7 @@ export const onInput = (payload: Event) => {
 	console.log('target', target.textContent)
 
 	if (target.textContent === '') {
+		// 置空防止出现<br>
 		target.textContent = ''
 	}
 }

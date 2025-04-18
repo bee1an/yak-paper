@@ -1,5 +1,5 @@
 import type { MaybeArray } from '@yak-paper/utils'
-import type { VNode } from 'vue'
+import type { h, VNode } from 'vue'
 
 /**
  * @description 数据协议, 所有物料的数据都需要实现这个协议
@@ -14,6 +14,8 @@ export interface DataAgreer {
 	 */
 	type: string
 }
+
+export type HPropsType = Parameters<typeof h>[1]
 
 /**
  * @description 渲染协议, 所有物料的渲染都需要实现这个协议
@@ -32,12 +34,14 @@ export interface HyperAgreer {
 	/**
 	 * @description 属性
 	 */
-	props: Record<string, any>
+	props: HPropsType
 
 	/**
 	 * @description 子节点
 	 */
 	children?: MaybeArray<Pick<HyperAgreer, 'tagName' | 'props' | 'children'> | string | null>
+
+	mergeProps(props: HPropsType): void
 
 	/**
 	 * @description 渲染函数
