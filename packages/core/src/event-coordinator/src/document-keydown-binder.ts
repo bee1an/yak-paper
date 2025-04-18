@@ -1,7 +1,13 @@
 import type { AnyFn } from '@yak-paper/utils'
 
 interface DocumentKeydownBindOption {
+	/**
+	 * @description 触发条件
+	 */
 	when: (event: KeyboardEvent) => boolean
+	/**
+	 * @description 事件处理函数
+	 */
 	action: AnyFn
 }
 

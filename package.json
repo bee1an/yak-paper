@@ -71,7 +71,7 @@
 			"eslint --fix",
 			"prettier --parser=vue --write"
 		],
-		"*.css": [
+		"*.scss": [
 			"prettier --write"
 		],
 		"*.md": [

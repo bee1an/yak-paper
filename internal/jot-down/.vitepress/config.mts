@@ -38,6 +38,8 @@ export default defineConfig({
 			provider: 'local'
 		},
 
+		lastUpdated: { text: '最后更新时间' },
+
 		docFooter: {
 			prev: '上一篇',
 			next: '下一篇'
