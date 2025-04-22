@@ -11,6 +11,9 @@ importers:
       '@yak-paper/build':
         specifier: workspace:*
         version: link:internal/build
+      '@yak-paper/components':
+        specifier: workspace:*
+        version: link:packages/components
       '@yak-paper/composables':
         specifier: workspace:*
         version: link:packages/composables
@@ -23,9 +26,6 @@ importers:
       '@yak-paper/theme-utils':
         specifier: workspace:*
         version: link:packages/theme-utils
-      '@yak-paper/transforms':
-        specifier: workspace:*
-        version: link:packages/transforms
       '@yak-paper/utils':
         specifier: workspace:*
         version: link:packages/utils
@@ -175,17 +175,15 @@ importers:
 
   internal/jot-down: {}
 
+  packages/components: {}
+
   packages/composables: {}
 
   packages/core: {}
 
   packages/material: {}
 
-  packages/renderer: {}
-
   packages/theme-utils: {}
-
-  packages/transforms: {}
 
   packages/utils: {}
 

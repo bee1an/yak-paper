@@ -23,11 +23,11 @@
 	"license": "MIT",
 	"dependencies": {
 		"@yak-paper/build": "workspace:*",
+		"@yak-paper/components": "workspace:*",
 		"@yak-paper/composables": "workspace:*",
 		"@yak-paper/core": "workspace:*",
 		"@yak-paper/material": "workspace:*",
 		"@yak-paper/theme-utils": "workspace:*",
-		"@yak-paper/transforms": "workspace:*",
 		"@yak-paper/utils": "workspace:*",
 		"vue": "3.5.13",
 		"yak-paper": "workspace:*"

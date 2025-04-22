@@ -1,6 +1,6 @@
 import { TextHyper } from '@yak-paper/material'
 import { defineComponent } from 'vue'
-import { editableWhenInput, editableWhenKeydown } from '../../event-coordinator'
+import { editableWhenInput, editableWhenKeydown } from '@yak-paper/core'
 
 export default defineComponent({
 	name: 'PBlock',

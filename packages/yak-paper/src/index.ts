@@ -1,3 +1,6 @@
+export * from './components'
+export * from './composables'
 export * from './core'
 export * from './material'
+export * from './theme-utils'
 export * from './utils'

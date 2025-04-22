@@ -1,7 +1,7 @@
 {
-	"name": "@yak-paper/transforms",
+	"name": "@yak-paper/components",
 	"version": "1.0.0",
-	"description": "@yak-paper/transforms",
+	"description": "@yak-paper/components",
 	"license": "MIT",
 	"buildOptions": {
 		"entryPath": "index.ts"

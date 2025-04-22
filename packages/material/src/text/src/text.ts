@@ -7,7 +7,7 @@ import {
 	type JsonDeserializerOption,
 	type HyperAgreer,
 	type HPropsType
-} from '@yak-paper/transforms'
+} from '@yak-paper/core'
 import themeDefined from '../style/theme'
 import themeManager from '../../../style'
 import { reactive, toValue, useTemplateRef, type MaybeRef } from 'vue'
