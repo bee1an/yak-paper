@@ -1,12 +1,10 @@
 import { useThemeStyle } from '@yak-paper/composables'
 import {
-	createVNode,
-	editableSerializer,
-	jsonDeserializer,
+	Transformer,
 	type DataAgreer,
 	type JsonDeserializerOption,
 	type HyperAgreer,
-	type HPropsType
+	type WrapperPropsType
 } from '@yak-paper/core'
 import themeDefined from '../style/theme'
 import themeManager from '../../../style'
@@ -17,7 +15,7 @@ const props = reactive({ theme: 'light' })
 
 const themeStyle = useThemeStyle(themeDefined, props, themeManager.createCssVar.bind(themeManager))
 
-interface TextDataAgreer extends DataAgreer {
+export interface TextDataAgreer extends DataAgreer {
 	type: 'text'
 
 	formate?: JsonDeserializerOption[]
@@ -43,7 +41,7 @@ export class TextHyper implements HyperAgreer {
 	templateRef: MaybeRef<HTMLElement | null>
 
 	constructor(private _rawData?: TextDataAgreer) {
-		this.children = _rawData?.formate?.map(jsonDeserializer).filter((item) => item !== null)
+		this.children = _rawData ? this.deserialize(_rawData) : []
 
 		this.templateRef = useTemplateRef<HTMLElement>(this.props.ref)
 
@@ -55,7 +53,7 @@ export class TextHyper implements HyperAgreer {
 	 *
 	 * @param props - 需要合并的属性对象，类型为包含任意值的键值对集合（Record<string, any>）。
 	 */
-	mergeProps(props: HPropsType) {
+	mergeProps(props: WrapperPropsType) {
 		Object.assign(this.props, props)
 	}
 
@@ -68,7 +66,7 @@ export class TextHyper implements HyperAgreer {
 	 * @returns 返回由renderer函数生成的虚拟节点
 	 */
 	createVNode() {
-		return createVNode(this)
+		return Transformer.instance.createVNode(this)
 	}
 
 	/**
@@ -92,7 +90,20 @@ export class TextHyper implements HyperAgreer {
 
 		return {
 			type: this.type,
-			...editableSerializer(dom)
+			...Transformer.instance.serializer(dom)
 		}
+	}
+
+	/**
+	 * @description 将原始数据反序列化为目标格式。
+	 *
+	 * 该函数接收一个 `TextDataAgreer` 类型的原始数据，通过 `Transformer.instance.deserializer` 方法
+	 * 对 `raw.formate` 数组中的每个元素进行反序列化，并过滤掉结果为 `null` 的元素。
+	 *
+	 * @param raw - 包含需要反序列化数据的 `TextDataAgreer` 对象。如果 `raw` 或 `raw.formate` 为 `null` 或 `undefined`，则返回 `undefined`。
+	 * @returns 反序列化后的数组，其中不包含 `null` 元素。如果 `raw` 或 `raw.formate` 为 `null` 或 `undefined`，则返回 `undefined`。
+	 */
+	deserialize(raw: TextDataAgreer) {
+		return raw.formate?.map(Transformer.instance.deserializer).filter((item) => item !== null)
 	}
 }

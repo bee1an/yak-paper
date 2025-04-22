@@ -1,13 +1,27 @@
-export const editableWhenInput = (event: Event) => {
-	if (!(event.target instanceof HTMLElement)) return
+export class EditableWhenInput {
+	private static _instance: EditableWhenInput
 
-	const target = event.target
+	private constructor() {
+		this.handle = this.handle.bind(this)
+	}
+	static get instance() {
+		if (!this._instance) {
+			this._instance = new EditableWhenInput()
+		}
+		return this._instance
+	}
 
-	// 每次输入检查当前元素的内容
-	console.log('target', target.textContent)
+	handle(event: Event) {
+		if (!(event.target instanceof HTMLElement)) return
 
-	if (target.textContent === '') {
-		// 置空防止出现<br>
-		target.textContent = ''
+		const target = event.target
+
+		// 每次输入检查当前元素的内容
+		// console.log('target', target.textContent)
+
+		if (target.textContent === '') {
+			// 置空防止出现<br>
+			target.textContent = ''
+		}
 	}
 }

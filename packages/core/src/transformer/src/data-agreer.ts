@@ -15,7 +15,21 @@ export interface DataAgreer {
 	type: string
 }
 
-export type HPropsType = Parameters<typeof h>[1]
+/**
+ * @description props 类型
+ *
+ * 获取vue h 函数的参数类型
+ */
+export type WrapperPropsType = Parameters<typeof h>[1]
+
+/** @description 单个子元素对象类型 */
+export type ChildObjOption = Pick<HyperAgreer, 'tagName' | 'props' | 'children'>
+
+/** @description 单个子元素类型 */
+export type ChildOption = ChildObjOption | string | null
+
+/** @description 子元素类型 */
+export type ChildrenOption = MaybeArray<ChildOption>
 
 /**
  * @description 渲染协议, 所有物料的渲染都需要实现这个协议
@@ -34,14 +48,17 @@ export interface HyperAgreer {
 	/**
 	 * @description 属性
 	 */
-	props: HPropsType
+	props: WrapperPropsType
 
 	/**
 	 * @description 子节点
 	 */
-	children?: MaybeArray<Pick<HyperAgreer, 'tagName' | 'props' | 'children'> | string | null>
+	children?: ChildrenOption
 
-	mergeProps(props: HPropsType): void
+	/**
+	 * @description 合并属性
+	 */
+	mergeProps(props: WrapperPropsType): void
 
 	/**
 	 * @description 渲染函数

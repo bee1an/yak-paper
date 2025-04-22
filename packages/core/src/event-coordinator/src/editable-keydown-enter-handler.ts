@@ -11,7 +11,8 @@ export class EditableKeydownEnterHandler extends EditableKeydownBaseHandler {
 			return
 		}
 
-		// TODO:处理回车事件
 		event.preventDefault()
+
+		this._eventBus.emit('enter', event)
 	}
 }

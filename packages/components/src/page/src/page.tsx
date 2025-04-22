@@ -1,29 +1,21 @@
-import { defineComponent, useTemplateRef } from 'vue'
+import { defineComponent } from 'vue'
 import { PBlock } from '../../block'
+import { Paper } from '@yak-paper/core'
+import { WareHouse } from './warehouse'
 
 export default defineComponent({
 	name: 'PPage',
-
 	setup() {
-		const blockRef = useTemplateRef<InstanceType<typeof PBlock>>('block')
-
-		const btnClick = () => {
-			const json = blockRef.value?.text.serialize()
-			console.log('json', json)
-		}
-
-		return {
-			btnClick
-		}
+		Paper.EditableWhenKeydown.eventBus.on('enter', () => {
+			WareHouse.instance.addHyper({ type: 'text' })
+		})
 	},
-
 	render() {
-		const { btnClick } = this
-
 		return (
 			<div>
-				<button onClick={btnClick}>点击</button>
-				<PBlock ref="block" />
+				{WareHouse.instance.hypers.map((item, index) => (
+					<PBlock key={index} blockData={item} />
+				))}
 			</div>
 		)
 	}

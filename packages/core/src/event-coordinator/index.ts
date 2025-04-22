@@ -1,6 +1,4 @@
 export * from './src/document-keydown-binder'
 export * from './src/editable-input-handler'
 export * from './src/editable-keydown-base-handler'
-export * from './src/editable-keydown-blob-handler'
-export * from './src/editable-keydown-enter-handler'
 export * from './src/editable-keydown-handler'

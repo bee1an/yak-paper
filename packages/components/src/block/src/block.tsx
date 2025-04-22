@@ -1,22 +1,36 @@
-import { TextHyper } from '@yak-paper/material'
-import { defineComponent } from 'vue'
-import { editableWhenInput, editableWhenKeydown } from '@yak-paper/core'
+import { TextHyper, type TextDataAgreer } from '@yak-paper/material'
+import { defineComponent, type PropType } from 'vue'
+import { EditableWhenInput, EditableWhenKeydown, type DataAgreer } from '@yak-paper/core'
+
+const pBlockProps = {
+	blockData: {
+		type: Object as PropType<DataAgreer>,
+		default: () => []
+	}
+}
 
 export default defineComponent({
 	name: 'PBlock',
+	props: pBlockProps,
+	setup(props) {
+		let hyper
 
-	setup() {
-		const text = new TextHyper({
-			type: 'text'
+		if (props.blockData.type === 'text') {
+			hyper = new TextHyper(props.blockData as TextDataAgreer)
+		} else {
+			throw new Error('block type is not supported')
+		}
+
+		hyper.mergeProps({
+			onInput: EditableWhenInput.instance.handle,
+			onKeydown: EditableWhenKeydown.instance.handle
 		})
 
-		text.mergeProps({ onInput: editableWhenInput, onKeydown: editableWhenKeydown })
-
-		return { text }
+		return { hyper }
 	},
 
 	render() {
-		const { text } = this
-		return <>{text.createVNode()}</>
+		const { hyper } = this
+		return <>{hyper.createVNode()}</>
 	}
 })
