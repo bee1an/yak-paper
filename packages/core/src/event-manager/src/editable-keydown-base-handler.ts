@@ -1,6 +1,3 @@
-import type { EventEmitter } from '@yak-paper/utils'
-import type { EditableKeydownEvents } from './editable-keydown-handler'
-
 /**
  * @description 责任链处理者
  */
@@ -18,8 +15,6 @@ interface Hander {
 
 export abstract class EditableKeydownBaseHandler implements Hander {
 	private _nextHandler: Hander | null = null
-
-	constructor(protected _eventBus: EventEmitter<EditableKeydownEvents>) {}
 
 	setNext(handler: Hander): Hander {
 		this._nextHandler = handler

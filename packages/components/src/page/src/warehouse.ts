@@ -1,25 +1,24 @@
 import type { DataAgreer } from '@yak-paper/core'
 import { reactive } from 'vue'
 
-export class WareHouse {
-	private static _instance: WareHouse
+export class Warehouse {
+	private static _instance: Warehouse
 
 	private constructor() {}
 
 	static get instance() {
 		if (!this._instance) {
-			this._instance = new WareHouse()
+			this._instance = new Warehouse()
 		}
 		return this._instance
 	}
 
-	private _hypers: DataAgreer[] = reactive([{ type: 'text' }])
-
-	get hypers() {
-		return this._hypers
+	private _blocks: DataAgreer[] = reactive([{ type: 'text' }])
+	get blocks() {
+		return this._blocks
 	}
 
-	addHyper(hyper: DataAgreer) {
-		this._hypers.push(hyper)
+	addBlock(hyper: DataAgreer) {
+		this._blocks.push(hyper)
 	}
 }

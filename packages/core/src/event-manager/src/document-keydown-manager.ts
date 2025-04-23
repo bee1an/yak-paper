@@ -11,22 +11,22 @@ interface DocumentKeydownBindOption {
 	action: AnyFn
 }
 
-export class DocumentKeydownBinder {
-	private static instance: DocumentKeydownBinder | null = null
+export class DocumentKeydownManager {
+	private static instance: DocumentKeydownManager | null = null
 
 	/**
-	 * @description 获取 DocumentKeydownBinder 类的单例实例
+	 * @description 获取 DocumentKeydownManager 类的单例实例
 	 *
 	 * 实现单例模式的核心方法，当实例不存在时创建新实例，
 	 * 保证整个应用生命周期中只存在一个实例对象
 	 *
 	 * @static
-	 * @returns {DocumentKeydownBinder} 返回 DocumentKeydownBinder 类的单例实例
+	 * @returns {DocumentKeydownManager} 返回 DocumentKeydownManager 类的单例实例
 	 */
-	static getInstance(): DocumentKeydownBinder {
+	static getInstance(): DocumentKeydownManager {
 		// 单例检查：当实例不存在时初始化新实例
 		if (!this.instance) {
-			this.instance = new DocumentKeydownBinder()
+			this.instance = new DocumentKeydownManager()
 		}
 		return this.instance
 	}
@@ -65,7 +65,7 @@ export class DocumentKeydownBinder {
 				try {
 					element.action(e)
 				} catch (error) {
-					console.error('[DocumentKeydownBinder] Action execution failed:', error)
+					console.error('[DocumentKeydownManager] Action execution failed:', error)
 				}
 				// 短路逻辑：首个匹配成功后终止后续处理
 				break
@@ -115,6 +115,6 @@ export class DocumentKeydownBinder {
 
 		this._keySet = new Set()
 
-		DocumentKeydownBinder.instance = null
+		DocumentKeydownManager.instance = null
 	}
 }

@@ -1,6 +1,7 @@
 import { TextHyper, type TextDataAgreer } from '@yak-paper/material'
-import { defineComponent, type PropType } from 'vue'
-import { EditableWhenInput, EditableWhenKeydown, type DataAgreer } from '@yak-paper/core'
+import { defineComponent, inject, type PropType } from 'vue'
+import { type DataAgreer } from '@yak-paper/core'
+import { pageInjectKey } from '../../page/src/page'
 
 const pBlockProps = {
 	blockData: {
@@ -13,6 +14,8 @@ export default defineComponent({
 	name: 'PBlock',
 	props: pBlockProps,
 	setup(props) {
+		const { paper } = inject(pageInjectKey)!
+
 		let hyper
 
 		if (props.blockData.type === 'text') {
@@ -22,8 +25,8 @@ export default defineComponent({
 		}
 
 		hyper.mergeProps({
-			onInput: EditableWhenInput.instance.handle,
-			onKeydown: EditableWhenKeydown.instance.handle
+			onInput: paper.editableInputManager.handle,
+			onKeydown: paper.editableKeydownManager.handle
 		})
 
 		return { hyper }

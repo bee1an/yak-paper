@@ -1,19 +1,27 @@
-import { defineComponent } from 'vue'
+import { defineComponent, provide, type InjectionKey } from 'vue'
 import { PBlock } from '../../block'
 import { Paper } from '@yak-paper/core'
-import { WareHouse } from './warehouse'
+import { Warehouse } from './warehouse'
+
+export const pageInjectKey = Symbol('pageInjectKey') as InjectionKey<{
+	paper: Paper
+}>
 
 export default defineComponent({
 	name: 'PPage',
 	setup() {
-		Paper.EditableWhenKeydown.eventBus.on('enter', () => {
-			WareHouse.instance.addHyper({ type: 'text' })
+		const paper = new Paper()
+
+		paper.editableKeydownManager.on('newLine', () => {
+			Warehouse.instance.addBlock({ type: 'text' })
 		})
+
+		provide(pageInjectKey, { paper })
 	},
 	render() {
 		return (
 			<div>
-				{WareHouse.instance.hypers.map((item, index) => (
+				{Warehouse.instance.blocks.map((item, index) => (
 					<PBlock key={index} blockData={item} />
 				))}
 			</div>

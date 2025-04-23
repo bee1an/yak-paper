@@ -1,3 +1,4 @@
-export * from './event-coordinator'
+export * from './event-manager'
 export * from './paper'
+export * from './selection-manager'
 export * from './transformer'
