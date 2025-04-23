@@ -1,7 +1,8 @@
 import { TextHyper, type TextDataAgreer } from '@yak-paper/material'
-import { defineComponent, inject, type PropType } from 'vue'
+import { defineComponent, inject, onUnmounted, type PropType } from 'vue'
 import { type DataAgreer } from '@yak-paper/core'
 import { pageInjectKey } from '../../page/src/page'
+import { BlockWarehouse } from './warehouse'
 
 const pBlockProps = {
 	blockData: {
@@ -28,6 +29,9 @@ export default defineComponent({
 			onInput: paper.editableInputManager.handle,
 			onKeydown: paper.editableKeydownManager.handle
 		})
+
+		BlockWarehouse.instance.addHyper(hyper)
+		onUnmounted(() => BlockWarehouse.instance.removeHyper(hyper))
 
 		return { hyper }
 	},

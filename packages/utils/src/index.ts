@@ -1,3 +1,4 @@
+export * from './array'
 export * from './EventEmitter'
 export * from './name-case'
 export * from './types'

@@ -1,4 +1,6 @@
 export class SelectionManager {
+	static focusEditable(dom: HTMLElement) {}
+
 	constructor() {}
 
 	get selection() {

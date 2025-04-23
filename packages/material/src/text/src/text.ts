@@ -38,14 +38,17 @@ export class TextHyper implements HyperAgreer {
 	children: HyperAgreer['children'] = []
 
 	/** @description 保存这个组件的dom引用 */
-	templateRef: MaybeRef<HTMLElement | null>
+	private _templateRef: MaybeRef<HTMLElement | null>
+	get templateRef() {
+		return toValue(this._templateRef)
+	}
 
 	constructor(private _rawData?: TextDataAgreer) {
 		this.children = _rawData ? this.deserialize(_rawData) : []
 
-		this.templateRef = useTemplateRef<HTMLElement>(this.props.ref)
+		this._templateRef = useTemplateRef<HTMLElement>(this.props.ref)
 
-		return reactive(this) as TextHyper
+		return reactive(this) as unknown as TextHyper
 	}
 
 	/**
@@ -78,7 +81,7 @@ export class TextHyper implements HyperAgreer {
 	 * @throws {Error} 如果DOM的blockType与当前对象类型不匹配，则抛出错误
 	 */
 	serialize(): TextDataAgreer {
-		const dom = toValue(this.templateRef)
+		const dom = this.templateRef
 
 		if (!dom) {
 			return this._rawData ?? { type: this.type }

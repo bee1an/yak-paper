@@ -3,9 +3,7 @@ import { PPage } from 'yak-paper'
 </script>
 
 <template>
-	<div>
-		<PPage></PPage>
-	</div>
+	<PPage></PPage>
 </template>
 
 <style scoped></style>
