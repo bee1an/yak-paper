@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import components from './components'
 import './assets/normalize.css'
+import './style.scss'
 import 'virtual:uno.css'
 
 import App from './App.vue'
