@@ -1,4 +1,4 @@
-import type { HyperAgreer } from '@yak-paper/core'
+import type { BlockAgreer } from '@yak-paper/core'
 import { reactive } from 'vue'
 
 export class BlockWarehouse {
@@ -13,17 +13,17 @@ export class BlockWarehouse {
 		return this._instance
 	}
 
-	private _hypers: HyperAgreer[] = reactive([])
+	private _blocks: BlockAgreer[] = reactive([])
 
-	get hypers() {
-		return this._hypers
+	get blocks() {
+		return this._blocks
 	}
 
-	addHyper(hyper: HyperAgreer) {
-		this._hypers.push(hyper)
+	addBlock(block: BlockAgreer) {
+		this._blocks.push(block)
 	}
 
-	removeHyper(hyper: HyperAgreer) {
-		this._hypers.splice(this._hypers.indexOf(hyper), 1)
+	removeBlock(block: BlockAgreer) {
+		this._blocks.splice(this._blocks.indexOf(block), 1)
 	}
 }

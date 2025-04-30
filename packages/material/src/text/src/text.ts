@@ -3,7 +3,7 @@ import {
 	Transformer,
 	type DataAgreer,
 	type JsonDeserializerOption,
-	type HyperAgreer
+	type BlockAgreer
 } from '@yak-paper/core'
 import themeDefined from '../style/theme'
 import themeManager from '../../../style'
@@ -20,7 +20,7 @@ export interface TextDataAgreer extends DataAgreer {
 	formate?: JsonDeserializerOption[]
 }
 
-export class TextHyper implements HyperAgreer {
+export class TextBlock implements BlockAgreer {
 	readonly type = 'text'
 
 	readonly tagName = 'div'
@@ -34,7 +34,7 @@ export class TextHyper implements HyperAgreer {
 		ref: 'textRef'
 	}
 
-	children: HyperAgreer['children'] = []
+	children: BlockAgreer['children'] = []
 
 	/** @description 保存这个组件的dom引用 */
 	private _templateRef: MaybeRef<HTMLElement | null>
@@ -47,7 +47,7 @@ export class TextHyper implements HyperAgreer {
 
 		this._templateRef = useTemplateRef<HTMLElement>(this.props.ref)
 
-		return reactive(this) as unknown as TextHyper
+		return reactive(this) as unknown as TextBlock
 	}
 
 	// /**
@@ -58,6 +58,8 @@ export class TextHyper implements HyperAgreer {
 	// mergeProps(props: WrapperPropsType) {
 	// 	Object.assign(this.props, props)
 	// }
+
+	focus() {}
 
 	/**
 	 * @description 创建虚拟节点

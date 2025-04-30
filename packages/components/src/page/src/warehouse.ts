@@ -13,12 +13,12 @@ export class PageWarehouse {
 		return this._instance
 	}
 
-	private _blocks: DataAgreer[] = reactive([])
-	get blocks() {
-		return this._blocks
+	private _dataList: DataAgreer[] = reactive([])
+	get dataList() {
+		return this._dataList
 	}
 
-	addBlock(hyper: DataAgreer) {
-		this._blocks.push(hyper)
+	addData(data: DataAgreer) {
+		this._dataList.push(data)
 	}
 }

@@ -15,15 +15,20 @@ export interface DataAgreer {
 	type: string
 }
 
+type WrapperAinProps = {
+	'data-block-type': string
+}
+
 /**
  * @description props 类型
  *
  * 获取vue h 函数的参数类型
  */
-export type WrapperPropsType = Parameters<typeof h>[1]
+export type WrapperPropsType = Parameters<typeof h>[1] & WrapperAinProps
 
 /** @description 单个子元素对象类型 */
-export type ChildObjOption = Pick<HyperAgreer, 'tagName' | 'props' | 'children'>
+export type ChildObjOption = Pick<BlockAgreer, 'tagName' | 'children'> &
+	Omit<BlockAgreer['props'], keyof WrapperAinProps>
 
 /** @description 单个子元素类型 */
 export type ChildOption = ChildObjOption | string | null
@@ -34,7 +39,7 @@ export type ChildrenOption = MaybeArray<ChildOption>
 /**
  * @description 渲染协议, 所有物料的渲染都需要实现这个协议
  */
-export interface HyperAgreer {
+export interface BlockAgreer {
 	/**
 	 * @description 渲染类型, 同数据类型
 	 */

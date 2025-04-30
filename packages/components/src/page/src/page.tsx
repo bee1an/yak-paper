@@ -15,7 +15,7 @@ export default defineComponent({
 		const paper = new Paper()
 
 		const addEmptyText = () => {
-			PageWarehouse.instance.addBlock({ type: 'text' })
+			PageWarehouse.instance.addData({ type: 'text' })
 		}
 
 		paper.editableKeydownManager.on('newLine', () => {
@@ -23,9 +23,11 @@ export default defineComponent({
 		})
 
 		const focusLast = () => {
-			if (BlockWarehouse.instance.hypers.length === 0) {
+			if (BlockWarehouse.instance.blocks.length === 0) {
 				addEmptyText()
 			}
+
+			PageWarehouse
 		}
 
 		provide(pageInjectKey, { paper })
@@ -45,7 +47,7 @@ export default defineComponent({
 					onInput={paper.editableInputManager.handle}
 				>
 					<div class={style.blocks}>
-						{PageWarehouse.instance.blocks.map((item, index) => (
+						{PageWarehouse.instance.dataList.map((item, index) => (
 							<PBlock key={index} blockData={item} />
 						))}
 					</div>

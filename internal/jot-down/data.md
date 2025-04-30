@@ -10,23 +10,23 @@
 
 数据类型
 
-## HyperAgreer
+## BlockAgreer
 
 渲染协议
 
-### HyperAgreer.type
+### BlockAgreer.type
 
 渲染类型, 同数据类型
 
-### HyperAgreer.tagName
+### BlockAgreer.tagName
 
 标签名
 
-### HyperAgreer.tagName
+### BlockAgreer.tagName
 
 属性
 
-### HyperAgreer.children
+### BlockAgreer.children
 
 子节点
 
@@ -46,13 +46,13 @@ export interface DataAgreer {
 /**
  * 渲染协议, 所有物料的渲染都需要实现这个协议
  */
-export interface HyperAgreer {
+export interface BlockAgreer {
 	type: string
 
 	tagName: string
 
 	attr: Record<string, any>
 
-	children?: MaybeArray<Pick<HyperAgreer, 'tagName' | 'props' | 'children'> | string | null>
+	children?: MaybeArray<Pick<BlockAgreer, 'tagName' | 'props' | 'children'> | string | null>
 }
 ```

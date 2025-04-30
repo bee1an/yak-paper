@@ -1,4 +1,4 @@
-import { TextHyper, type TextDataAgreer } from '@yak-paper/material'
+import { TextBlock, type TextDataAgreer } from '@yak-paper/material'
 import { defineComponent, onUnmounted, type PropType } from 'vue'
 import { type DataAgreer } from '@yak-paper/core'
 import { BlockWarehouse } from './warehouse'
@@ -14,22 +14,22 @@ export default defineComponent({
 	name: 'PBlock',
 	props: pBlockProps,
 	setup(props) {
-		let hyper
+		let block
 
 		if (props.blockData.type === 'text') {
-			hyper = new TextHyper(props.blockData as TextDataAgreer)
+			block = new TextBlock(props.blockData as TextDataAgreer)
 		} else {
 			throw new Error('block type is not supported')
 		}
 
-		BlockWarehouse.instance.addHyper(hyper)
-		onUnmounted(() => BlockWarehouse.instance.removeHyper(hyper))
+		BlockWarehouse.instance.addBlock(block)
+		onUnmounted(() => BlockWarehouse.instance.removeBlock(block))
 
-		return { hyper }
+		return { block }
 	},
 
 	render() {
-		const { hyper } = this
-		return <>{hyper.createVNode()}</>
+		const { block } = this
+		return <>{block.createVNode()}</>
 	}
 })
