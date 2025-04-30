@@ -3,8 +3,7 @@ import {
 	Transformer,
 	type DataAgreer,
 	type JsonDeserializerOption,
-	type HyperAgreer,
-	type WrapperPropsType
+	type HyperAgreer
 } from '@yak-paper/core'
 import themeDefined from '../style/theme'
 import themeManager from '../../../style'
@@ -51,14 +50,14 @@ export class TextHyper implements HyperAgreer {
 		return reactive(this) as unknown as TextHyper
 	}
 
-	/**
-	 * 合并属性到当前组件的props对象
-	 *
-	 * @param props - 需要合并的属性对象，类型为包含任意值的键值对集合（Record<string, any>）。
-	 */
-	mergeProps(props: WrapperPropsType) {
-		Object.assign(this.props, props)
-	}
+	// /**
+	//  * 合并属性到当前组件的props对象
+	//  *
+	//  * @param props - 需要合并的属性对象，类型为包含任意值的键值对集合（Record<string, any>）。
+	//  */
+	// mergeProps(props: WrapperPropsType) {
+	// 	Object.assign(this.props, props)
+	// }
 
 	/**
 	 * @description 创建虚拟节点

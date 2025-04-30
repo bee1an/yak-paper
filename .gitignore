@@ -136,3 +136,5 @@ dist
 .pnp.*
 
 .idea
+
+tsconfig.vitest-temp.json

@@ -55,10 +55,10 @@ export interface HyperAgreer {
 	 */
 	children?: ChildrenOption
 
-	/**
-	 * @description 合并属性
-	 */
-	mergeProps(props: WrapperPropsType): void
+	// /**
+	//  * @description 合并属性
+	//  */
+	// mergeProps(props: WrapperPropsType): void
 
 	/**
 	 * @description 渲染函数

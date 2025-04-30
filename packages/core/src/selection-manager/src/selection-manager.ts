@@ -1,5 +1,5 @@
 export class SelectionManager {
-	static focusEditable(dom: HTMLElement) {}
+	static focusEditable() {}
 
 	constructor() {}
 
