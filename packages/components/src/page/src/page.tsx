@@ -1,4 +1,4 @@
-import { defineComponent, provide, type InjectionKey } from 'vue'
+import { defineComponent, nextTick, provide, type InjectionKey } from 'vue'
 import { PBlock } from '../../block'
 import { Paper } from '@yak-paper/core'
 import { PageWarehouse } from './warehouse'
@@ -15,7 +15,7 @@ export default defineComponent({
 		const paper = new Paper()
 
 		const addEmptyText = () => {
-			PageWarehouse.instance.addData({ type: 'text' })
+			return PageWarehouse.instance.addData({ type: 'text' })
 		}
 
 		paper.editableKeydownManager.on('newLine', () => {
@@ -23,11 +23,16 @@ export default defineComponent({
 		})
 
 		const focusLast = () => {
-			if (BlockWarehouse.instance.blocks.length === 0) {
-				addEmptyText()
+			let index = BlockWarehouse.instance.blocks.length - 1
+
+			if (index < 0) {
+				index = addEmptyText()
 			}
 
-			PageWarehouse
+			nextTick(() => {
+				console.log('123', BlockWarehouse.instance.blocks, index)
+				BlockWarehouse.instance.blocks[index].focus?.(paper.selectionManager)
+			})
 		}
 
 		provide(pageInjectKey, { paper })
@@ -39,6 +44,7 @@ export default defineComponent({
 
 		return (
 			<div class={style.page} onClick={focusLast}>
+				{/* 编辑宿主 */}
 				<div
 					class={style.host}
 					onClick={(event) => event.stopPropagation()}

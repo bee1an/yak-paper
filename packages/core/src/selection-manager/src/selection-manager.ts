@@ -10,4 +10,10 @@ export class SelectionManager {
 
 		return this.selection.getRangeAt(0)
 	}
+
+	createRange() {
+		const range = document.createRange()
+
+		return range
+	}
 }

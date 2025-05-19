@@ -1,9 +1,10 @@
 import { useThemeStyle } from '@yak-paper/composables'
 import {
 	Transformer,
+	BlockAgreer,
 	type DataAgreer,
 	type JsonDeserializerOption,
-	type BlockAgreer
+	SelectionManager
 } from '@yak-paper/core'
 import themeDefined from '../style/theme'
 import themeManager from '../../../style'
@@ -20,7 +21,7 @@ export interface TextDataAgreer extends DataAgreer {
 	formate?: JsonDeserializerOption[]
 }
 
-export class TextBlock implements BlockAgreer {
+export class TextBlock extends BlockAgreer {
 	readonly type = 'text'
 
 	readonly tagName = 'div'
@@ -30,7 +31,7 @@ export class TextBlock implements BlockAgreer {
 		contenteditable: true,
 		'data-placeholder': '请输入',
 		'data-block-type': this.type,
-		style: themeStyle,
+		// style: themeStyle,
 		ref: 'textRef'
 	}
 
@@ -43,6 +44,7 @@ export class TextBlock implements BlockAgreer {
 	}
 
 	constructor(private _rawData?: TextDataAgreer) {
+		super()
 		this.children = _rawData ? this.deserialize(_rawData) : []
 
 		this._templateRef = useTemplateRef<HTMLElement>(this.props.ref)
@@ -59,7 +61,20 @@ export class TextBlock implements BlockAgreer {
 	// 	Object.assign(this.props, props)
 	// }
 
-	focus() {}
+	focus(selectionManager: SelectionManager) {
+		if (!this.templateRef) return
+
+		const range = selectionManager.createRange()
+
+		if (this.templateRef.childNodes.length) {
+			range.setStartAfter(this.templateRef.childNodes[0])
+			range.setEndAfter(this.templateRef.childNodes[this.templateRef.childNodes.length - 1])
+		} else {
+			range.selectNodeContents(this.templateRef)
+		}
+
+		selectionManager.selection?.addRange(range)
+	}
 
 	/**
 	 * @description 创建虚拟节点

@@ -18,7 +18,8 @@ export class PageWarehouse {
 		return this._dataList
 	}
 
-	addData(data: DataAgreer) {
-		this._dataList.push(data)
+	addData(data: DataAgreer, index = this._dataList.length) {
+		this._dataList.splice(index, 0, data)
+		return index
 	}
 }
