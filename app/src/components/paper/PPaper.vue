@@ -5,5 +5,3 @@ import { PPage } from 'yak-paper'
 <template>
 	<PPage></PPage>
 </template>
-
-<style scoped></style>
