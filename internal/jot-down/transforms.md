@@ -28,7 +28,7 @@ export class TextBlock implements BlockAgreer {
 
 	children: BlockAgreer['children'] = []
 
-	constructor(private _rawData?: TextDataAgreer) {
+	constructor(private _rawData?: TextBlockAgreer) {
 		// ...
 	}
 }

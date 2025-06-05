@@ -1,3 +1,4 @@
+export * from './agreer'
 export * from './event-manager'
 export * from './paper'
 export * from './selection-manager'

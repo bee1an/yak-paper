@@ -1,4 +1,6 @@
 export * from './array'
+export * from './createCRUD'
+export * from './createId'
 export * from './EventEmitter'
 export * from './name-case'
 export * from './types'

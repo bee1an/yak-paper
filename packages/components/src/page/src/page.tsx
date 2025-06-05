@@ -1,9 +1,9 @@
 import { defineComponent, nextTick, provide, type InjectionKey } from 'vue'
 import { PBlock } from '../../block'
 import { Paper } from '@yak-paper/core'
-import { PageWarehouse } from './warehouse'
 import style from '../style/page.module.scss'
-import { BlockWarehouse } from '../../block/src/warehouse'
+import { BlockAdapter, store } from '../../../store'
+import { createId } from '@yak-paper/utils'
 
 export const pageInjectKey = Symbol('pageInjectKey') as InjectionKey<{
 	paper: Paper
@@ -15,7 +15,10 @@ export default defineComponent({
 		const paper = new Paper()
 
 		const addEmptyText = () => {
-			return PageWarehouse.instance.addData({ type: 'text' })
+			const block = new BlockAdapter(createId(), 'text')
+
+			store.add(block)
+			return block
 		}
 
 		paper.editableKeydownManager.on('newLine', () => {
@@ -23,16 +26,13 @@ export default defineComponent({
 		})
 
 		const focusLast = () => {
-			let index = BlockWarehouse.instance.blocks.length - 1
-
-			if (index < 0) {
-				index = addEmptyText()
-			}
+			const blockAdapter = addEmptyText()
 
 			nextTick(() => {
-				console.log('123', BlockWarehouse.instance.blocks, index)
-				BlockWarehouse.instance.blocks[index].focus?.(paper.selectionManager)
+				console.log('blockProxy', blockAdapter.block)
 			})
+
+			// store.data[index].focus(paper.selectionManager)
 		}
 
 		provide(pageInjectKey, { paper })
@@ -53,8 +53,8 @@ export default defineComponent({
 					onInput={paper.editableInputManager.handle}
 				>
 					<div class={style.blocks}>
-						{PageWarehouse.instance.dataList.map((item, index) => (
-							<PBlock key={index} blockData={item} />
+						{store.data.map((item, index) => (
+							<PBlock key={index} id={item.id} />
 						))}
 					</div>
 				</div>

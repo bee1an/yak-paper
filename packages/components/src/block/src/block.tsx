@@ -1,12 +1,12 @@
-import { TextBlock, type TextDataAgreer } from '@yak-paper/material'
-import { defineComponent, onUnmounted, type PropType } from 'vue'
-import { type DataAgreer } from '@yak-paper/core'
-import { BlockWarehouse } from './warehouse'
+import { defineComponent } from 'vue'
+import { store } from '../../../store'
+import { TextBlock } from '@yak-paper/material'
 
 const pBlockProps = {
-	blockData: {
-		type: Object as PropType<DataAgreer>,
-		default: () => []
+	id: {
+		type: String,
+		required: true,
+		default: ''
 	}
 }
 
@@ -16,14 +16,15 @@ export default defineComponent({
 	setup(props) {
 		let block
 
-		if (props.blockData.type === 'text') {
-			block = new TextBlock(props.blockData as TextDataAgreer)
+		const blockProxy = store.findById(props.id)!
+
+		if (blockProxy.type === 'text') {
+			block = new TextBlock()
 		} else {
-			throw new Error('block type is not supported')
+			throw new Error('block type error')
 		}
 
-		BlockWarehouse.instance.addBlock(block)
-		onUnmounted(() => BlockWarehouse.instance.removeBlock(block))
+		blockProxy.install(block)
 
 		return { block }
 	},

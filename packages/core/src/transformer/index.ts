@@ -1,3 +1,2 @@
-export * from './src/data-agreer'
-
+export * from './src/formate'
 export * from './src/transforms'

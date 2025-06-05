@@ -11,7 +11,7 @@ export class Paper {
 	 */
 	editableKeydownManager: EditableKeydownManager
 	/**
-	 * @description 选取管理器
+	 * @description 选区管理器
 	 */
 	selectionManager: SelectionManager
 
