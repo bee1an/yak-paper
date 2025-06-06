@@ -1,2 +1,2 @@
-export * from './src/formate'
-export * from './src/transforms'
+export * from './formate'
+export * from './transforms'

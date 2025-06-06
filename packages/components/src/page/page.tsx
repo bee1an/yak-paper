@@ -1,8 +1,8 @@
 import { defineComponent, nextTick, provide, type InjectionKey } from 'vue'
-import { PBlock } from '../../block'
+import { PBlock } from '../block'
 import { Paper } from '@yak-paper/core'
-import style from '../style/page.module.scss'
-import { BlockAdapter, store } from '../../../store'
+import style from './style/page.module.scss'
+import { BlockAdapter, store } from '../../store'
 import { createId } from '@yak-paper/utils'
 
 export const pageInjectKey = Symbol('pageInjectKey') as InjectionKey<{

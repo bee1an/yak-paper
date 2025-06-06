@@ -1,1 +1,1 @@
-export * from './src/paper'
+export * from './paper'

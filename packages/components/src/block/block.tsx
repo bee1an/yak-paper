@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue'
-import { store } from '../../../store'
+import { store } from '../../store'
 import { TextBlock } from '@yak-paper/material'
 
 const pBlockProps = {

@@ -1,5 +1,5 @@
 import type { EventEmitter } from '@yak-paper/utils'
-import type { SelectionManager } from '../../../selection-manager'
+import type { SelectionManager } from '../../selection-manager'
 import { EditableKeydownBaseHandler } from './editable-keydown-base-handler'
 import type { EditableKeydownEvents } from './editable-keydown-manager'
 

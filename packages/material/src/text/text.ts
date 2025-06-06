@@ -6,10 +6,10 @@ import {
 	type BlockAgreer,
 	formater
 } from '@yak-paper/core'
-import themeDefined from '../style/theme'
-import themeManager from '../../../style'
+import themeDefined from './style/theme'
+import themeManager from '../../style'
 import { reactive, toValue, useTemplateRef, type MaybeRef } from 'vue'
-import style from '../style/text.module.scss'
+import style from './style/text.module.scss'
 import { createId } from 'yak-paper'
 
 const props = reactive({ theme: 'light' })

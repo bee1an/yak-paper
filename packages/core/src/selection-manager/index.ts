@@ -1,1 +1,1 @@
-export * from './src/selection-manager'
+export * from './selection-manager'

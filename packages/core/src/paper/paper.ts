@@ -1,5 +1,5 @@
-import { EditableInputManager, EditableKeydownManager } from '../../event-manager'
-import { SelectionManager } from '../../selection-manager'
+import { EditableInputManager, EditableKeydownManager } from '../event-manager'
+import { SelectionManager } from '../selection-manager'
 
 export class Paper {
 	/**

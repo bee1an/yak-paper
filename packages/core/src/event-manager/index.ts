@@ -1,2 +1,2 @@
-export * from './src/input'
-export * from './src/keydown'
+export * from './input'
+export * from './keydown'

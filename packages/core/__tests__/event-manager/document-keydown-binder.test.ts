@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { DocumentKeydownManager } from '../src/keydown'
+import { DocumentKeydownManager } from '../../src'
 
 describe('document-keydown-manager.ts', () => {
 	it('Singleton', () => {

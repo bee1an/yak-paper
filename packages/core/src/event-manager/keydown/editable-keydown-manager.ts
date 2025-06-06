@@ -1,7 +1,7 @@
 import { EventEmitter } from '@yak-paper/utils'
 import { EditableKeydownBlobHandler } from './editable-keydown-blob-handler'
 import { EditableKeydownEnterHandler } from './editable-keydown-enter-handler'
-import type { SelectionManager } from '../../../selection-manager'
+import type { SelectionManager } from '../../selection-manager'
 import { EditableKeydownDeleteHandler } from './editable-keydown-delete-handler'
 
 export type EditableKeydownEvents = {
