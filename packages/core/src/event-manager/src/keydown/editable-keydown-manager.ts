@@ -1,7 +1,7 @@
 import { EventEmitter } from '@yak-paper/utils'
 import { EditableKeydownBlobHandler } from './editable-keydown-blob-handler'
 import { EditableKeydownEnterHandler } from './editable-keydown-enter-handler'
-import type { SelectionManager } from '../../selection-manager'
+import type { SelectionManager } from '../../../selection-manager'
 import { EditableKeydownDeleteHandler } from './editable-keydown-delete-handler'
 
 export type EditableKeydownEvents = {
@@ -25,7 +25,6 @@ export class EditableKeydownManager extends EventEmitter<EditableKeydownEvents> 
 
 		// eslint-disable-next-line @typescript-eslint/no-this-alias
 		const that = this
-
 		// 使用代理确保依赖统一
 		this._enterHandler = new EditableKeydownEnterHandler(
 			new Proxy(
@@ -40,8 +39,11 @@ export class EditableKeydownManager extends EventEmitter<EditableKeydownEvents> 
 
 		this._deleteHandler = new EditableKeydownDeleteHandler()
 
-		this._blobHandler.setNext(this._enterHandler).setNext(this._deleteHandler)
+		this._setChain()
+	}
 
+	private _setChain() {
+		this._blobHandler.setNext(this._enterHandler).setNext(this._deleteHandler)
 		this.handle = this.handle.bind(this)
 	}
 

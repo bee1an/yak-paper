@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { isOnlyModifierKeyPressed } from '../src/editable-keydown-base-handler'
-
+import { isOnlyModifierKeyPressed } from '../src/keydown'
 describe('editable-keydown-base-handler.ts', () => {
 	it('isOnlyModifierKeyPressed', () => {
 		const keyboardEvent = new KeyboardEvent('keydown', {

@@ -22,17 +22,15 @@ export default defineComponent({
 		}
 
 		paper.editableKeydownManager.on('newLine', () => {
-			addEmptyText()
+			focusLast()
 		})
 
 		const focusLast = () => {
 			const blockAdapter = addEmptyText()
 
 			nextTick(() => {
-				console.log('blockProxy', blockAdapter.block)
+				blockAdapter.block?.focus(paper.selectionManager)
 			})
-
-			// store.data[index].focus(paper.selectionManager)
 		}
 
 		provide(pageInjectKey, { paper })

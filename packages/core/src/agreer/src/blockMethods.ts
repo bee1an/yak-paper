@@ -1,4 +1,5 @@
 import type { VNode } from 'vue'
+import type { SelectionManager } from '@yak-paper/core'
 
 export interface BlockMethods {
 	/**
@@ -6,4 +7,6 @@ export interface BlockMethods {
 	 * 返回vnode
 	 */
 	createVNode(): VNode
+
+	focus?(selectionManager: SelectionManager): void
 }

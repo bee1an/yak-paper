@@ -68,14 +68,6 @@ export class TextBlock implements TextBlockAgreer {
 		return params.formate?.map(formater.raw2Format).filter((item) => item !== null) ?? null
 	}
 
-	/**
-	 * @description 创建虚拟节点
-	 *
-	 * 此函数负责调用renderer函数来生成当前组件的虚拟节点
-	 * 相当于基于vue的json2Html
-	 *
-	 * @returns 返回由renderer函数生成的虚拟节点
-	 */
 	createVNode() {
 		return Transformer.instance.json2Vnode(this)
 	}
@@ -91,7 +83,9 @@ export class TextBlock implements TextBlockAgreer {
 			range.selectNodeContents(this.templateRef)
 		}
 
+		selectionManager.selection?.removeAllRanges()
 		selectionManager.selection?.addRange(range)
+		selectionManager.selection?.collapseToEnd()
 	}
 
 	// serialize(): RawFormate | null {

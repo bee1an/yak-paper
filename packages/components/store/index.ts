@@ -1,5 +1,6 @@
 import { onUnmounted, reactive } from 'vue'
-import { createCRUD, type TextBlock } from 'yak-paper'
+import { createCRUD, type CRUD } from '@yak-paper/utils'
+import type { TextBlock } from '@yak-paper/material'
 
 interface AdapterType {
 	id: string
@@ -28,20 +29,22 @@ export class BlockAdapter implements AdapterType {
 	}
 }
 
-const _store = reactive(createCRUD<BlockAdapter>())
+type StoreType = CRUD<BlockAdapter>
+
+const _store = reactive(createCRUD<BlockAdapter>()) as StoreType
 
 class StoreProxy {
+	constructor(public store: StoreType) {}
+
 	findById(id: string) {
-		return _store.data.find((item) => item.id === id)
+		return this.store.data.find((item) => item.id === id)
 	}
 }
 
-export const _ = new StoreProxy()
-
-export const store = new Proxy(_, {
+export const store = new Proxy<StoreProxy>(new StoreProxy(_store), {
 	get(target, key) {
-		if (key in _store) {
-			return Reflect.get(_store, key)
+		if (key in target.store) {
+			return Reflect.get(target.store, key)
 		}
 
 		return Reflect.get(target, key)
