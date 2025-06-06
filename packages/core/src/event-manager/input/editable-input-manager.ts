@@ -1,19 +1,19 @@
+import type { SelectionManager } from '@yak-paper/core'
+
 export class EditableInputManager {
-	constructor() {
+	constructor(private _inject: { selectionManager: SelectionManager }) {
 		this.handle = this.handle.bind(this)
 	}
 
-	handle(event: Event) {
-		if (!(event.target instanceof HTMLElement)) return
-
-		const target = event.target
-
+	handle() {
 		// 每次输入检查当前元素的内容
-		console.log('target', target.textContent)
 
-		if (target.textContent === '') {
+		//找到编辑元素
+		const focusNode = this._inject.selectionManager.findEditableElement()!
+
+		if (focusNode.textContent === '') {
 			// 置空防止出现<br>
-			target.textContent = ''
+			focusNode.innerHTML = ''
 		}
 	}
 }

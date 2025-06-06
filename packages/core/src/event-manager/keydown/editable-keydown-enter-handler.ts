@@ -29,7 +29,9 @@ export class EditableKeydownEnterHandler extends EditableKeydownBaseHandler {
 
 		event.preventDefault()
 
-		if (this._selectionManager.range?.collapsed) {
+		const range = this._selectionManager.getRange()
+
+		if (range?.collapsed) {
 			this._inject.emit('newLine', event)
 		} else {
 			// 删除逻辑

@@ -16,7 +16,7 @@ export class Paper {
 	selectionManager: SelectionManager
 
 	constructor() {
-		this.editableInputManager = new EditableInputManager()
+		this.editableInputManager = new EditableInputManager(this)
 		this.editableKeydownManager = new EditableKeydownManager(this)
 		this.selectionManager = new SelectionManager()
 	}

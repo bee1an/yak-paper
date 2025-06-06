@@ -1,19 +1,30 @@
 export class SelectionManager {
-	get selection() {
+	getSelection() {
 		return window.getSelection()
 	}
 
-	get range() {
-		if (!this.selection) return null
+	getRange() {
+		const selection = this.getSelection()
 
-		if (this.selection.rangeCount === 0) return null
+		if (!selection) return null
 
-		return this.selection.getRangeAt(0)
+		if (selection.rangeCount === 0) return null
+
+		return selection.getRangeAt(0)
 	}
 
 	createRange() {
 		const range = document.createRange()
 
 		return range
+	}
+
+	/** @description 找到当前光标所在的编辑元素 */
+	findEditableElement(): HTMLElement | null {
+		const range = this.getRange()
+
+		if (!range?.collapsed) return null
+
+		return range.startContainer as HTMLElement
 	}
 }

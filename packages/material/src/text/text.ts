@@ -74,6 +74,11 @@ export class TextBlock implements TextBlockAgreer {
 
 	focus(selectionManager: SelectionManager) {
 		if (!this.templateRef) return
+
+		const selection = selectionManager.getSelection()
+
+		if (!selection) return
+
 		const range = selectionManager.createRange()
 
 		if (this.templateRef.childNodes.length) {
@@ -83,9 +88,9 @@ export class TextBlock implements TextBlockAgreer {
 			range.selectNodeContents(this.templateRef)
 		}
 
-		selectionManager.selection?.removeAllRanges()
-		selectionManager.selection?.addRange(range)
-		selectionManager.selection?.collapseToEnd()
+		selection.removeAllRanges()
+		selection.addRange(range)
+		selection.collapseToEnd()
 	}
 
 	// serialize(): RawFormate | null {
