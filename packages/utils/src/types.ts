@@ -26,3 +26,12 @@ export type MaybeArray<T> = T | T[]
  * 第二泛型参数可以指定函数的返回值类型
  */
 export type AnyFn<T extends any[] = any[], R = any> = (...args: T) => R
+
+export type GetAssignPropItem<T extends any[], K, Prop> = T extends [
+	infer F extends T[number],
+	...infer Tail extends any[]
+]
+	? K extends F[Prop extends keyof F ? Prop : never]
+		? F
+		: GetAssignPropItem<Tail, K, Prop>
+	: never
