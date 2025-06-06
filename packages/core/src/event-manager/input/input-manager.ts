@@ -1,11 +1,12 @@
 import type { SelectionManager } from '@yak-paper/core'
 
-export class EditableInputManager {
+export class InputManager {
 	constructor(private _inject: { selectionManager: SelectionManager }) {
 		this.handle = this.handle.bind(this)
 	}
 
 	handle() {
+		console.log('input')
 		// 每次输入检查当前元素的内容
 
 		//找到编辑元素

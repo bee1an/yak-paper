@@ -21,7 +21,7 @@ export default defineComponent({
 			return block
 		}
 
-		paper.editableKeydownManager.on('newLine', () => {
+		paper.keydownManager.on('newLine', () => {
 			focusLast()
 		})
 
@@ -35,20 +35,25 @@ export default defineComponent({
 
 		provide(pageInjectKey, { paper })
 
-		return { focusLast, paper }
+		const compositionStart = () => {
+			console.log('', 'compositionStart')
+		}
+
+		return { focusLast, paper, compositionStart }
 	},
 	render() {
-		const { focusLast, paper } = this
+		const { focusLast, paper, compositionStart } = this
 
 		return (
 			<div class={style.page} onClick={focusLast}>
 				{/* 编辑宿主 */}
 				<div
 					class={style.host}
+					onCompositionstart={compositionStart}
 					onClick={(event) => event.stopPropagation()}
 					contenteditable
-					onKeydown={paper.editableKeydownManager.handle}
-					onInput={paper.editableInputManager.handle}
+					onKeydown={paper.keydownManager.handle}
+					onInput={paper.inputManager.handle}
 				>
 					<div class={style.blocks}>
 						{store.data.map((item, index) => (

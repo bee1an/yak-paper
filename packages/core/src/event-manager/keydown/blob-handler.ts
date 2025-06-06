@@ -1,9 +1,9 @@
-import { EditableKeydownBaseHandler } from './editable-keydown-base-handler'
+import { BaseHandler } from './base-handler'
 
 /**
  * @description 回车事件处理者
  */
-export class EditableKeydownBlobHandler extends EditableKeydownBaseHandler {
+export class BlobHandler extends BaseHandler {
 	handle(event: KeyboardEvent) {
 		if (
 			event.code !== 'KeyB' ||

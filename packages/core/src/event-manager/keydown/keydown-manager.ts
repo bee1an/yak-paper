@@ -1,19 +1,19 @@
 import { EventEmitter } from '@yak-paper/utils'
-import { EditableKeydownBlobHandler } from './editable-keydown-blob-handler'
-import { EditableKeydownEnterHandler } from './editable-keydown-enter-handler'
+import { BlobHandler } from './blob-handler'
+import { EnterHandler } from './enter-handler'
 import type { SelectionManager } from '../../selection-manager'
-import { EditableKeydownDeleteHandler } from './editable-keydown-delete-handler'
+import { DeleteHandler } from './delete-handler'
 
-export type EditableKeydownEvents = {
+export type KeydownEvents = {
 	newLine: [KeyboardEvent]
 }
 
-export class EditableKeydownManager extends EventEmitter<EditableKeydownEvents> {
-	private _blobHandler: EditableKeydownBlobHandler
+export class KeydownManager extends EventEmitter<KeydownEvents> {
+	private _blobHandler: BlobHandler
 
-	private _enterHandler: EditableKeydownEnterHandler
+	private _enterHandler: EnterHandler
 
-	private _deleteHandler: EditableKeydownDeleteHandler
+	private _deleteHandler: DeleteHandler
 
 	/**
 	 * @param inject 依赖注入
@@ -21,12 +21,12 @@ export class EditableKeydownManager extends EventEmitter<EditableKeydownEvents> 
 	constructor(inject: { selectionManager: SelectionManager }) {
 		super()
 
-		this._blobHandler = new EditableKeydownBlobHandler()
+		this._blobHandler = new BlobHandler()
 
 		// eslint-disable-next-line @typescript-eslint/no-this-alias
 		const that = this
 		// 使用代理确保依赖统一
-		this._enterHandler = new EditableKeydownEnterHandler(
+		this._enterHandler = new EnterHandler(
 			new Proxy(
 				{},
 				{
@@ -34,10 +34,10 @@ export class EditableKeydownManager extends EventEmitter<EditableKeydownEvents> 
 						return that[key as keyof typeof that] || inject[key as keyof typeof inject] || undefined
 					}
 				}
-			) as EditableKeydownManager & typeof inject
+			) as KeydownManager & typeof inject
 		)
 
-		this._deleteHandler = new EditableKeydownDeleteHandler()
+		this._deleteHandler = new DeleteHandler()
 
 		this._setChain()
 	}

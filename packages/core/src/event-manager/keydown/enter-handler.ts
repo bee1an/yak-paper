@@ -1,16 +1,16 @@
 import type { EventEmitter } from '@yak-paper/utils'
 import type { SelectionManager } from '../../selection-manager'
-import { EditableKeydownBaseHandler } from './editable-keydown-base-handler'
-import type { EditableKeydownEvents } from './editable-keydown-manager'
+import { BaseHandler } from './base-handler'
+import type { KeydownEvents } from './keydown-manager'
 
 /**
  * @description 回车事件处理者
  */
-export class EditableKeydownEnterHandler extends EditableKeydownBaseHandler {
+export class EnterHandler extends BaseHandler {
 	constructor(
 		private _inject: {
 			selectionManager: SelectionManager
-			emit: EventEmitter<EditableKeydownEvents>['emit']
+			emit: EventEmitter<KeydownEvents>['emit']
 		}
 	) {
 		super()

@@ -13,7 +13,7 @@ interface Hander {
 	handle: (event: KeyboardEvent) => void
 }
 
-export abstract class EditableKeydownBaseHandler implements Hander {
+export abstract class BaseHandler implements Hander {
 	private _nextHandler: Hander | null = null
 
 	setNext(handler: Hander): Hander {

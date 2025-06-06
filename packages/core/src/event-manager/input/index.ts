@@ -1,1 +1,1 @@
-export * from './editable-input-manager'
+export * from './input-manager'

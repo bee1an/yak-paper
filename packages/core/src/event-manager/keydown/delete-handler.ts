@@ -1,9 +1,9 @@
-import { EditableKeydownBaseHandler } from './editable-keydown-base-handler'
+import { BaseHandler } from './base-handler'
 
 /**
  * @description 回车事件处理者
  */
-export class EditableKeydownDeleteHandler extends EditableKeydownBaseHandler {
+export class DeleteHandler extends BaseHandler {
 	handle(event: KeyboardEvent) {
 		if (event.code !== 'Backspace') {
 			// 交由下一个处理者处理
