@@ -35,21 +35,18 @@ export default defineComponent({
 
 		provide(pageInjectKey, { paper })
 
-		const compositionStart = () => {
-			console.log('', 'compositionStart')
-		}
-
-		return { focusLast, paper, compositionStart }
+		return { focusLast, paper }
 	},
 	render() {
-		const { focusLast, paper, compositionStart } = this
+		const { focusLast, paper } = this
 
 		return (
 			<div class={style.page} onClick={focusLast}>
 				{/* 编辑宿主 */}
 				<div
 					class={style.host}
-					onCompositionstart={compositionStart}
+					onCompositionstart={() => paper.compositionManager.onStart()}
+					onCompositionend={() => paper.compositionManager.onEnd()}
 					onClick={(event) => event.stopPropagation()}
 					contenteditable
 					onKeydown={paper.keydownManager.handle}

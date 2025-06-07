@@ -1,49 +1,50 @@
 import { EventEmitter } from '@yak-paper/utils'
 import { BlobHandler } from './blob-handler'
-import { EnterHandler } from './enter-handler'
-import type { SelectionManager } from '../../selection-manager'
+import { EnterHandler, type KeydownEnterMediatorEvents } from './enter-handler'
 import { DeleteHandler } from './delete-handler'
+import { Colleague, type PaperMediator } from '../../paper'
 
 export type KeydownEvents = {
 	newLine: [KeyboardEvent]
 }
 
-export class KeydownManager extends EventEmitter<KeydownEvents> {
+export type KeydownMediatorEvents = KeydownEnterMediatorEvents
+
+export class KeydownManager extends Colleague {
 	private _blobHandler: BlobHandler
 
 	private _enterHandler: EnterHandler
 
 	private _deleteHandler: DeleteHandler
 
+	bus = new EventEmitter<KeydownEvents>()
+
+	on(...rest: Parameters<EventEmitter<KeydownEvents>['on']>) {
+		return this.bus.on.bind(this.bus)(...rest)
+	}
+
 	/**
 	 * @param inject 依赖注入
 	 */
-	constructor(inject: { selectionManager: SelectionManager }) {
-		super()
+	constructor(_: PaperMediator) {
+		super(_)
 
 		this._blobHandler = new BlobHandler()
 
-		// eslint-disable-next-line @typescript-eslint/no-this-alias
-		const that = this
-		// 使用代理确保依赖统一
+		const _emit = this.bus.emit.bind(this.bus)
+
 		this._enterHandler = new EnterHandler(
-			new Proxy(
-				{},
-				{
-					get(_, key) {
-						return that[key as keyof typeof that] || inject[key as keyof typeof inject] || undefined
-					}
-				}
-			) as KeydownManager & typeof inject
+			<T extends keyof KeydownEnterMediatorEvents>(
+				eventName: T,
+				...args: Parameters<KeydownEnterMediatorEvents[T]>
+			) => _.notify(this as KeydownManager, eventName, ...args),
+			_emit
 		)
 
 		this._deleteHandler = new DeleteHandler()
 
-		this._setChain()
-	}
-
-	private _setChain() {
 		this._blobHandler.setNext(this._enterHandler).setNext(this._deleteHandler)
+
 		this.handle = this.handle.bind(this)
 	}
 
