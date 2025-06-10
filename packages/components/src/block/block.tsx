@@ -1,6 +1,6 @@
 import { defineComponent } from 'vue'
 import { store } from '../../store'
-import { TextBlock } from '@yak-paper/material'
+import { ListBlock, TextBlock } from '@yak-paper/material'
 
 const pBlockProps = {
 	id: {
@@ -20,6 +20,8 @@ export default defineComponent({
 
 		if (blockProxy.type === 'text') {
 			block = new TextBlock()
+		} else if (blockProxy.type === 'list') {
+			block = new ListBlock()
 		} else {
 			throw new Error('block type error')
 		}

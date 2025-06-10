@@ -1,3 +1,5 @@
+import type { h } from 'vue'
+
 /**
  * @description 返回string类型并且不丢失ts提示
  * @example
@@ -35,3 +37,10 @@ export type GetAssignPropItem<T extends any[], K, Prop> = T extends [
 		? F
 		: GetAssignPropItem<Tail, K, Prop>
 	: never
+
+/**
+ * @description
+ *
+ * h函数的第二个参数
+ */
+export type HProps = Parameters<typeof h>[1]

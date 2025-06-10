@@ -1,4 +1,4 @@
-import type { HProps } from '@yak-paper/types'
+import type { HProps } from '@yak-paper/utils'
 
 export type FormatType = 'text' | 'blob' | 'underline' | 'italic'
 

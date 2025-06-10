@@ -1,6 +1,4 @@
-import type { MaybeArray } from '@yak-paper/utils'
-import type { FormatVal } from '@yak-paper/core'
-import type { HProps } from '@yak-paper/types'
+import type { HProps, MaybeArray } from '@yak-paper/utils'
 
 export type WrapperAinProps = {
 	'data-block-type': string
@@ -14,7 +12,11 @@ export type WrapperAinProps = {
 export type WrapperPropsType = HProps & WrapperAinProps
 
 /** @description 子元素类型 */
-export type ChildrenOption = MaybeArray<FormatVal>
+export type ChildOption = {
+	tagName: string
+	props?: HProps
+	children?: MaybeArray<string | ChildOption>
+}
 
 export interface BlockFields {
 	/**
@@ -40,5 +42,5 @@ export interface BlockFields {
 	/**
 	 * @description 子节点
 	 */
-	children: ChildrenOption
+	children: ChildOption[]
 }

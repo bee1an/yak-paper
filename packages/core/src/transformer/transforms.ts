@@ -1,6 +1,6 @@
 import { h, type VNode } from 'vue'
-import type { BlockAgreer, ChildrenOption } from '@yak-paper/core'
-import type { HProps } from '@yak-paper/types'
+import type { BlockAgreer, ChildOption } from '@yak-paper/core'
+import type { HProps } from '@yak-paper/utils'
 
 type CreateChildrenReturnType = undefined | string | VNode | CreateChildrenReturnType[]
 
@@ -20,7 +20,7 @@ export class Transformer {
 
 	private constructor() {}
 
-	private _createChildren(option?: ChildrenOption): CreateChildrenReturnType {
+	private _createChildren(option?: ChildOption['children']): CreateChildrenReturnType {
 		if (!option) {
 			return undefined
 		}
@@ -36,7 +36,7 @@ export class Transformer {
 		return this.json2Vnode(option)
 	}
 
-	json2Vnode(option: Json2VnodeOption) {
+	json2Vnode(option: ChildOption) {
 		return h(option.tagName, option.props, this._createChildren(option.children))
 	}
 }

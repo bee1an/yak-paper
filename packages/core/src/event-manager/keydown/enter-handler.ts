@@ -7,6 +7,7 @@ import type { PaperMediator } from '../../paper'
 export type KeydownEnterMediatorEvents = {
 	getRange(): Range | null
 	getInputCompositionState(): boolean
+	findEditableElement: () => ReturnType<SelectionManager['findEditableElement']>
 }
 
 /**

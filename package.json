@@ -28,7 +28,6 @@
 		"@yak-paper/core": "workspace:*",
 		"@yak-paper/material": "workspace:*",
 		"@yak-paper/theme-utils": "workspace:*",
-		"@yak-paper/types": "workspace:*",
 		"@yak-paper/utils": "workspace:*",
 		"uid": "2.0.2",
 		"vue": "3.5.13",

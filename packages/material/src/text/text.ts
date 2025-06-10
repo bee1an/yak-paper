@@ -1,16 +1,10 @@
 import { useThemeStyle } from '@yak-paper/composables'
-import {
-	Transformer,
-	type RawFormate,
-	SelectionManager,
-	type BlockAgreer,
-	formater
-} from '@yak-paper/core'
+import { Transformer, type RawFormate, SelectionManager, type BlockAgreer } from '@yak-paper/core'
 import themeDefined from './style/theme'
 import themeManager from '../../style'
 import { reactive, toValue, useTemplateRef, type MaybeRef } from 'vue'
-import style from './style/text.module.scss'
 import { createId } from 'yak-paper'
+import { BaseEditable } from '../_internal/baseEditable/baseEditable'
 
 const props = reactive({ theme: 'light' })
 
@@ -31,18 +25,15 @@ export class TextBlock implements TextBlockAgreer {
 
 	readonly type = 'text'
 
-	readonly tagName = 'div'
+	readonly tagName = 'section'
 
 	readonly props = {
-		class: style.block,
-		contenteditable: true,
-		'data-placeholder': '请输入',
 		'data-block-type': this.type,
 		style: themeStyle,
 		ref: 'textRef'
 	}
 
-	children: BlockAgreer['children'] = []
+	children: BlockAgreer['children']
 
 	/** @description 保存这个组件的dom引用 */
 	private _templateRef: MaybeRef<HTMLElement | null> = null
@@ -50,10 +41,12 @@ export class TextBlock implements TextBlockAgreer {
 		return toValue(this._templateRef)
 	}
 
+	private _editables: BaseEditable[] = []
+
 	constructor(params?: TextBlockParams) {
 		this.id = params?.id ?? createId()
 
-		this.children = this._createChildren(params) ?? []
+		this.children = this._createChildren(params)
 
 		this._templateRef = useTemplateRef<HTMLElement>(this.props.ref)
 
@@ -61,11 +54,9 @@ export class TextBlock implements TextBlockAgreer {
 	}
 
 	private _createChildren(params?: TextBlockParams) {
-		if (!params?.formate) {
-			return null
-		}
+		this._editables.push(new BaseEditable(params))
 
-		return params.formate?.map(formater.raw2Format).filter((item) => item !== null) ?? null
+		return [...this._editables]
 	}
 
 	createVNode() {
@@ -73,40 +64,23 @@ export class TextBlock implements TextBlockAgreer {
 	}
 
 	focus(selectionManager: SelectionManager) {
-		if (!this.templateRef) return
-
-		const selection = selectionManager.getSelection()
-
-		if (!selection) return
-
-		const range = selectionManager.createRange()
-
-		if (this.templateRef.childNodes.length) {
-			range.setStartAfter(this.templateRef.childNodes[0])
-			range.setEndAfter(this.templateRef.childNodes[this.templateRef.childNodes.length - 1])
-		} else {
-			range.selectNodeContents(this.templateRef)
-		}
-
-		selection.removeAllRanges()
-		selection.addRange(range)
-		selection.collapseToEnd()
+		this._editables[0].focus(selectionManager)
 	}
-
-	// serialize(): RawFormate | null {
-	// 	const dom = this.templateRef
-
-	// 	if (!dom) {
-	// 		return null
-	// 	}
-
-	// 	if (dom.dataset.blockType !== this.type) {
-	// 		throw new Error('dom is not text')
-	// 	}
-
-	// 	return {
-	// 		type: this.type,
-	// 		formate: Transformer.instance.serializer(dom).formate
-	// 	}
-	// }
 }
+
+// serialize(): RawFormate | null {
+// 	const dom = this.templateRef
+
+// 	if (!dom) {
+// 		return null
+// 	}
+
+// 	if (dom.dataset.blockType !== this.type) {
+// 		throw new Error('dom is not text')
+// 	}
+
+// 	return {
+// 		type: this.type,
+// 		formate: Transformer.instance.serializer(dom).formate
+// 	}
+// }

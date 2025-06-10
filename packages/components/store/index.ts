@@ -1,16 +1,16 @@
 import { onUnmounted, reactive } from 'vue'
 import { createCRUD, type CRUD } from '@yak-paper/utils'
-import type { TextBlock } from '@yak-paper/material'
+import type { BlockAgreer } from '@yak-paper/core'
 
 interface AdapterType {
 	id: string
 	type: string
-	block?: TextBlock
+	block?: BlockAgreer
 }
 
 export class BlockAdapter implements AdapterType {
-	private _block?: TextBlock
-	get block(): TextBlock | undefined {
+	private _block?: BlockAgreer
+	get block(): BlockAgreer | undefined {
 		return this._block
 	}
 
@@ -19,7 +19,7 @@ export class BlockAdapter implements AdapterType {
 		public type: string
 	) {}
 
-	install(block: TextBlock) {
+	install(block: BlockAgreer) {
 		this._block = block
 		onUnmounted(() => this.uninstall())
 	}

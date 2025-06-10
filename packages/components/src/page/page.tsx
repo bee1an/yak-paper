@@ -29,7 +29,7 @@ export default defineComponent({
 			const blockAdapter = addEmptyText()
 
 			nextTick(() => {
-				blockAdapter.block?.focus(paper.selectionManager)
+				blockAdapter.block?.focus?.(paper.selectionManager)
 			})
 		}
 
