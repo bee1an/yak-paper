@@ -1,5 +1,5 @@
 import type { VNode } from 'vue'
-import type { SelectionManager } from '@yak-paper/core'
+import type { SelectionManager } from '../selection-manager'
 
 export interface BlockMethods {
 	/**

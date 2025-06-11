@@ -1,4 +1,4 @@
-import { Colleague } from '@yak-paper/core/src/paper'
+import { Colleague } from '../../paper/colleague'
 
 export class CompositionManager extends Colleague {
 	inputting = false

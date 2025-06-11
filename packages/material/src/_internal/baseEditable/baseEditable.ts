@@ -1,7 +1,7 @@
-import { formater, type FormatVal } from '@yak-paper/core'
+import { formater, SelectionManager, type FormatVal, type RawFormate } from '@yak-paper/core'
 import { reactive, toValue, useTemplateRef, type MaybeRef } from 'vue'
-import type { HProps, MaybeArray, RawFormate, SelectionManager } from 'yak-paper'
 import style from './baseEditable.module.scss'
+import type { HProps, MaybeArray } from '@yak-paper/utils'
 
 interface BaseEditableOptions {
 	formate?: RawFormate[]

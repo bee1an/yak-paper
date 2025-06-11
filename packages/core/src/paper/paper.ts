@@ -1,53 +1,12 @@
-import type { GetAssignPropItem } from '@yak-paper/utils'
-import {
-	BlurManager,
-	CompositionManager,
-	InputManager,
-	KeydownManager,
-	type KeydownMediatorEvents
-} from '../event-manager'
+import { BlurManager, CompositionManager, InputManager, KeydownManager } from '../event-manager'
 import { SelectionManager } from '../selection-manager'
-
-type NotifyEvents = [
-	{
-		target: InputManager
-		events: {
-			findEditableElement: () => ReturnType<SelectionManager['findEditableElement']>
-		}
-	},
-	{
-		target: KeydownManager
-		events: KeydownMediatorEvents
-	}
-]
-
-type Sender = NotifyEvents[number]['target']
-
-type GetEventsProp<T extends Sender> = GetAssignPropItem<NotifyEvents, T, 'target'>['events']
-
-export interface PaperMediator {
-	notify<T extends Sender, K extends keyof GetEventsProp<T>>(
-		s: T,
-		event: K,
-		...args: Parameters<
-			GetEventsProp<T>[K] extends (...args: any[]) => any ? GetEventsProp<T>[K] : () => unknown
-		>
-	): ReturnType<
-		GetEventsProp<T>[K] extends (...args: any[]) => any ? GetEventsProp<T>[K] : () => never
-	>
-}
-
-export abstract class Colleague {
-	protected _mediator!: PaperMediator
-
-	constructor(_mediator?: PaperMediator) {
-		_mediator && this.setMediator(_mediator)
-	}
-
-	setMediator(mediator: PaperMediator) {
-		this._mediator = mediator
-	}
-}
+import type {
+	InputManagerNotifyEvents,
+	KeydownManagerNotifyEvents,
+	PaperMediator,
+	PublicNotifyEvent
+} from './colleague'
+import { CmdBoardManager } from '../cmd-board-manager'
 
 export class Paper implements PaperMediator {
 	private static _instance: Paper | null = null
@@ -78,8 +37,12 @@ export class Paper implements PaperMediator {
 	 * @description 编辑元素失焦事件管理器
 	 */
 	blurManager: BlurManager
+	/**
+	 * @description 命令面板管理器
+	 */
+	cmdBoardManager: CmdBoardManager
 
-	private _handler: NotifyHandler
+	private _notifyHandler: NotifyHandler
 
 	private constructor() {
 		this.inputManager = new InputManager()
@@ -94,20 +57,37 @@ export class Paper implements PaperMediator {
 		this.blurManager = new BlurManager()
 		this.blurManager.setMediator(this)
 
-		this._handler = new InputManagerNotifyHandler(this)
-		this._handler.setNext(new KeydownManagerNotifyHandler(this))
-	}
+		this.cmdBoardManager = new CmdBoardManager()
+		this.cmdBoardManager.setMediator(this)
 
-	notify<T extends Sender, K extends keyof GetEventsProp<T>>(
-		s: T,
-		event: K,
-		...args: Parameters<
-			GetEventsProp<T>[K] extends (...args: any[]) => any ? GetEventsProp<T>[K] : () => unknown
-		>
-	): ReturnType<
-		GetEventsProp<T>[K] extends (...args: any[]) => any ? GetEventsProp<T>[K] : () => never
-	> {
-		return this._handler.handle(s, event, ...args)
+		this._notifyHandler = new InputManagerNotifyHandler(this)
+		this._notifyHandler.setNext(new KeydownManagerNotifyHandler(this))
+	}
+	notify(s: unknown, event: keyof PublicNotifyEvent, ...args: unknown[]) {
+		if (event === 'public:findEditableElement') {
+			return this.selectionManager.findEditableElement()
+		}
+		if (event === 'public:getRange') {
+			return this.selectionManager.getRange()
+		}
+		if (event === 'public:getInputCompositionState') {
+			return this.compositionManager.inputting
+		}
+		if (event === 'public:getSelectionManager') {
+			return this.selectionManager
+		}
+		if (event === 'public:cmdBoardIsActive') {
+			return this.cmdBoardManager.active
+		}
+		if (event === 'public:setCmdBoardActive') {
+			this.cmdBoardManager.active = true
+			return
+		}
+
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const _: never = event
+
+		return this._notifyHandler.handle(s, event, ...args)
 	}
 }
 
@@ -121,15 +101,7 @@ abstract class NotifyHandler {
 		return handler
 	}
 
-	handle<T extends Sender, K extends keyof GetEventsProp<T>>(
-		s: T,
-		event: K,
-		...args: Parameters<
-			GetEventsProp<T>[K] extends (...args: any[]) => any ? GetEventsProp<T>[K] : () => unknown
-		>
-	): ReturnType<
-		GetEventsProp<T>[K] extends (...args: any[]) => any ? GetEventsProp<T>[K] : () => never
-	> {
+	handle(s: unknown, event: unknown, ...args: unknown[]): unknown {
 		if (this._next) {
 			return this._next.handle(s, event, ...args)
 		}
@@ -139,47 +111,41 @@ abstract class NotifyHandler {
 }
 
 class InputManagerNotifyHandler extends NotifyHandler {
-	handle<T extends Sender, K extends keyof GetEventsProp<T>>(
+	handle<T extends InputManager, K extends keyof InputManagerNotifyEvents>(
 		s: T,
 		event: K,
-		...args: Parameters<
-			GetEventsProp<T>[K] extends (...args: any[]) => any ? GetEventsProp<T>[K] : () => unknown
-		>
-	): ReturnType<
-		GetEventsProp<T>[K] extends (...args: any[]) => any ? GetEventsProp<T>[K] : () => never
-	> {
-		if (s === this._paper.inputManager) {
-			if (event === 'findEditableElement') {
-				return this._paper.selectionManager.findEditableElement() as any
-			}
+		...args: Parameters<InputManagerNotifyEvents[K]>
+	): ReturnType<InputManagerNotifyEvents[K]> {
+		if (s !== this._paper.inputManager) {
+			return super.handle(s, event, ...args) as any
 		}
-		return super.handle(s, event, ...args)
+
+		if (event === 'cmdUpdate') {
+			this._paper.cmdBoardManager.handle()
+		} else if (event === 'cmdRecordRange') {
+			this._paper.cmdBoardManager.recordRangeOption()
+		} else {
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			const _: never = event
+		}
+
+		return undefined as any
 	}
 }
 
 class KeydownManagerNotifyHandler extends NotifyHandler {
-	handle<T extends Sender, K extends keyof GetEventsProp<T>>(
+	handle<T extends KeydownManager, K extends keyof KeydownManagerNotifyEvents>(
 		s: T,
 		event: K,
-		...args: Parameters<
-			GetEventsProp<T>[K] extends (...args: any[]) => any ? GetEventsProp<T>[K] : () => unknown
-		>
-	): ReturnType<
-		GetEventsProp<T>[K] extends (...args: any[]) => any ? GetEventsProp<T>[K] : () => never
-	> {
+		...args: Parameters<KeydownManagerNotifyEvents[K]>
+	): ReturnType<KeydownManagerNotifyEvents[K]> {
 		if (s !== this._paper.keydownManager) {
-			return super.handle(s, event, ...args)
-		}
-		if (event === 'getRange') {
-			return this._paper.selectionManager.getRange() as any
-		}
-		if (event === 'getInputCompositionState') {
-			return this._paper.compositionManager.inputting as any
-		}
-		if (event === 'getSelectionManager') {
-			return this._paper.selectionManager as any
+			return super.handle(s, event, ...args) as any
 		}
 
-		throw new Error('Invalid event')
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const _: never = event
+
+		throw new Error('No handler')
 	}
 }

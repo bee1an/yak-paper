@@ -1,6 +1,6 @@
 import { h, type VNode } from 'vue'
-import type { BlockAgreer, ChildOption } from '@yak-paper/core'
 import type { HProps } from '@yak-paper/utils'
+import type { BlockAgreer, ChildOption } from '../agreer'
 
 type CreateChildrenReturnType = undefined | string | VNode | CreateChildrenReturnType[]
 

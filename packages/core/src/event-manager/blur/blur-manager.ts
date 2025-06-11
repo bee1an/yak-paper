@@ -1,4 +1,4 @@
-import { Colleague, type PaperMediator } from '../../paper'
+import { Colleague, type PaperMediator } from '../../paper/colleague'
 
 export class BlurManager extends Colleague {
 	constructor(private _?: PaperMediator) {

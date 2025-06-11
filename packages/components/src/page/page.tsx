@@ -69,6 +69,9 @@ export default defineComponent({
 		return (
 			<div class={style.page} onClick={tryCreateNewLineToLast}>
 				{/* 编辑宿主 */}
+				{paper.cmdBoardManager.suggestions.map((suggest) => (
+					<div>{suggest.id}</div>
+				))}
 				<div
 					class={style.host}
 					onCompositionstart={() => paper.compositionManager.onStart()}

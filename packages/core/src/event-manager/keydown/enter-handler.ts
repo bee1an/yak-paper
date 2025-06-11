@@ -1,19 +1,12 @@
 import type { EventEmitter } from '@yak-paper/utils'
-import type { SelectionManager } from '../../selection-manager'
 import { BaseHandler } from './base-handler'
 import type { KeydownEvents } from './keydown-manager'
+import type { KeydownManagerNotifyEvents, PublicNotifyEvent } from '../../paper/colleague'
 
-export type KeydownEnterMediatorEvents = {
-	getSelectionManager(): SelectionManager
-	getRange(): Range | null
-	getInputCompositionState(): boolean
-	findEditableElement: () => ReturnType<SelectionManager['findEditableElement']>
-}
-
-type PvtNotify = <T extends keyof KeydownEnterMediatorEvents>(
+type PvtNotify = <T extends keyof (KeydownManagerNotifyEvents & PublicNotifyEvent)>(
 	eventName: T,
-	...args: Parameters<KeydownEnterMediatorEvents[T]>
-) => ReturnType<KeydownEnterMediatorEvents[T]>
+	...args: Parameters<KeydownManagerNotifyEvents & PublicNotifyEvent[T]>
+) => ReturnType<KeydownManagerNotifyEvents & PublicNotifyEvent[T]>
 
 /**
  * @description 回车事件处理者
@@ -41,10 +34,10 @@ export class EnterHandler extends BaseHandler {
 
 		event.preventDefault()
 
-		const inputCompositionState = this._notify('getInputCompositionState')
+		const inputCompositionState = this._notify('public:getInputCompositionState')
 		if (inputCompositionState) return
 
-		const selectionManager = this._notify('getSelectionManager')
+		const selectionManager = this._notify('public:getSelectionManager')
 
 		const range = selectionManager.getRange()
 

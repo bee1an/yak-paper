@@ -1,4 +1,5 @@
 export * from './agreer'
+export * from './cmd-board-manager'
 export * from './event-manager'
 export * from './paper'
 export * from './selection-manager'

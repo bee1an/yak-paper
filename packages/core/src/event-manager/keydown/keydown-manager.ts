@@ -1,14 +1,12 @@
 import { EventEmitter } from '@yak-paper/utils'
 import { BlobHandler } from './blob-handler'
-import { EnterHandler, type KeydownEnterMediatorEvents } from './enter-handler'
+import { EnterHandler } from './enter-handler'
 import { DeleteHandler } from './delete-handler'
-import { Colleague, type PaperMediator } from '../../paper'
+import { Colleague, type PaperMediator } from '../../paper/colleague'
 
 export type KeydownEvents = {
 	newLine: [blockId: string, KeyboardEvent]
 }
-
-export type KeydownMediatorEvents = KeydownEnterMediatorEvents
 
 export class KeydownManager extends Colleague {
 	private _blobHandler: BlobHandler
@@ -23,9 +21,6 @@ export class KeydownManager extends Colleague {
 		return this.bus.on.bind(this.bus)(...rest)
 	}
 
-	/**
-	 * @param inject 依赖注入
-	 */
 	constructor(_?: PaperMediator) {
 		super(_)
 
@@ -44,11 +39,8 @@ export class KeydownManager extends Colleague {
 
 	setMediator(mediator: PaperMediator) {
 		super.setMediator(mediator)
-		this._enterHandler.setNotify(
-			<T extends keyof KeydownEnterMediatorEvents>(
-				eventName: T,
-				...args: Parameters<KeydownEnterMediatorEvents[T]>
-			) => mediator.notify(this as KeydownManager, eventName, ...args)
+		this._enterHandler.setNotify((eventName: any, ...args: any[]) =>
+			mediator.notify(this, eventName, ...args)
 		)
 	}
 
