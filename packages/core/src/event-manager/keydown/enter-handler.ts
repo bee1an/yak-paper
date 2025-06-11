@@ -4,6 +4,7 @@ import { BaseHandler } from './base-handler'
 import type { KeydownEvents } from './keydown-manager'
 
 export type KeydownEnterMediatorEvents = {
+	getSelectionManager(): SelectionManager
 	getRange(): Range | null
 	getInputCompositionState(): boolean
 	findEditableElement: () => ReturnType<SelectionManager['findEditableElement']>
@@ -43,10 +44,12 @@ export class EnterHandler extends BaseHandler {
 		const inputCompositionState = this._notify('getInputCompositionState')
 		if (inputCompositionState) return
 
-		const range = this._notify('getRange')
+		const selectionManager = this._notify('getSelectionManager')
+
+		const range = selectionManager.getRange()
 
 		if (range?.collapsed) {
-			this._emit('newLine', event)
+			this._emit('newLine', selectionManager.findFocusedBlockId()!, event)
 		} else {
 			// 删除逻辑
 		}

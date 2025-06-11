@@ -5,7 +5,7 @@ import { DeleteHandler } from './delete-handler'
 import { Colleague, type PaperMediator } from '../../paper'
 
 export type KeydownEvents = {
-	newLine: [KeyboardEvent]
+	newLine: [blockId: string, KeyboardEvent]
 }
 
 export type KeydownMediatorEvents = KeydownEnterMediatorEvents

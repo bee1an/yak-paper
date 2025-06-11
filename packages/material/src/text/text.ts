@@ -31,7 +31,7 @@ export type TextBlockEvents = {
 }
 
 export class TextBlock implements TextBlockAgreer {
-	readonly id: string
+	readonly id!: string
 
 	readonly type = 'text'
 
@@ -39,6 +39,7 @@ export class TextBlock implements TextBlockAgreer {
 
 	readonly props = {
 		'data-block-type': this.type,
+		'data-block-id': '1',
 		style: themeStyle,
 		ref: 'textRef',
 		onClick: () => {
@@ -51,16 +52,22 @@ export class TextBlock implements TextBlockAgreer {
 
 	bus = new EventEmitter<TextBlockEvents>()
 
+	get isEmpty() {
+		return this._editable.isEmpty
+	}
+
 	/** @description 保存这个组件的dom引用 */
 	private _templateRef: MaybeRef<HTMLElement | null> = null
 	get templateRef() {
 		return toValue(this._templateRef)
 	}
 
-	private _editables: BaseEditable[] = []
+	private _editable!: BaseEditable
 
 	constructor(params?: TextBlockParams) {
 		this.id = params?.id ?? createId()
+
+		this.props['data-block-id'] = this.id
 
 		this.children = this._createChildren(params)
 
@@ -70,9 +77,9 @@ export class TextBlock implements TextBlockAgreer {
 	}
 
 	private _createChildren(params?: TextBlockParams) {
-		this._editables.push(new BaseEditable(params))
+		this._editable = new BaseEditable(params)
 
-		return [...this._editables]
+		return [this._editable]
 	}
 
 	createVNode() {
@@ -80,14 +87,12 @@ export class TextBlock implements TextBlockAgreer {
 	}
 
 	focus(selectionManager: SelectionManager) {
-		const editable = this._editables[0]
-
-		editable.focus(selectionManager)
-		editable.modifyProps({ 'data-placeholder': '可以输入了' })
+		this._editable.focus(selectionManager)
+		this._editable.modifyProps({ 'data-placeholder': '可以输入了' })
 	}
 
 	blur() {
-		this._editables[0].blur()
+		this._editable.blur()
 	}
 }
 

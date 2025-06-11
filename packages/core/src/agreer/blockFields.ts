@@ -2,6 +2,7 @@ import type { HProps, MaybeArray } from '@yak-paper/utils'
 
 export type WrapperAinProps = {
 	'data-block-type': string
+	'data-block-id': string
 }
 
 /**
@@ -43,4 +44,9 @@ export interface BlockFields {
 	 * @description 子节点
 	 */
 	children: ChildOption[]
+
+	/**
+	 * @description 内容是否是空的
+	 */
+	isEmpty: boolean
 }

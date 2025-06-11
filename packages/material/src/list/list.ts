@@ -32,6 +32,7 @@ export class ListBlock implements ListBlockAgreer {
 		class: style.block,
 		contenteditable: true,
 		'data-block-type': this.type,
+		'data-block-id': '',
 		style: themeStyle,
 		ref: 'listRef'
 	}
@@ -46,6 +47,7 @@ export class ListBlock implements ListBlockAgreer {
 
 	constructor(params?: ListBlockParams) {
 		this.id = params?.id ?? createId()
+		this.props['data-block-id'] = this.id
 
 		this.children = this._createChildren(params)
 

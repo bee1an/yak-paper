@@ -15,23 +15,24 @@ export default defineComponent({
 	setup() {
 		const paper = Paper.instance
 
-		const addEmptyText = () => {
+		const addEmptyText = (index: number) => {
 			const block = new BlockAdapter(createId(), 'text')
 
-			store.add(block)
+			store.addByIndex(block, index)
 			return block
 		}
 
-		paper.keydownManager.on('newLine', () => {
-			createNewLine()
+		paper.keydownManager.on('newLine', (blockId) => {
+			const index = store.findIndexById(blockId)
+			createNewLineByIndex(index + 1)
 		})
 
 		const everyBlur = () => {
 			store.data.forEach((item) => item.block?.blur?.())
 		}
 
-		const createNewLine = async () => {
-			const blockAdapter = addEmptyText()
+		const createNewLineByIndex = async (index: number) => {
+			const blockAdapter = addEmptyText(index)
 
 			everyBlur()
 
@@ -44,15 +45,29 @@ export default defineComponent({
 			})
 		}
 
+		const tryCreateNewLineToLast = async () => {
+			const lastBlock = store.data[store.data.length - 1]
+
+			if (lastBlock?.block?.isEmpty) {
+				everyBlur()
+				await nextTick()
+				const block = lastBlock.block
+				block.focus?.(paper.selectionManager)
+				return
+			}
+
+			createNewLineByIndex(store.data.length)
+		}
+
 		provide(pageInjectKey, { paper })
 
-		return { createNewLine, paper }
+		return { tryCreateNewLineToLast, paper }
 	},
 	render() {
-		const { createNewLine, paper } = this
+		const { tryCreateNewLineToLast, paper } = this
 
 		return (
-			<div class={style.page} onClick={createNewLine}>
+			<div class={style.page} onClick={tryCreateNewLineToLast}>
 				{/* 编辑宿主 */}
 				<div
 					class={style.host}
@@ -65,8 +80,8 @@ export default defineComponent({
 					onBlur={paper.blurManager.handle}
 				>
 					<div class={style.blocks}>
-						{store.data.map((item, index) => (
-							<PBlock key={index} id={item.id} />
+						{store.data.map((item) => (
+							<PBlock key={item.id} id={item.id} />
 						))}
 					</div>
 				</div>

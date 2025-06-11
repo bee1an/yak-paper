@@ -176,6 +176,9 @@ class KeydownManagerNotifyHandler extends NotifyHandler {
 		if (event === 'getInputCompositionState') {
 			return this._paper.compositionManager.inputting as any
 		}
+		if (event === 'getSelectionManager') {
+			return this._paper.selectionManager as any
+		}
 
 		throw new Error('Invalid event')
 	}

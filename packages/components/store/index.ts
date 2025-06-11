@@ -39,6 +39,10 @@ class StoreProxy {
 	findById(id: string) {
 		return this.store.data.find((item) => item.id === id)
 	}
+
+	findIndexById(id: string) {
+		return this.store.data.findIndex((item) => item.id === id)
+	}
 }
 
 export const store = new Proxy<StoreProxy>(new StoreProxy(_store), {

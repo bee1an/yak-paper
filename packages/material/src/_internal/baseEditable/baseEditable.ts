@@ -9,11 +9,8 @@ interface BaseEditableOptions {
 }
 
 export class BaseEditable {
-	readonly type = 'editable'
-
-	readonly tagName = 'div'
-
-	readonly props = {
+	tagName = 'div'
+	props = {
 		class: style.editable,
 		contenteditable: true,
 		'data-placeholder': '',
@@ -25,7 +22,15 @@ export class BaseEditable {
 		return toValue(this._templateRef)
 	}
 
-	children: MaybeArray<FormatVal> = []
+	children: MaybeArray<FormatVal>
+
+	get isEmpty() {
+		if (!this.templateRef) return true
+
+		const { formate } = formater.html2Raw(this.templateRef)
+
+		return !formate.length
+	}
 
 	constructor(params?: BaseEditableOptions) {
 		this.children = this._createChildren(params)
