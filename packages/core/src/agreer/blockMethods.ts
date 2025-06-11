@@ -9,4 +9,6 @@ export interface BlockMethods {
 	createVNode(): VNode
 
 	focus?(selectionManager: SelectionManager): void
+
+	blur?(): void
 }

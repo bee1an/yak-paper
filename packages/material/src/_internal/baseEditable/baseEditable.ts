@@ -1,10 +1,11 @@
 import { formater, type FormatVal } from '@yak-paper/core'
 import { reactive, toValue, useTemplateRef, type MaybeRef } from 'vue'
-import type { MaybeArray, RawFormate, SelectionManager } from 'yak-paper'
+import type { HProps, MaybeArray, RawFormate, SelectionManager } from 'yak-paper'
 import style from './baseEditable.module.scss'
 
 interface BaseEditableOptions {
 	formate?: RawFormate[]
+	props?: HProps
 }
 
 export class BaseEditable {
@@ -15,7 +16,7 @@ export class BaseEditable {
 	readonly props = {
 		class: style.editable,
 		contenteditable: true,
-		'data-placeholder': '请输入',
+		'data-placeholder': '',
 		ref: 'editableRef'
 	}
 
@@ -28,6 +29,7 @@ export class BaseEditable {
 
 	constructor(params?: BaseEditableOptions) {
 		this.children = this._createChildren(params)
+		this.modifyProps(params?.props)
 
 		this._templateRef = useTemplateRef<HTMLElement>(this.props.ref)
 
@@ -40,6 +42,10 @@ export class BaseEditable {
 		}
 
 		return params.formate?.map(formater.raw2Format).filter((item) => item !== null) ?? null
+	}
+
+	modifyProps(props: HProps | this['props']) {
+		Object.assign(this.props, props)
 	}
 
 	focus(selectionManager: SelectionManager) {
@@ -61,5 +67,9 @@ export class BaseEditable {
 		selection.removeAllRanges()
 		selection.addRange(range)
 		selection.collapseToEnd()
+	}
+
+	blur() {
+		this.modifyProps({ 'data-placeholder': '\u200B' })
 	}
 }

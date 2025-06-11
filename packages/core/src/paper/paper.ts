@@ -1,5 +1,6 @@
 import type { GetAssignPropItem } from '@yak-paper/utils'
 import {
+	BlurManager,
 	CompositionManager,
 	InputManager,
 	KeydownManager,
@@ -49,6 +50,14 @@ export abstract class Colleague {
 }
 
 export class Paper implements PaperMediator {
+	private static _instance: Paper | null = null
+	static get instance() {
+		if (!this._instance) {
+			this._instance = new Paper()
+		}
+		return this._instance
+	}
+
 	/**
 	 * @description 编辑元素输入事件管理器
 	 */
@@ -65,18 +74,25 @@ export class Paper implements PaperMediator {
 	 * @description 组合输入管理器
 	 */
 	compositionManager: CompositionManager
+	/**
+	 * @description 编辑元素失焦事件管理器
+	 */
+	blurManager: BlurManager
 
 	private _handler: NotifyHandler
 
-	constructor() {
-		this.inputManager = new InputManager(this)
+	private constructor() {
+		this.inputManager = new InputManager()
 		this.inputManager.setMediator(this)
 
-		this.keydownManager = new KeydownManager(this)
+		this.keydownManager = new KeydownManager()
 		this.keydownManager.setMediator(this)
 
 		this.selectionManager = new SelectionManager()
 		this.compositionManager = new CompositionManager(this)
+
+		this.blurManager = new BlurManager()
+		this.blurManager.setMediator(this)
 
 		this._handler = new InputManagerNotifyHandler(this)
 		this._handler.setNext(new KeydownManagerNotifyHandler(this))

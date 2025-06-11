@@ -1,4 +1,4 @@
-import { Colleague, type PaperMediator } from '@yak-paper/core/src/paper'
+import { Colleague, type PaperMediator } from '../../paper'
 
 export class InputManager extends Colleague {
 	constructor(private _?: PaperMediator) {

@@ -4,6 +4,7 @@ import { Paper } from '@yak-paper/core'
 import style from './style/page.module.scss'
 import { BlockAdapter, store } from '../../store'
 import { createId } from '@yak-paper/utils'
+import type { TextBlock } from '@yak-paper/material'
 
 export const pageInjectKey = Symbol('pageInjectKey') as InjectionKey<{
 	paper: Paper
@@ -12,7 +13,7 @@ export const pageInjectKey = Symbol('pageInjectKey') as InjectionKey<{
 export default defineComponent({
 	name: 'PPage',
 	setup() {
-		const paper = new Paper()
+		const paper = Paper.instance
 
 		const addEmptyText = () => {
 			const block = new BlockAdapter(createId(), 'text')
@@ -22,26 +23,36 @@ export default defineComponent({
 		}
 
 		paper.keydownManager.on('newLine', () => {
-			focusLast()
+			createNewLine()
 		})
 
-		const focusLast = () => {
+		const everyBlur = () => {
+			store.data.forEach((item) => item.block?.blur?.())
+		}
+
+		const createNewLine = async () => {
 			const blockAdapter = addEmptyText()
 
-			nextTick(() => {
-				blockAdapter.block?.focus?.(paper.selectionManager)
+			everyBlur()
+
+			await nextTick()
+
+			const block = blockAdapter.block!
+			block.focus?.(paper.selectionManager)
+			;(block as TextBlock).bus.on('click', () => {
+				everyBlur()
 			})
 		}
 
 		provide(pageInjectKey, { paper })
 
-		return { focusLast, paper }
+		return { createNewLine, paper }
 	},
 	render() {
-		const { focusLast, paper } = this
+		const { createNewLine, paper } = this
 
 		return (
-			<div class={style.page} onClick={focusLast}>
+			<div class={style.page} onClick={createNewLine}>
 				{/* 编辑宿主 */}
 				<div
 					class={style.host}
@@ -51,6 +62,7 @@ export default defineComponent({
 					contenteditable
 					onKeydown={paper.keydownManager.handle}
 					onInput={paper.inputManager.handle}
+					onBlur={paper.blurManager.handle}
 				>
 					<div class={style.blocks}>
 						{store.data.map((item, index) => (

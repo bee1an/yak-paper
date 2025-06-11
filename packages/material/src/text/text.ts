@@ -1,10 +1,16 @@
 import { useThemeStyle } from '@yak-paper/composables'
-import { Transformer, type RawFormate, SelectionManager, type BlockAgreer } from '@yak-paper/core'
+import {
+	type RawFormate,
+	SelectionManager,
+	type BlockAgreer,
+	transformer,
+	Paper
+} from '@yak-paper/core'
 import themeDefined from './style/theme'
 import themeManager from '../../style'
 import { reactive, toValue, useTemplateRef, type MaybeRef } from 'vue'
-import { createId } from 'yak-paper'
 import { BaseEditable } from '../_internal/baseEditable/baseEditable'
+import { createId, EventEmitter } from '@yak-paper/utils'
 
 const props = reactive({ theme: 'light' })
 
@@ -20,6 +26,10 @@ export interface TextBlockParams {
 	formate?: RawFormate[]
 }
 
+export type TextBlockEvents = {
+	click: []
+}
+
 export class TextBlock implements TextBlockAgreer {
 	readonly id: string
 
@@ -30,10 +40,16 @@ export class TextBlock implements TextBlockAgreer {
 	readonly props = {
 		'data-block-type': this.type,
 		style: themeStyle,
-		ref: 'textRef'
+		ref: 'textRef',
+		onClick: () => {
+			this.bus.emit('click')
+			this.focus(Paper.instance.selectionManager)
+		}
 	}
 
 	children: BlockAgreer['children']
+
+	bus = new EventEmitter<TextBlockEvents>()
 
 	/** @description 保存这个组件的dom引用 */
 	private _templateRef: MaybeRef<HTMLElement | null> = null
@@ -60,11 +76,18 @@ export class TextBlock implements TextBlockAgreer {
 	}
 
 	createVNode() {
-		return Transformer.instance.json2Vnode(this)
+		return transformer.json2Vnode(this)
 	}
 
 	focus(selectionManager: SelectionManager) {
-		this._editables[0].focus(selectionManager)
+		const editable = this._editables[0]
+
+		editable.focus(selectionManager)
+		editable.modifyProps({ 'data-placeholder': '可以输入了' })
+	}
+
+	blur() {
+		this._editables[0].blur()
 	}
 }
 

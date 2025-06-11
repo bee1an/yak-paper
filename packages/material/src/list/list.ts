@@ -1,4 +1,4 @@
-import { Transformer, type BlockAgreer, type RawFormate } from '@yak-paper/core'
+import { transformer, type BlockAgreer, type RawFormate } from '@yak-paper/core'
 import { createId } from '@yak-paper/utils'
 import { type VNode, type MaybeRef, toValue, useTemplateRef, reactive } from 'vue'
 import { useThemeStyle } from '@yak-paper/composables'
@@ -66,6 +66,6 @@ export class ListBlock implements ListBlockAgreer {
 	}
 
 	createVNode(): VNode {
-		return Transformer.instance.json2Vnode(this)
+		return transformer.json2Vnode(this)
 	}
 }

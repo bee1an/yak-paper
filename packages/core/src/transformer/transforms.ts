@@ -8,7 +8,7 @@ export type FormateType = 'text' | 'blob' | 'underline' | 'italic'
 
 export type Json2VnodeOption = Pick<BlockAgreer, 'tagName' | 'children'> & { props: HProps }
 
-export class Transformer {
+class Transformer {
 	private static _instance: Transformer
 	static get instance() {
 		if (!Transformer._instance) {
@@ -40,3 +40,5 @@ export class Transformer {
 		return h(option.tagName, option.props, this._createChildren(option.children))
 	}
 }
+
+export const transformer = Transformer.instance

@@ -26,26 +26,30 @@ export class KeydownManager extends Colleague {
 	/**
 	 * @param inject 依赖注入
 	 */
-	constructor(_: PaperMediator) {
+	constructor(_?: PaperMediator) {
 		super(_)
 
 		this._blobHandler = new BlobHandler()
 
 		const _emit = this.bus.emit.bind(this.bus)
 
-		this._enterHandler = new EnterHandler(
-			<T extends keyof KeydownEnterMediatorEvents>(
-				eventName: T,
-				...args: Parameters<KeydownEnterMediatorEvents[T]>
-			) => _.notify(this as KeydownManager, eventName, ...args),
-			_emit
-		)
+		this._enterHandler = new EnterHandler(_emit)
 
 		this._deleteHandler = new DeleteHandler()
 
 		this._blobHandler.setNext(this._enterHandler).setNext(this._deleteHandler)
 
 		this.handle = this.handle.bind(this)
+	}
+
+	setMediator(mediator: PaperMediator) {
+		super.setMediator(mediator)
+		this._enterHandler.setNotify(
+			<T extends keyof KeydownEnterMediatorEvents>(
+				eventName: T,
+				...args: Parameters<KeydownEnterMediatorEvents[T]>
+			) => mediator.notify(this as KeydownManager, eventName, ...args)
+		)
 	}
 
 	handle(event: KeyboardEvent) {
