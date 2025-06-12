@@ -1,5 +1,5 @@
-import { defineComponent, nextTick, provide, type InjectionKey } from 'vue'
-import { PBlock } from '../block'
+import { computed, defineComponent, nextTick, provide, type InjectionKey } from 'vue'
+import { PBlock, CmdBoard } from '../index'
 import { Paper } from '@yak-paper/core'
 import style from './style/page.module.scss'
 import { BlockAdapter, store } from '../../store'
@@ -61,7 +61,7 @@ export default defineComponent({
 
 		provide(pageInjectKey, { paper })
 
-		return { tryCreateNewLineToLast, paper }
+		return { tryCreateNewLineToLast, paper, a: computed(() => paper.cmdBoardManager.suggestions) }
 	},
 	render() {
 		const { tryCreateNewLineToLast, paper } = this
@@ -69,10 +69,9 @@ export default defineComponent({
 		return (
 			<div class={style.page} onClick={tryCreateNewLineToLast}>
 				{/* 编辑宿主 */}
-				{paper.cmdBoardManager.suggestions.map((suggest) => (
-					<div>{suggest.id}</div>
-				))}
-				<div
+
+				<CmdBoard />
+				<article
 					class={style.host}
 					onCompositionstart={() => paper.compositionManager.onStart()}
 					onCompositionend={() => paper.compositionManager.onEnd()}
@@ -87,7 +86,7 @@ export default defineComponent({
 							<PBlock key={item.id} id={item.id} />
 						))}
 					</div>
-				</div>
+				</article>
 			</div>
 		)
 	}

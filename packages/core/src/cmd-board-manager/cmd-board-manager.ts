@@ -1,20 +1,26 @@
-import { ref } from 'vue'
+import { h, ref } from 'vue'
 import { Colleague } from '../paper/colleague'
+import type { MenuOption } from '@yyui/yy-ui'
+import Text from './icons/Text.vue'
+import List from './icons/List.vue'
 
-interface SugguestOption {
-	id: string
+interface SugguestOption extends MenuOption {
 	value: string[]
 }
 
 export class CmdBoardManager extends Colleague {
 	static readonly suggestList: SugguestOption[] = [
 		{
-			id: 'text',
-			value: ['text']
+			key: 'text',
+			value: ['text'],
+			label: '文本',
+			icon: () => h(Text)
 		},
 		{
-			id: 'list',
-			value: ['list']
+			key: 'list',
+			value: ['list'],
+			label: '列表',
+			icon: () => h(List)
 		}
 	]
 
@@ -38,16 +44,23 @@ export class CmdBoardManager extends Colleague {
 		container: Node
 		offset: number
 		data: string
+		cursorSite: { x: number; y: number }
 	} | null = null
+	get rangeOption() {
+		return this._rangeOption
+	}
 	recordRangeOption() {
 		const range = this._mediator.notify(this, 'public:getRange')
 
 		if (!range) return
 
+		const { x, y, height } = range.getBoundingClientRect()
+
 		this._rangeOption = {
 			container: range.startContainer,
 			offset: range.startOffset,
-			data: range.startContainer.textContent!
+			data: range.startContainer.textContent!,
+			cursorSite: { x, y: y + height + 5 }
 		}
 	}
 
