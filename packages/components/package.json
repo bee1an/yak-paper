@@ -1,6 +1,7 @@
 {
 	"name": "@yak-paper/components",
 	"version": "1.0.0",
+	"type": "module",
 	"description": "@yak-paper/components",
 	"license": "MIT",
 	"buildOptions": {

@@ -6,8 +6,8 @@
 	"description": "@yak-paper/app",
 	"scripts": {
 		"dev": "vite",
-		"build:dev": "vue-tsc -b && vite build --mode development",
-		"build": "vue-tsc -b && vite build --mode production",
+		"build:dev": "vue-tsc --noEmit && vite build --mode development",
+		"build": "vue-tsc --noEmit && vite build --mode production",
 		"preview": "vite preview"
 	},
 	"dependencies": {

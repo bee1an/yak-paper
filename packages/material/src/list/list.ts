@@ -1,4 +1,4 @@
-import { transformer, type BlockAgreer, type RawFormate } from '@yak-paper/core'
+import { SelectionManager, transformer, type BlockAgreer, type RawFormate } from '@yak-paper/core'
 import { createId } from '@yak-paper/utils'
 import { type VNode, type MaybeRef, toValue, useTemplateRef, reactive } from 'vue'
 import { useThemeStyle } from '@yak-paper/composables'
@@ -55,6 +55,8 @@ export class ListBlock implements ListBlockAgreer {
 
 		return reactive(this) as unknown as ListBlock
 	}
+
+	isEmpty: boolean = false
 
 	private _createChildren(params?: ListBlockParams) {
 		return [

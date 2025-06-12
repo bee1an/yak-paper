@@ -1,6 +1,7 @@
 {
 	"name": "@yak-paper/theme-utils",
 	"version": "1.0.0",
+	"type": "module",
 	"description": "yak-paper/theme-utils",
 	"license": "MIT"
 }

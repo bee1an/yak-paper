@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-import vueJsx from '@vitejs/plugin-vue-jsx'
+import Vue from '@vitejs/plugin-vue'
+import VueJsx from '@vitejs/plugin-vue-jsx'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import UnoCSS from 'unocss/vite'
@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => {
 	const isDev = mode === 'development'
 
 	return {
-		plugins: [vue(), vueJsx(), UnoCSS()],
+		plugins: [Vue(), VueJsx(), UnoCSS()],
 		server: { port: 8888 },
 		build: { minify: !isDev },
 		resolve: {

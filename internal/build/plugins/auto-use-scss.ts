@@ -3,7 +3,7 @@ import path from 'path'
 import { pkgDir } from '../utils'
 
 // 匹配的路径, 较真写法, 可以不用这个, 直接判断是否是 scss 文件
-const autoUsePath = /\w*\\packages\\(core|material)\\.*\w*.module.scss/
+const autoUsePath = /.*[\\/]packages[\\/](core|material)[\\/].*.module.scss/
 
 function autoUseScss(): Plugin {
 	return {

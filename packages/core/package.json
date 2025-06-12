@@ -1,6 +1,7 @@
 {
 	"name": "@yak-paper/core",
 	"version": "1.0.0",
+	"type": "module",
 	"description": "@yak-paper/core",
 	"license": "MIT",
 	"buildOptions": {
