@@ -1,6 +1,6 @@
-import { defineComponent } from 'vue'
-import { store } from '../../store'
+import { defineComponent, inject } from 'vue'
 import { ListBlock, TextBlock } from '@yak-paper/material'
+import { pageInjectKey } from '../page/page'
 
 const pBlockProps = {
 	id: {
@@ -14,14 +14,16 @@ export default defineComponent({
 	name: 'PBlock',
 	props: pBlockProps,
 	setup(props) {
+		const { paper } = inject(pageInjectKey)!
+
 		let block
 
-		const blockProxy = store.findById(props.id)!
+		const blockProxy = paper.sections.findById(props.id)!
 
 		if (blockProxy.typeEqualTo('text')) {
-			block = new TextBlock({ id: props.id, ...blockProxy.blockOption })
+			block = new TextBlock({ ...blockProxy.blockOption })
 		} else if (blockProxy.typeEqualTo('list')) {
-			block = new ListBlock({ id: props.id, ...blockProxy.blockOption })
+			block = new ListBlock({ ...blockProxy.blockOption })
 		} else {
 			throw new Error('block type error')
 		}

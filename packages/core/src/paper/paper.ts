@@ -7,6 +7,8 @@ import type {
 	PublicNotifyEvent
 } from './colleague'
 import { CmdBoardManager } from '../cmd-board-manager'
+import { sections, type Sections } from '../sections'
+import { Creator } from '../sections/creator'
 
 export class Paper implements PaperMediator {
 	private static _instance: Paper | null = null
@@ -41,6 +43,10 @@ export class Paper implements PaperMediator {
 	 * @description 命令面板管理器
 	 */
 	cmdBoardManager: CmdBoardManager
+	/**
+	 * @description 段落类
+	 */
+	sections: Sections
 
 	private _notifyHandler: NotifyHandler
 
@@ -60,21 +66,27 @@ export class Paper implements PaperMediator {
 		this.cmdBoardManager = new CmdBoardManager()
 		this.cmdBoardManager.setMediator(this)
 
+		this.sections = sections
+		this.sections.setMediator(this)
+		sections.setCreator(Creator.getInstance(this))
+
 		this._notifyHandler = new InputManagerNotifyHandler(this)
 		this._notifyHandler.setNext(new KeydownManagerNotifyHandler(this))
 	}
 	notify(s: unknown, event: keyof PublicNotifyEvent, ...args: unknown[]) {
-		if (event === 'public:findEditableElement') {
+		if (typeof s === 'string') {
+			args.unshift(event)
+			event = s as keyof PublicNotifyEvent
+		}
+
+		if (event === 'public:selection:findEditableElement') {
 			return this.selectionManager.findEditableElement()
 		}
-		if (event === 'public:getRange') {
+		if (event === 'public:selection:getRange') {
 			return this.selectionManager.getRange()
 		}
 		if (event === 'public:getInputCompositionState') {
 			return this.compositionManager.inputting
-		}
-		if (event === 'public:getSelectionManager') {
-			return this.selectionManager
 		}
 		if (event === 'public:cmdBoardIsActive') {
 			return this.cmdBoardManager.active
@@ -82,6 +94,21 @@ export class Paper implements PaperMediator {
 		if (event === 'public:setCmdBoardActive') {
 			this.cmdBoardManager.active = true
 			return
+		}
+		if (event === 'public:selection:findFocusedBlock') {
+			return this.selectionManager.findFocusedBlock()
+		}
+		if (event === 'public:selection:findFocusedBlockId') {
+			return this.selectionManager.findFocusedBlockId()
+		}
+		if (event === 'public:sections:findById') {
+			return this.sections.findById(args[0] as string)
+		}
+		if (event === 'public:sections.creator:createNewLineByIndex') {
+			return this.sections.creator.createNewLineByIndex(...(args as [number, any]))
+		}
+		if (event === 'public:sections:findIndexById') {
+			return this.sections.findIndexById(...(args as [any]))
 		}
 
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars

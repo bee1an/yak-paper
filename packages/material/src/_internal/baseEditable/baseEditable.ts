@@ -1,5 +1,5 @@
 import { formater, SelectionManager, type FormatVal, type RawFormate } from '@yak-paper/core'
-import { reactive, toValue, useTemplateRef, type MaybeRef } from 'vue'
+import { mergeProps, reactive, toValue, useTemplateRef, type MaybeRef } from 'vue'
 import style from './baseEditable.module.scss'
 import type { HProps, MaybeArray } from '@yak-paper/utils'
 
@@ -34,7 +34,7 @@ export class BaseEditable {
 
 	constructor(params?: BaseEditableOptions) {
 		this.children = this._createChildren(params)
-		this.modifyProps(params?.props)
+		this.mergeProps(params?.props)
 
 		this._templateRef = useTemplateRef<HTMLElement>(this.props.ref)
 
@@ -49,8 +49,8 @@ export class BaseEditable {
 		return params.formate?.map(formater.raw2Format).filter((item) => item !== null) ?? null
 	}
 
-	modifyProps(props: HProps | this['props']) {
-		Object.assign(this.props, props)
+	mergeProps(props: HProps | this['props']) {
+		this.props = mergeProps(this.props, props || {}) as any
 	}
 
 	focus(selectionManager: SelectionManager) {
@@ -75,6 +75,6 @@ export class BaseEditable {
 	}
 
 	blur() {
-		this.modifyProps({ 'data-placeholder': '\u200B' })
+		this.mergeProps({ 'data-placeholder': '\u200B' })
 	}
 }

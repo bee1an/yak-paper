@@ -2,8 +2,6 @@ import { computed, defineComponent, nextTick, provide, type InjectionKey } from 
 import { PBlock, CmdBoard } from '../index'
 import { Paper } from '@yak-paper/core'
 import style from './style/page.module.scss'
-import { store } from '../../store'
-import { Creator } from './creator'
 
 export const pageInjectKey = Symbol('pageInjectKey') as InjectionKey<{
 	paper: Paper
@@ -13,20 +11,21 @@ export default defineComponent({
 	name: 'PPage',
 	setup() {
 		const paper = Paper.instance
-		const creator = Creator.getInstance(paper, store)
+		const sections = paper.sections
+		const creator = sections.creator
 
 		paper.keydownManager.on('newLine', (blockId) => {
-			const index = store.findIndexById(blockId)
+			const index = sections.findIndexById(blockId)
 			creator.createNewLineByIndex(index + 1)
 		})
 
 		// 尝试在创建一个块到最后
 		const tryCreateNewLineToLast = async () => {
-			const lastBlock = store.data[store.data.length - 1]
+			const lastBlock = sections.data[sections.data.length - 1]
 
 			if (lastBlock?.block?.isEmpty) {
 				// 如果最后一行是空的块则聚焦
-				creator._blur()
+				sections.blurAll()
 				await nextTick()
 				const block = lastBlock.block
 
@@ -34,7 +33,7 @@ export default defineComponent({
 				return
 			}
 
-			creator.createNewLineByIndex(store.data.length)
+			creator.createNewLineByIndex(sections.data.length)
 		}
 
 		provide(pageInjectKey, { paper })
@@ -60,7 +59,7 @@ export default defineComponent({
 					onBlur={paper.blurManager.handle}
 				>
 					<div class={style.blocks}>
-						{store.data.map((item) => (
+						{paper.sections.data.map((item) => (
 							<PBlock key={item.id} id={item.id} />
 						))}
 					</div>

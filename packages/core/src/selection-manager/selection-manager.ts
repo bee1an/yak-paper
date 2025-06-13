@@ -46,7 +46,7 @@ export class SelectionManager {
 	}
 
 	/** @description 找到当前聚焦的块元素id */
-	findFocusedBlockId() {
+	findFocusedBlockId(): string | null | undefined {
 		const block = this.findFocusedBlock()
 
 		if (!block) return null

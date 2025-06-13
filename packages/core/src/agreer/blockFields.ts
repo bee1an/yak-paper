@@ -1,4 +1,4 @@
-import type { HProps, MaybeArray } from '@yak-paper/utils'
+import type { EventEmitter, HProps, MaybeArray } from '@yak-paper/utils'
 
 export type WrapperAinProps = {
 	'data-block-type': string
@@ -17,6 +17,10 @@ export type ChildOption = {
 	tagName: string
 	props?: HProps
 	children?: MaybeArray<string | ChildOption>
+}
+
+export type BlockEvents = {
+	click: []
 }
 
 export interface BlockFields {
@@ -49,4 +53,9 @@ export interface BlockFields {
 	 * @description 内容是否是空的
 	 */
 	isEmpty: boolean
+
+	/**
+	 * @description 事件总线
+	 */
+	bus: EventEmitter<BlockEvents>
 }

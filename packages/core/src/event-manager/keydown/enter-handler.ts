@@ -37,12 +37,11 @@ export class EnterHandler extends BaseHandler {
 		const inputCompositionState = this._notify('public:getInputCompositionState')
 		if (inputCompositionState) return
 
-		const selectionManager = this._notify('public:getSelectionManager')
-
-		const range = selectionManager.getRange()
+		// TODO
+		const range = this._notify('public:selection:getRange')
 
 		if (range?.collapsed) {
-			this._emit('newLine', selectionManager.findFocusedBlockId()!, event)
+			this._emit('newLine', this._notify('public:selection:findFocusedBlockId')!, event)
 		} else {
 			// 删除逻辑
 		}

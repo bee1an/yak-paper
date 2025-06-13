@@ -28,18 +28,18 @@ export class InputManager extends Colleague {
 		// 每次输入检查当前元素的内容
 		const { inputType, data } = event
 
-		const cmdIsActive = this._mediator.notify(this, 'public:cmdBoardIsActive')
+		const cmdIsActive = this._mediator.notify('public:cmdBoardIsActive')
 
 		if (!cmdIsActive && data === TRIGGER_COMMAND_MODE_CHAR && inputType === InputType.INSERT_TEXT) {
-			this._mediator.notify(this, 'public:setCmdBoardActive')
+			this._mediator.notify('public:setCmdBoardActive')
 			this._mediator.notify(this, 'cmdRecordRange')
 		}
 
-		this._mediator.notify(this, 'public:cmdBoardIsActive') &&
+		this._mediator.notify('public:cmdBoardIsActive') &&
 			this._mediator.notify(this, 'cmdUpdate', event)
 
 		//找到编辑元素
-		const focusNode = this._mediator.notify(this, 'public:findEditableElement')!
+		const focusNode = this._mediator.notify('public:selection:findEditableElement')!
 
 		if (focusNode.textContent === '') {
 			// 置空防止出现<br>

@@ -1,5 +1,12 @@
-import { SelectionManager, transformer, type BlockAgreer, type RawFormate } from '@yak-paper/core'
-import { createId } from '@yak-paper/utils'
+import {
+	Paper,
+	SelectionManager,
+	transformer,
+	type BlockAgreer,
+	type BlockEvents,
+	type RawFormate
+} from '@yak-paper/core'
+import { createId, EventEmitter } from '@yak-paper/utils'
 import { type VNode, type MaybeRef, toValue, useTemplateRef, reactive } from 'vue'
 import { useThemeStyle } from '@yak-paper/composables'
 import themeDefined from './style/theme'
@@ -21,6 +28,8 @@ export interface ListBlockOption {
 	formate: RawFormate[]
 }
 
+export type ListBlockEvents = {} & BlockEvents
+
 export class ListBlock implements ListBlockAgreer {
 	readonly id: string
 
@@ -34,12 +43,21 @@ export class ListBlock implements ListBlockAgreer {
 		'data-block-type': this.type,
 		'data-block-id': '',
 		style: themeStyle,
-		ref: 'listRef'
+		ref: 'listRef',
+		onClick: () => {
+			this.bus.emit('click')
+			this.focus(Paper.instance.selectionManager)
+		}
 	}
 
 	children: BlockAgreer['children']
 
-	/** @description 保存这个组件的dom引用 */
+	bus = new EventEmitter<ListBlockEvents>()
+
+	get isEmpty() {
+		return this._editable.isEmpty
+	}
+
 	private _templateRef: MaybeRef<HTMLElement | null> = null
 	get templateRef() {
 		return toValue(this._templateRef)
@@ -58,12 +76,13 @@ export class ListBlock implements ListBlockAgreer {
 		return reactive(this) as unknown as ListBlock
 	}
 
-	get isEmpty() {
-		return this._editable.isEmpty
-	}
-
 	private _createChildren(params?: ListBlockOption) {
-		this._editable = new BaseEditable(params)
+		this._editable = new BaseEditable({
+			...params,
+			props: {
+				class: [style['flex_1']]
+			}
+		})
 
 		return [
 			{
@@ -81,7 +100,7 @@ export class ListBlock implements ListBlockAgreer {
 
 	focus(selectionManager: SelectionManager) {
 		this._editable.focus(selectionManager)
-		this._editable.modifyProps({ 'data-placeholder': '可以输入了' })
+		this._editable.mergeProps({ 'data-placeholder': '项目' })
 	}
 
 	blur() {

@@ -3,6 +3,7 @@ import { Colleague } from '../paper/colleague'
 import type { MenuOption } from '@yyui/yy-ui'
 import Text from './icons/Text.vue'
 import List from './icons/List.vue'
+import type { TypeName } from '@yak-paper/material'
 
 interface SugguestOption extends MenuOption {
 	value: string[]
@@ -50,7 +51,7 @@ export class CmdBoardManager extends Colleague {
 		return this._rangeOption
 	}
 	recordRangeOption() {
-		const range = this._mediator.notify(this, 'public:getRange')
+		const range = this._mediator.notify('public:selection:getRange')
 
 		if (!range) return
 
@@ -66,7 +67,7 @@ export class CmdBoardManager extends Colleague {
 
 	noSuggestTimes = 0
 	handle() {
-		const focusNode = this._mediator.notify(this, 'public:findEditableElement')!
+		const focusNode = this._mediator.notify('public:selection:findEditableElement')!
 
 		const text = focusNode.textContent!
 
@@ -99,6 +100,25 @@ export class CmdBoardManager extends Colleague {
 		} else {
 			this.noSuggestTimes = 0
 		}
+	}
+
+	itemClickHandle(type: TypeName) {
+		this.exit()
+
+		const id = this._mediator.notify('public:selection:findFocusedBlockId')!
+
+		const section = this._mediator.notify('public:sections:findById', id)!
+
+		if (section.block!.isEmpty) {
+			// 转换逻辑
+			return
+		}
+
+		this._mediator.notify(
+			'public:sections.creator:createNewLineByIndex',
+			this._mediator.notify('public:sections:findIndexById', id) + 1,
+			{ type }
+		)
 	}
 
 	exit() {

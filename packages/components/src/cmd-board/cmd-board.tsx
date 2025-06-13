@@ -9,7 +9,7 @@ export default defineComponent({
 		const { paper } = inject(pageInjectKey)!
 
 		const itemClickHandle = (option: MenuItem) => {
-			paper.cmdBoardManager.exit()
+			paper.cmdBoardManager.itemClickHandle(option.key as any)
 		}
 
 		const boradVisible = computed(() => {
