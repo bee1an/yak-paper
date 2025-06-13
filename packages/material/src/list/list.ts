@@ -15,10 +15,10 @@ export interface ListBlockAgreer extends BlockAgreer {
 	type: 'list'
 }
 
-export interface ListBlockParams {
+export interface ListBlockOption {
 	id?: string
 
-	formate?: RawFormate[]
+	formate: RawFormate[]
 }
 
 export class ListBlock implements ListBlockAgreer {
@@ -45,7 +45,9 @@ export class ListBlock implements ListBlockAgreer {
 		return toValue(this._templateRef)
 	}
 
-	constructor(params?: ListBlockParams) {
+	private _editable!: BaseEditable
+
+	constructor(params?: ListBlockOption) {
 		this.id = params?.id ?? createId()
 		this.props['data-block-id'] = this.id
 
@@ -56,20 +58,33 @@ export class ListBlock implements ListBlockAgreer {
 		return reactive(this) as unknown as ListBlock
 	}
 
-	isEmpty: boolean = false
+	get isEmpty() {
+		return this._editable.isEmpty
+	}
 
-	private _createChildren(params?: ListBlockParams) {
+	private _createChildren(params?: ListBlockOption) {
+		this._editable = new BaseEditable(params)
+
 		return [
 			{
 				tagName: 'div',
 				props: { class: style.dot, contenteditable: false },
 				children: [{ tagName: 'span' }]
 			},
-			new BaseEditable(params)
+			this._editable
 		]
 	}
 
 	createVNode(): VNode {
 		return transformer.json2Vnode(this)
+	}
+
+	focus(selectionManager: SelectionManager) {
+		this._editable.focus(selectionManager)
+		this._editable.modifyProps({ 'data-placeholder': '可以输入了' })
+	}
+
+	blur() {
+		this._editable.blur()
 	}
 }

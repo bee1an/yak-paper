@@ -1,26 +1,36 @@
 import { onUnmounted, reactive } from 'vue'
 import { createCRUD, type CRUD } from '@yak-paper/utils'
-import type { BlockAgreer } from '@yak-paper/core'
+import { type TypeName, type TypeToBlockMap, type TypeToBlockOption } from '@yak-paper/material'
 
-interface AdapterType {
+type AdapterType<T extends TypeName> = {
 	id: string
 	type: string
-	block?: BlockAgreer
+	blockOption: TypeToBlockOption[T]
+	block?: TypeToBlockMap[T]
 }
 
-export class BlockAdapter implements AdapterType {
-	private _block?: BlockAgreer
-	get block(): BlockAgreer | undefined {
+export class BlockAdapter<T extends TypeName = TypeName> implements AdapterType<T> {
+	typeEqualTo<K extends TypeName>(expectType: K): this is BlockAdapter<K> {
+		return this.type === (expectType as TypeName)
+	}
+
+	private _block?: TypeToBlockMap[T]
+	get block(): TypeToBlockMap[T] | undefined {
 		return this._block
+	}
+
+	get blockOption(): TypeToBlockOption[T] {
+		return this._blockOption
 	}
 
 	constructor(
 		public id: string,
-		public type: string
+		public type: T,
+		private _blockOption: TypeToBlockOption[T]
 	) {}
 
-	install(block: BlockAgreer) {
-		this._block = block
+	install(block: TypeToBlockMap[TypeName]) {
+		this._block = block as TypeToBlockMap[T]
 		onUnmounted(() => this.uninstall())
 	}
 
@@ -31,7 +41,7 @@ export class BlockAdapter implements AdapterType {
 
 type StoreType = CRUD<BlockAdapter>
 
-const _store = reactive(createCRUD<BlockAdapter>()) as StoreType
+const _store = reactive(createCRUD<BlockAdapter>()) as unknown as StoreType
 
 class StoreProxy {
 	constructor(public store: StoreType) {}
@@ -44,6 +54,8 @@ class StoreProxy {
 		return this.store.data.findIndex((item) => item.id === id)
 	}
 }
+
+export type Store = StoreProxy & typeof _store
 
 export const store = new Proxy<StoreProxy>(new StoreProxy(_store), {
 	get(target, key) {

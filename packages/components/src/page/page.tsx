@@ -2,9 +2,8 @@ import { computed, defineComponent, nextTick, provide, type InjectionKey } from 
 import { PBlock, CmdBoard } from '../index'
 import { Paper } from '@yak-paper/core'
 import style from './style/page.module.scss'
-import { BlockAdapter, store } from '../../store'
-import { createId } from '@yak-paper/utils'
-import type { TextBlock } from '@yak-paper/material'
+import { store } from '../../store'
+import { Creator } from './creator'
 
 export const pageInjectKey = Symbol('pageInjectKey') as InjectionKey<{
 	paper: Paper
@@ -14,49 +13,28 @@ export default defineComponent({
 	name: 'PPage',
 	setup() {
 		const paper = Paper.instance
-
-		const addEmptyText = (index: number) => {
-			const block = new BlockAdapter(createId(), 'text')
-
-			store.addByIndex(block, index)
-			return block
-		}
+		const creator = Creator.getInstance(paper, store)
 
 		paper.keydownManager.on('newLine', (blockId) => {
 			const index = store.findIndexById(blockId)
-			createNewLineByIndex(index + 1)
+			creator.createNewLineByIndex(index + 1)
 		})
 
-		const everyBlur = () => {
-			store.data.forEach((item) => item.block?.blur?.())
-		}
-
-		const createNewLineByIndex = async (index: number) => {
-			const blockAdapter = addEmptyText(index)
-
-			everyBlur()
-
-			await nextTick()
-
-			const block = blockAdapter.block!
-			block.focus?.(paper.selectionManager)
-			;(block as TextBlock).bus.on('click', () => {
-				everyBlur()
-			})
-		}
-
+		// 尝试在创建一个块到最后
 		const tryCreateNewLineToLast = async () => {
 			const lastBlock = store.data[store.data.length - 1]
 
 			if (lastBlock?.block?.isEmpty) {
-				everyBlur()
+				// 如果最后一行是空的块则聚焦
+				creator._blur()
 				await nextTick()
 				const block = lastBlock.block
+
 				block.focus?.(paper.selectionManager)
 				return
 			}
 
-			createNewLineByIndex(store.data.length)
+			creator.createNewLineByIndex(store.data.length)
 		}
 
 		provide(pageInjectKey, { paper })

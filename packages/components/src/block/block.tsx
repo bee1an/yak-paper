@@ -18,10 +18,10 @@ export default defineComponent({
 
 		const blockProxy = store.findById(props.id)!
 
-		if (blockProxy.type === 'text') {
-			block = new TextBlock({ id: props.id })
-		} else if (blockProxy.type === 'list') {
-			block = new ListBlock({ id: props.id })
+		if (blockProxy.typeEqualTo('text')) {
+			block = new TextBlock({ id: props.id, ...blockProxy.blockOption })
+		} else if (blockProxy.typeEqualTo('list')) {
+			block = new ListBlock({ id: props.id, ...blockProxy.blockOption })
 		} else {
 			throw new Error('block type error')
 		}

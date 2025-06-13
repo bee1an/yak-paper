@@ -1,4 +1,4 @@
-import { defineComponent, Teleport, Transition, inject, withModifiers } from 'vue'
+import { defineComponent, Teleport, Transition, inject, withModifiers, computed } from 'vue'
 import { Menu, Scrollbar, px, type MenuItem } from '@yyui/yy-ui'
 import style from './style/cmd-board.module.scss'
 import { pageInjectKey } from '../page/page'
@@ -8,12 +8,15 @@ export default defineComponent({
 	setup() {
 		const { paper } = inject(pageInjectKey)!
 
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const itemClickHandle = (option: MenuItem) => {
 			paper.cmdBoardManager.exit()
 		}
 
-		return { paper, itemClickHandle }
+		const boradVisible = computed(() => {
+			return paper.cmdBoardManager.active && paper.cmdBoardManager.suggestions.length > 0
+		})
+
+		return { paper, itemClickHandle, boradVisible }
 	},
 	render() {
 		const { cmdBoardManager } = this.paper
@@ -24,14 +27,14 @@ export default defineComponent({
 					enterFromClass={style['fade-enter-from']}
 					enterActiveClass={style['fade-enter-active']}
 				>
-					{cmdBoardManager.active && (
+					{this.boradVisible && (
 						<div
 							class={style.board}
 							style={{
 								left: px(cmdBoardManager.rangeOption?.cursorSite.x),
 								top: px(cmdBoardManager.rangeOption?.cursorSite.y)
 							}}
-							onMousedown={withModifiers(() => {}, ['prevent'])} // 阻止默认, 不抢焦点
+							onMousedown={withModifiers(() => null, ['prevent'])} // 阻止默认, 不抢焦点
 						>
 							<Scrollbar contentStyle={{ padding: '4px' }}>
 								<Menu

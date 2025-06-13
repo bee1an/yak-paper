@@ -20,7 +20,7 @@ export interface TextBlockAgreer extends BlockAgreer {
 	type: 'text'
 }
 
-export interface TextBlockParams {
+export interface TextBlockOption {
 	id?: string
 
 	formate?: RawFormate[]
@@ -64,7 +64,7 @@ export class TextBlock implements TextBlockAgreer {
 
 	private _editable!: BaseEditable
 
-	constructor(params?: TextBlockParams) {
+	constructor(params?: TextBlockOption) {
 		this.id = params?.id ?? createId()
 
 		this.props['data-block-id'] = this.id
@@ -76,7 +76,7 @@ export class TextBlock implements TextBlockAgreer {
 		return reactive(this) as unknown as TextBlock
 	}
 
-	private _createChildren(params?: TextBlockParams) {
+	private _createChildren(params?: TextBlockOption) {
 		this._editable = new BaseEditable(params)
 
 		return [this._editable]
