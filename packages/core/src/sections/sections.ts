@@ -16,16 +16,28 @@ class SectionsProxy extends Colleague {
 		super()
 	}
 
+	/** 失焦所有 */
 	blurAll() {
 		this.store.data.forEach((item) => item.block?.blur?.())
 	}
 
+	/** 根据id查找元素 */
 	findById(id: string): Section<TypeName> | undefined {
 		return this.store.data.find((item) => item.id === id)
 	}
 
+	/** 根据id查找元素索引 */
 	findIndexById(id: string): number {
 		return this.store.data.findIndex((item) => item.id === id)
+	}
+
+	/** 根据当前焦点查找元素 */
+	findByFocused(): Section<TypeName> | undefined {
+		const id = this._mediator.notify('public:selection:findFocusedBlockId')
+
+		if (!id) return
+
+		return this.findById(id)
 	}
 }
 

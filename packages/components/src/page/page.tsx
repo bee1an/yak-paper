@@ -14,11 +14,6 @@ export default defineComponent({
 		const sections = paper.sections
 		const creator = sections.creator
 
-		paper.keydownManager.on('newLine', (blockId) => {
-			const index = sections.findIndexById(blockId)
-			creator.createNewLineByIndex(index + 1)
-		})
-
 		// 尝试在创建一个块到最后
 		const tryCreateNewLineToLast = async () => {
 			const lastBlock = sections.data[sections.data.length - 1]
@@ -45,9 +40,8 @@ export default defineComponent({
 
 		return (
 			<div class={style.page} onClick={tryCreateNewLineToLast}>
-				{/* 编辑宿主 */}
-
 				<CmdBoard />
+				{/* 编辑宿主 */}
 				<article
 					class={style.host}
 					onCompositionstart={() => paper.compositionManager.onStart()}

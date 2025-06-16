@@ -41,6 +41,8 @@ export type PublicNotifyEvent = {
 	): Promise<void>
 	/** 根据id获取行索引 */
 	'public:sections:findIndexById'(id: string): number
+	/** 找到当前聚焦的section */
+	'public:sections:findByFocused'(): Section<TypeName> | undefined
 }
 
 export interface PaperMediator {

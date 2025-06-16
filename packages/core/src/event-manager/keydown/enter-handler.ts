@@ -1,6 +1,6 @@
-import type { EventEmitter } from '@yak-paper/utils'
+// import type { EventEmitter } from '@yak-paper/utils'
 import { BaseHandler } from './base-handler'
-import type { KeydownEvents } from './keydown-manager'
+// import type { KeydownEvents } from './keydown-manager'
 import type { PublicNotifyEvent } from '../../paper/colleague'
 import type { KeydownNotifyEvents } from '../../paper/keydown-notify-handler'
 
@@ -14,10 +14,7 @@ type PvtNotify = <T extends keyof (KeydownNotifyEvents & PublicNotifyEvent)>(
  */
 export class EnterHandler extends BaseHandler {
 	private _notify!: PvtNotify
-	constructor(
-		private _emit: EventEmitter<KeydownEvents>['emit'],
-		notify?: PvtNotify
-	) {
+	constructor(notify?: PvtNotify) {
 		super()
 		notify && (this._notify = notify)
 	}
@@ -41,7 +38,13 @@ export class EnterHandler extends BaseHandler {
 		const range = this._notify('public:selection:getRange')
 
 		if (range?.collapsed) {
-			this._emit('newLine', this._notify('public:selection:findFocusedBlockId')!, event)
+			const { type, id } = this._notify('public:sections:findByFocused')!
+
+			this._notify(
+				'public:sections.creator:createNewLineByIndex',
+				this._notify('public:sections:findIndexById', id) + 1,
+				{ type }
+			)
 		} else {
 			// 删除逻辑
 		}

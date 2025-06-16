@@ -93,12 +93,6 @@ export class Paper implements PaperMediator {
 			event = s as keyof PublicNotifyEvent
 		}
 
-		if (event === 'public:selection:findEditableElement') {
-			return this.selectionManager.findEditableElement()
-		}
-		if (event === 'public:selection:getRange') {
-			return this.selectionManager.getRange()
-		}
 		if (event === 'public:getInputCompositionState') {
 			return this.compositionManager.inputting
 		}
@@ -108,6 +102,12 @@ export class Paper implements PaperMediator {
 		if (event === 'public:setCmdBoardActive') {
 			this.cmdBoardManager.active = true
 			return
+		}
+		if (event === 'public:selection:findEditableElement') {
+			return this.selectionManager.findEditableElement()
+		}
+		if (event === 'public:selection:getRange') {
+			return this.selectionManager.getRange()
 		}
 		if (event === 'public:selection:findFocusedBlock') {
 			return this.selectionManager.findFocusedBlock()
@@ -123,6 +123,9 @@ export class Paper implements PaperMediator {
 		}
 		if (event === 'public:sections:findIndexById') {
 			return this.sections.findIndexById(...(args as [any]))
+		}
+		if (event === 'public:sections:findByFocused') {
+			return this.sections.findByFocused()
 		}
 
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars

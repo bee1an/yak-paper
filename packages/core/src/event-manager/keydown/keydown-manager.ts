@@ -5,7 +5,7 @@ import { DeleteHandler } from './delete-handler'
 import { Colleague, type PaperMediator } from '../../paper/colleague'
 
 export type KeydownEvents = {
-	newLine: [blockId: string, KeyboardEvent]
+	// newLine: [blockId: string, KeyboardEvent]
 }
 
 export class KeydownManager extends Colleague {
@@ -26,9 +26,7 @@ export class KeydownManager extends Colleague {
 
 		this._blobHandler = new BlobHandler()
 
-		const _emit = this.bus.emit.bind(this.bus)
-
-		this._enterHandler = new EnterHandler(_emit)
+		this._enterHandler = new EnterHandler()
 
 		this._deleteHandler = new DeleteHandler()
 
