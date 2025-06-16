@@ -4,7 +4,7 @@ import type { MenuOption } from '@yyui/yy-ui'
 import Text from './icons/Text.vue'
 import List from './icons/List.vue'
 import type { TypeName } from '@yak-paper/material'
-
+import { isText } from 'yak-paper'
 interface SugguestOption extends MenuOption {
 	value: string[]
 }
@@ -55,10 +55,24 @@ export class CmdBoardManager extends Colleague {
 
 		if (!range) return
 
+		let text
+
+		/**
+		 * 如果当前焦点不在文本节点中，则插入一个占位符，用于获取光标位置
+		 *
+		 * 因为当焦点不在文本中时不能通过getBoundingClientRect获取到正确的光标位置
+		 */
+		if (!isText(range.startContainer)) {
+			text = document.createTextNode('\u200b')
+			range.insertNode(text)
+		}
+
 		const { x, y, height } = range.getBoundingClientRect()
 
+		text?.remove()
+
 		this._rangeOption = {
-			container: range.startContainer,
+			container: range.startContainer!,
 			offset: range.startOffset,
 			data: range.startContainer.textContent!,
 			cursorSite: { x, y: y + height + 5 }
@@ -71,9 +85,9 @@ export class CmdBoardManager extends Colleague {
 
 		const text = focusNode.textContent!
 
-		const { offset, container } = this._rangeOption!
+		const { offset } = this._rangeOption!
 
-		if (text.length < offset || container !== focusNode) {
+		if (text.length <= offset) {
 			this.exit()
 			return
 		}
