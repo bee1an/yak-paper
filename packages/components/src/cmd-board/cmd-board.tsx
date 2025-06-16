@@ -2,6 +2,7 @@ import { defineComponent, Teleport, Transition, inject, withModifiers, computed 
 import { Menu, Scrollbar, px, type MenuItem } from '@yyui/yy-ui'
 import style from './style/cmd-board.module.scss'
 import { pageInjectKey } from '../page/page'
+import type { TypeName } from '@yak-paper/material'
 
 export default defineComponent({
 	name: 'CmdBoard',
@@ -9,7 +10,7 @@ export default defineComponent({
 		const { paper } = inject(pageInjectKey)!
 
 		const itemClickHandle = (option: MenuItem) => {
-			paper.cmdBoardManager.itemClickHandle(option.key as any)
+			paper.cmdBoardManager.itemClickHandle(option.key as TypeName)
 		}
 
 		const boradVisible = computed(() => {

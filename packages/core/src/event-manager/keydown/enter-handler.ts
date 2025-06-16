@@ -1,12 +1,13 @@
 import type { EventEmitter } from '@yak-paper/utils'
 import { BaseHandler } from './base-handler'
 import type { KeydownEvents } from './keydown-manager'
-import type { KeydownManagerNotifyEvents, PublicNotifyEvent } from '../../paper/colleague'
+import type { PublicNotifyEvent } from '../../paper/colleague'
+import type { KeydownNotifyEvents } from '../../paper/keydown-notify-handler'
 
-type PvtNotify = <T extends keyof (KeydownManagerNotifyEvents & PublicNotifyEvent)>(
+type PvtNotify = <T extends keyof (KeydownNotifyEvents & PublicNotifyEvent)>(
 	eventName: T,
-	...args: Parameters<KeydownManagerNotifyEvents & PublicNotifyEvent[T]>
-) => ReturnType<KeydownManagerNotifyEvents & PublicNotifyEvent[T]>
+	...args: Parameters<KeydownNotifyEvents & PublicNotifyEvent[T]>
+) => ReturnType<KeydownNotifyEvents & PublicNotifyEvent[T]>
 
 /**
  * @description 回车事件处理者
@@ -37,7 +38,6 @@ export class EnterHandler extends BaseHandler {
 		const inputCompositionState = this._notify('public:getInputCompositionState')
 		if (inputCompositionState) return
 
-		// TODO
 		const range = this._notify('public:selection:getRange')
 
 		if (range?.collapsed) {

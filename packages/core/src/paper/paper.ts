@@ -1,14 +1,19 @@
-import { BlurManager, CompositionManager, InputManager, KeydownManager } from '../event-manager'
+import {
+	BeforeinputManager,
+	BlurManager,
+	CompositionManager,
+	InputManager,
+	KeydownManager
+} from '../event-manager'
 import { SelectionManager } from '../selection-manager'
-import type {
-	InputManagerNotifyEvents,
-	KeydownManagerNotifyEvents,
-	PaperMediator,
-	PublicNotifyEvent
-} from './colleague'
+import type { PaperMediator, PublicNotifyEvent } from './colleague'
 import { CmdBoardManager } from '../cmd-board-manager'
 import { sections, type Sections } from '../sections'
 import { Creator } from '../sections/creator'
+import type { NotifyHandler } from './notify-handler'
+import { InputNotifyHandler } from './input-notify-handler'
+import { KeydownNotifyHandler } from './keydown-notify-handler'
+import { BeforeinputNotifyHandler } from './beforeinput-notify-handler'
 
 export class Paper implements PaperMediator {
 	private static _instance: Paper | null = null
@@ -47,6 +52,10 @@ export class Paper implements PaperMediator {
 	 * @description 段落类
 	 */
 	sections: Sections
+	/**
+	 * @description 输入前事件
+	 */
+	beforeinputManager: BeforeinputManager
 
 	private _notifyHandler: NotifyHandler
 
@@ -70,8 +79,13 @@ export class Paper implements PaperMediator {
 		this.sections.setMediator(this)
 		sections.setCreator(Creator.getInstance(this))
 
-		this._notifyHandler = new InputManagerNotifyHandler(this)
-		this._notifyHandler.setNext(new KeydownManagerNotifyHandler(this))
+		this.beforeinputManager = new BeforeinputManager()
+		this.beforeinputManager.setMediator(this)
+
+		this._notifyHandler = new InputNotifyHandler(this)
+		this._notifyHandler
+			.setNext(new KeydownNotifyHandler(this))
+			.setNext(new BeforeinputNotifyHandler(this))
 	}
 	notify(s: unknown, event: keyof PublicNotifyEvent, ...args: unknown[]) {
 		if (typeof s === 'string') {
@@ -115,64 +129,5 @@ export class Paper implements PaperMediator {
 		const _: never = event
 
 		return this._notifyHandler.handle(s, event, ...args)
-	}
-}
-
-abstract class NotifyHandler {
-	protected _next: NotifyHandler | null = null
-
-	constructor(protected _paper: Paper) {}
-
-	setNext(handler: NotifyHandler) {
-		this._next = handler
-		return handler
-	}
-
-	handle(s: unknown, event: unknown, ...args: unknown[]): unknown {
-		if (this._next) {
-			return this._next.handle(s, event, ...args)
-		}
-
-		throw new Error('No handler')
-	}
-}
-
-class InputManagerNotifyHandler extends NotifyHandler {
-	handle<T extends InputManager, K extends keyof InputManagerNotifyEvents>(
-		s: T,
-		event: K,
-		...args: Parameters<InputManagerNotifyEvents[K]>
-	): ReturnType<InputManagerNotifyEvents[K]> {
-		if (s !== this._paper.inputManager) {
-			return super.handle(s, event, ...args) as any
-		}
-
-		if (event === 'cmdUpdate') {
-			this._paper.cmdBoardManager.handle()
-		} else if (event === 'cmdRecordRange') {
-			this._paper.cmdBoardManager.recordRangeOption()
-		} else {
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			const _: never = event
-		}
-
-		return undefined as any
-	}
-}
-
-class KeydownManagerNotifyHandler extends NotifyHandler {
-	handle<T extends KeydownManager, K extends keyof KeydownManagerNotifyEvents>(
-		s: T,
-		event: K,
-		...args: Parameters<KeydownManagerNotifyEvents[K]>
-	): ReturnType<KeydownManagerNotifyEvents[K]> {
-		if (s !== this._paper.keydownManager) {
-			return super.handle(s, event, ...args) as any
-		}
-
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const _: never = event
-
-		throw new Error('No handler')
 	}
 }

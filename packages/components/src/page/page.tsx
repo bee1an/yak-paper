@@ -1,4 +1,4 @@
-import { computed, defineComponent, nextTick, provide, type InjectionKey } from 'vue'
+import { defineComponent, nextTick, provide, type InjectionKey } from 'vue'
 import { PBlock, CmdBoard } from '../index'
 import { Paper } from '@yak-paper/core'
 import style from './style/page.module.scss'
@@ -38,7 +38,7 @@ export default defineComponent({
 
 		provide(pageInjectKey, { paper })
 
-		return { tryCreateNewLineToLast, paper, a: computed(() => paper.cmdBoardManager.suggestions) }
+		return { tryCreateNewLineToLast, paper }
 	},
 	render() {
 		const { tryCreateNewLineToLast, paper } = this
@@ -55,7 +55,8 @@ export default defineComponent({
 					onClick={(event) => event.stopPropagation()}
 					contenteditable
 					onKeydown={paper.keydownManager.handle}
-					onInput={paper.inputManager.handle}
+					onBeforeinput={(e: Event) => paper.beforeinputManager.handle(e as InputEvent)}
+					onInput={(e: Event) => paper.inputManager.handle(e as InputEvent)}
 					onBlur={paper.blurManager.handle}
 				>
 					<div class={style.blocks}>

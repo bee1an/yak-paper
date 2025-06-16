@@ -78,7 +78,7 @@ export class CmdBoardManager extends Colleague {
 			return
 		}
 
-		const command = text.slice(offset, text.length)
+		const command = text.slice(offset, text.length).replace('/', '')
 
 		if (command === '') {
 			this.suggestions = [...CmdBoardManager.suggestList]
@@ -103,8 +103,6 @@ export class CmdBoardManager extends Colleague {
 	}
 
 	itemClickHandle(type: TypeName) {
-		this.exit()
-
 		const id = this._mediator.notify('public:selection:findFocusedBlockId')!
 
 		const section = this._mediator.notify('public:sections:findById', id)!
@@ -114,11 +112,17 @@ export class CmdBoardManager extends Colleague {
 			return
 		}
 
+		// 在下一行创建一个元素
 		this._mediator.notify(
 			'public:sections.creator:createNewLineByIndex',
 			this._mediator.notify('public:sections:findIndexById', id) + 1,
 			{ type }
 		)
+
+		const { container, data } = this._rangeOption!
+		container.textContent = data
+
+		this.exit()
 	}
 
 	exit() {

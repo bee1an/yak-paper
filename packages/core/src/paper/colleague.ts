@@ -1,15 +1,9 @@
 import type { TypeName } from '@yak-paper/material'
-import type { InputManager, KeydownManager } from '../event-manager'
+import type { BeforeinputManager, InputManager, KeydownManager } from '../event-manager'
 import type { Section, SectionOption } from '../sections'
-
-export type InputManagerNotifyEvents = {
-	/** 跟新命令面板 */
-	cmdUpdate(event: InputEvent): any
-	/** 记录当前range信息 */
-	cmdRecordRange(): any
-}
-
-export type KeydownManagerNotifyEvents = {}
+import type { InputNotifyEvents } from './input-notify-handler'
+import type { KeydownNotifyEvents } from './keydown-notify-handler'
+import type { BeforeinputNotifyEvents } from './beforeinput-notify-handler'
 
 /**
  * @description 暴露给外部的公共notify事件
@@ -50,17 +44,23 @@ export type PublicNotifyEvent = {
 }
 
 export interface PaperMediator {
-	notify<T extends InputManager, K extends keyof InputManagerNotifyEvents>(
+	notify<T extends InputManager, K extends keyof InputNotifyEvents>(
 		s: T,
 		event: K,
-		...args: Parameters<InputManagerNotifyEvents[K]>
-	): ReturnType<InputManagerNotifyEvents[K]>
+		...args: Parameters<InputNotifyEvents[K]>
+	): ReturnType<InputNotifyEvents[K]>
 
-	notify<T extends KeydownManager, K extends keyof KeydownManagerNotifyEvents>(
+	notify<T extends KeydownManager, K extends keyof KeydownNotifyEvents>(
 		s: T,
 		event: K,
-		...args: Parameters<KeydownManagerNotifyEvents[K]>
-	): ReturnType<KeydownManagerNotifyEvents[K]>
+		...args: Parameters<KeydownNotifyEvents[K]>
+	): ReturnType<KeydownNotifyEvents[K]>
+
+	notify<T extends BeforeinputManager, K extends keyof BeforeinputNotifyEvents>(
+		s: T,
+		event: K,
+		...args: Parameters<BeforeinputNotifyEvents[K]>
+	): ReturnType<BeforeinputNotifyEvents[K]>
 
 	notify<T, K extends keyof PublicNotifyEvent>(
 		s: T,
