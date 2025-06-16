@@ -4,7 +4,6 @@ import {
 	SelectionManager,
 	type BlockAgreer,
 	transformer,
-	Paper,
 	type BlockEvents
 } from '@yak-paper/core'
 import themeDefined from './style/theme'
@@ -45,7 +44,7 @@ export class TextBlock implements TextBlockAgreer {
 		ref: 'textRef',
 		onClick: () => {
 			this.bus.emit('click')
-			this.focus(Paper.instance.selectionManager)
+			this._editable.mergeProps({ 'data-placeholder': '可以输入了' })
 		}
 	}
 

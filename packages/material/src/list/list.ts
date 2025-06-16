@@ -1,5 +1,4 @@
 import {
-	Paper,
 	SelectionManager,
 	transformer,
 	type BlockAgreer,
@@ -46,7 +45,7 @@ export class ListBlock implements ListBlockAgreer {
 		ref: 'listRef',
 		onClick: () => {
 			this.bus.emit('click')
-			this.focus(Paper.instance.selectionManager)
+			this._editable.mergeProps({ 'data-placeholder': '可以输入了' })
 		}
 	}
 
