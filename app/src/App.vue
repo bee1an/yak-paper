@@ -1,7 +1,8 @@
 <script setup lang="ts"></script>
 
 <template>
-	<div w-7xl m-auto><PPaperboard /></div>
+	<PCover />
+	<div w-7xl m-auto m-t><PPaperboard /></div>
 </template>
 
 <style>
