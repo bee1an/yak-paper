@@ -1,10 +1,4 @@
-import {
-	json2vnode,
-	SelectionManager,
-	type BlockAgreer,
-	type BlockEvents,
-	type RawFormate
-} from '@yak-paper/core'
+import { json2vnode, type BlockAgreer, type BlockEvents, type RawFormate } from '@yak-paper/core'
 import { createId, EventEmitter } from '@yak-paper/utils'
 import { type VNode, type MaybeRef, toValue, useTemplateRef, reactive } from 'vue'
 import { useThemeStyle } from '@yak-paper/composables'
@@ -24,7 +18,7 @@ export interface ListBlockAgreer extends BlockAgreer {
 export interface ListBlockOption {
 	id?: string
 
-	formate: RawFormate[]
+	formate?: RawFormate[]
 }
 
 export type ListBlockEvents = {} & BlockEvents
@@ -45,7 +39,7 @@ export class ListBlock implements ListBlockAgreer {
 		ref: 'listRef',
 		onClick: () => {
 			this.bus.emit('click')
-			this._editable.mergeProps({ 'data-placeholder': '可以输入了' })
+			this._editable.mergeProps({ 'data-placeholder': '项目' })
 		}
 	}
 
@@ -97,8 +91,8 @@ export class ListBlock implements ListBlockAgreer {
 		return json2vnode(this)
 	}
 
-	focus(selectionManager: SelectionManager) {
-		this._editable.focus(selectionManager)
+	focus() {
+		this._editable.focus()
 		this._editable.mergeProps({ 'data-placeholder': '项目' })
 	}
 

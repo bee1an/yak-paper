@@ -1,11 +1,5 @@
 import { useThemeStyle } from '@yak-paper/composables'
-import {
-	json2vnode,
-	SelectionManager,
-	type BlockAgreer,
-	type BlockEvents,
-	type RawFormate
-} from '@yak-paper/core'
+import { json2vnode, type BlockAgreer, type BlockEvents, type RawFormate } from '@yak-paper/core'
 import themeDefined from './style/theme'
 import themeManager from '../../style'
 import { reactive, toValue, useTemplateRef, type MaybeRef } from 'vue'
@@ -86,8 +80,8 @@ export class TextBlock implements TextBlockAgreer {
 		return json2vnode(this)
 	}
 
-	focus(selectionManager: SelectionManager) {
-		this._editable.focus(selectionManager)
+	focus() {
+		this._editable.focus()
 		this._editable.mergeProps({ 'data-placeholder': '可以输入了' })
 	}
 

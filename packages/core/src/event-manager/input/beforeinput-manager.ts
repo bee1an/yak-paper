@@ -1,3 +1,4 @@
+import { TRIGGER_COMMAND_MODE_CHAR } from '../../cmd-board-manager'
 import { Colleague } from '../../paper/colleague'
 
 /**
@@ -13,8 +14,6 @@ enum InputType {
 	DELETE_CONTENT_BACKWARD = 'deleteContentBackward',
 	DELETE_CONTENT_FORWARD = 'deleteContentForward'
 }
-
-const TRIGGER_COMMAND_MODE_CHAR = '/'
 
 export class BeforeinputManager extends Colleague {
 	handle(event: InputEvent) {

@@ -1,4 +1,4 @@
-import { formater, SelectionManager, type FormatVal, type RawFormate } from '@yak-paper/core'
+import { formater, Paper, type FormatVal, type RawFormate } from '@yak-paper/core'
 import { mergeProps, reactive, toValue, useTemplateRef, type MaybeRef } from 'vue'
 import style from './baseEditable.module.scss'
 import type { HProps, MaybeArray } from '@yak-paper/utils'
@@ -53,8 +53,10 @@ export class BaseEditable {
 		this.props = mergeProps(this.props, props || {}) as any
 	}
 
-	focus(selectionManager: SelectionManager) {
+	focus() {
 		if (!this.templateRef) return
+
+		const selectionManager = Paper.instance.selectionManager
 
 		const selection = selectionManager.getSelection()
 

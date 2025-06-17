@@ -24,7 +24,7 @@ export default defineComponent({
 				await nextTick()
 				const block = lastBlock.block
 
-				block.focus?.(paper.selectionManager)
+				block.focus?.()
 				return
 			}
 
@@ -55,7 +55,7 @@ export default defineComponent({
 				>
 					<div class={style.blocks}>
 						{paper.sections.data.map((item) => (
-							<PBlock key={item.id} id={item.id} />
+							<PBlock key={item.id + item.type} id={item.id} />
 						))}
 					</div>
 				</article>

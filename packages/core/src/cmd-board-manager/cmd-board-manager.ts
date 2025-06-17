@@ -1,4 +1,4 @@
-import { h, ref } from 'vue'
+import { h, nextTick, ref } from 'vue'
 import { Colleague } from '../paper/colleague'
 import type { MenuOption } from '@yyui/yy-ui'
 import Text from './icons/Text.vue'
@@ -8,6 +8,8 @@ import { isText } from 'yak-paper'
 interface SugguestOption extends MenuOption {
 	value: string[]
 }
+
+export const TRIGGER_COMMAND_MODE_CHAR = '/'
 
 export class CmdBoardManager extends Colleague {
 	static readonly suggestList: SugguestOption[] = [
@@ -116,13 +118,25 @@ export class CmdBoardManager extends Colleague {
 		}
 	}
 
-	itemClickHandle(type: TypeName) {
+	async itemClickHandle(type: TypeName) {
 		const id = this._mediator.notify('public:selection:findFocusedBlockId')!
 
 		const section = this._mediator.notify('public:sections:findById', id)!
 
-		if (section.block!.isEmpty) {
+		const blockRaw = section.block!.toRaw()
+
+		const { container, data } = this._rangeOption!
+		container.textContent = data
+
+		if (
+			section.block!.isEmpty ||
+			(blockRaw.formate!.length === 1 && blockRaw.formate![0].content === TRIGGER_COMMAND_MODE_CHAR)
+		) {
 			// 转换逻辑
+			section.transformTo(type)
+			this.exit()
+			await nextTick()
+			section.block!.focus?.()
 			return
 		}
 
@@ -132,10 +146,6 @@ export class CmdBoardManager extends Colleague {
 			this._mediator.notify('public:sections:findIndexById', id) + 1,
 			{ type }
 		)
-
-		const { container, data } = this._rangeOption!
-		container.textContent = data
-
 		this.exit()
 	}
 

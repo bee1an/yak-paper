@@ -39,7 +39,7 @@ export class Creator implements AbstractCreator {
 
 		const block = blockAdapter.block!
 
-		block.focus?.(this._paper.selectionManager)
+		block.focus?.()
 
 		block.bus.on('click', () => this._section.blurAll())
 	}
