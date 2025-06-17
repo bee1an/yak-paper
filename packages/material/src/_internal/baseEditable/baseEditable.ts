@@ -13,7 +13,7 @@ export class BaseEditable {
 	props = {
 		class: style.editable,
 		contenteditable: true,
-		'data-placeholder': '',
+		'data-placeholder': '\u200b',
 		ref: 'editableRef'
 	}
 

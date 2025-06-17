@@ -1,4 +1,4 @@
-import { reactive } from 'vue'
+import { reactive, nextTick } from 'vue'
 import { createCRUD, type CRUD } from '@yak-paper/utils'
 import { type TypeName, type TypeToBlockMap, type TypeToBlockOption } from '@yak-paper/material'
 import { Colleague } from '../paper/colleague'
@@ -84,6 +84,8 @@ export class Section<T extends TypeName = TypeName> implements AbstractSection<T
 
 	type: T
 
+	updated = false
+
 	constructor(private _sectionOption: SectionOption<T>) {
 		this.id = _sectionOption.id
 		this.type = _sectionOption.type
@@ -92,10 +94,17 @@ export class Section<T extends TypeName = TypeName> implements AbstractSection<T
 	transformTo(toType: TypeName) {
 		this.type = toType as any
 		this._sectionOption = Object.assign(this._block!.toRaw(), { id: this.id }) as any
+		this.updated = false
+	}
+
+	async tryFocus() {
+		if (!this._block || !this.updated) await nextTick()
+		this._block!.focus?.()
 	}
 
 	install(block: TypeToBlockMap[TypeName]) {
 		this._block = block as TypeToBlockMap[T]
+		this.updated = true
 	}
 
 	uninstall() {

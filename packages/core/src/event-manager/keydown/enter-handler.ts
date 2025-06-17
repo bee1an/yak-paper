@@ -38,7 +38,15 @@ export class EnterHandler extends BaseHandler {
 		const range = this._notify('public:selection:getRange')
 
 		if (range?.collapsed) {
-			const { type, id } = this._notify('public:sections:findByFocused')!
+			const section = this._notify('public:sections:findByFocused')!
+			const { type, id, block } = section
+
+			if (type !== 'text' && block!.isEmpty) {
+				// 将当前元素转换为文本元素
+				section.transformTo('text')
+				section.tryFocus()
+				return
+			}
 
 			this._notify(
 				'public:sections.creator:createNewLineByIndex',

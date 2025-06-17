@@ -1,4 +1,4 @@
-import { defineComponent, nextTick, provide, type InjectionKey } from 'vue'
+import { defineComponent, provide, type InjectionKey } from 'vue'
 import { PBlock, CmdBoard } from '../index'
 import { Paper } from '@yak-paper/core'
 import style from './style/page.module.scss'
@@ -21,15 +21,14 @@ export default defineComponent({
 			if (lastBlock?.block?.isEmpty) {
 				// 如果最后一行是空的块则聚焦
 				sections.blurAll()
-				await nextTick()
-				const block = lastBlock.block
-
-				block.focus?.()
+				lastBlock.tryFocus()
 				return
 			}
 
 			creator.createNewLineByIndex(sections.data.length)
 		}
+
+		paper.sections.creator.createNewLineByIndex(0)
 
 		provide(pageInjectKey, { paper })
 

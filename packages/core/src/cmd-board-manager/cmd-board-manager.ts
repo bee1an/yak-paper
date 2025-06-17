@@ -1,4 +1,4 @@
-import { h, nextTick, ref } from 'vue'
+import { h, ref } from 'vue'
 import { Colleague } from '../paper/colleague'
 import type { MenuOption } from '@yyui/yy-ui'
 import Text from './icons/Text.vue'
@@ -135,8 +135,7 @@ export class CmdBoardManager extends Colleague {
 			// 转换逻辑
 			section.transformTo(type)
 			this.exit()
-			await nextTick()
-			section.block!.focus?.()
+			section.tryFocus()
 			return
 		}
 

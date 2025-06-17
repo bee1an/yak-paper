@@ -3,7 +3,7 @@ import { createId } from '@yak-paper/utils'
 import { nextTick } from 'vue'
 
 export interface AbstractCreator {
-	createNewLineByIndex(index: number, option?: Partial<SectionOption>): Promise<void>
+	createNewLineByIndex(index: number, option?: Partial<SectionOption>): void
 }
 
 export class Creator implements AbstractCreator {
@@ -17,13 +17,13 @@ export class Creator implements AbstractCreator {
 
 	constructor(
 		private _paper: Paper,
-		private _section: Sections
+		private _sections: Sections
 	) {}
 
 	private _addBlockToStoreByIndex(index: number, option: SectionOption) {
 		const block = new Section(option)
 
-		this._section.addByIndex(block, index)
+		this._sections.addByIndex(block, index)
 		return block
 	}
 
@@ -33,14 +33,14 @@ export class Creator implements AbstractCreator {
 			Object.assign({ id: createId(), type: 'text' }, option)
 		)
 
-		this._section.blurAll()
+		this._sections.blurAll()
 
 		await nextTick()
 
 		const block = blockAdapter.block!
 
-		block.focus?.()
+		blockAdapter.tryFocus()
 
-		block.bus.on('click', () => this._section.blurAll())
+		block.bus.on('click', () => this._sections.blurAll())
 	}
 }
