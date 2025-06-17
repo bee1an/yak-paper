@@ -1,6 +1,6 @@
 import {
+	json2vnode,
 	SelectionManager,
-	transformer,
 	type BlockAgreer,
 	type BlockEvents,
 	type RawFormate
@@ -94,7 +94,7 @@ export class ListBlock implements ListBlockAgreer {
 	}
 
 	createVNode(): VNode {
-		return transformer.json2Vnode(this)
+		return json2vnode(this)
 	}
 
 	focus(selectionManager: SelectionManager) {
@@ -104,5 +104,12 @@ export class ListBlock implements ListBlockAgreer {
 
 	blur() {
 		this._editable.blur()
+	}
+
+	toRaw(): ListBlockOption & { type: 'list' } {
+		return {
+			type: this.type,
+			formate: this._editable.toRaw().formate
+		}
 	}
 }

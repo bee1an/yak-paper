@@ -1,10 +1,10 @@
 import { useThemeStyle } from '@yak-paper/composables'
 import {
-	type RawFormate,
+	json2vnode,
 	SelectionManager,
 	type BlockAgreer,
-	transformer,
-	type BlockEvents
+	type BlockEvents,
+	type RawFormate
 } from '@yak-paper/core'
 import themeDefined from './style/theme'
 import themeManager from '../../style'
@@ -83,7 +83,7 @@ export class TextBlock implements TextBlockAgreer {
 	}
 
 	createVNode() {
-		return transformer.json2Vnode(this)
+		return json2vnode(this)
 	}
 
 	focus(selectionManager: SelectionManager) {
@@ -93,6 +93,13 @@ export class TextBlock implements TextBlockAgreer {
 
 	blur() {
 		this._editable.blur()
+	}
+
+	toRaw(): TextBlockOption & { type: 'text' } {
+		return {
+			type: this.type,
+			formate: this._editable.toRaw().formate
+		}
 	}
 }
 

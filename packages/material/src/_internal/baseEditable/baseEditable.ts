@@ -77,4 +77,8 @@ export class BaseEditable {
 	blur() {
 		this.mergeProps({ 'data-placeholder': '\u200B' })
 	}
+
+	toRaw() {
+		return formater.html2Raw(this.templateRef!)
+	}
 }
