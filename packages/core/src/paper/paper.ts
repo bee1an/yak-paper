@@ -127,6 +127,15 @@ export class Paper implements PaperMediator {
 		if (event === 'public:sections:findByFocused') {
 			return this.sections.findByFocused()
 		}
+		if (event === 'public:sections:deleteByIndex') {
+			return this.sections.deleteByIndex(...(args as [number]))
+		}
+		if (event === 'public:sections:getLength') {
+			return this.sections.getLength()
+		}
+		if (event === 'public:sections:getByIndex') {
+			return this.sections.getByIndex(...(args as [number]))
+		}
 
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const _: never = event

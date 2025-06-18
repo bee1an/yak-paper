@@ -43,6 +43,12 @@ export type PublicNotifyEvent = {
 	'public:sections:findIndexById'(id: string): number
 	/** 找到当前聚焦的section */
 	'public:sections:findByFocused'(): Section<TypeName> | undefined
+	/** 根据id删除section */
+	'public:sections:deleteByIndex'(index: number): void
+	/** 获取sections长度 */
+	'public:sections:getLength'(): number
+	/** 根据id获取section */
+	'public:sections:getByIndex'(index: number): Section<TypeName> | undefined
 }
 
 export interface PaperMediator {

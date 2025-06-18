@@ -1,3 +1,19 @@
+import { type PublicNotifyEvent } from '../../paper/colleague'
+import type { KeydownNotifyEvents } from '../../paper/keydown-notify-handler'
+
+type NotifyHandleType = <T extends keyof (KeydownNotifyEvents & PublicNotifyEvent)>(
+	eventName: T,
+	...args: Parameters<KeydownNotifyEvents & PublicNotifyEvent[T]>
+) => ReturnType<KeydownNotifyEvents & PublicNotifyEvent[T]>
+
+abstract class BaseNotify {
+	protected _notify!: NotifyHandleType
+
+	setNotify(notify: NotifyHandleType) {
+		this._notify = notify
+	}
+}
+
 /**
  * @description 责任链处理者
  */
@@ -7,13 +23,13 @@ interface Hander {
 	 */
 	setNext(handler: Hander): Hander
 
-	/**
+	/**BaseNotify
 	 * @description 处理程序
 	 */
 	handle: (event: KeyboardEvent) => void
 }
 
-export abstract class BaseHandler implements Hander {
+export abstract class BaseHandler extends BaseNotify implements Hander {
 	private _nextHandler: Hander | null = null
 
 	setNext(handler: Hander): Hander {

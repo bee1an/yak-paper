@@ -1,8 +1,11 @@
 export interface CRUD<T = unknown> {
 	readonly data: T[]
+	getLength(): number
 	add(data: T): number
 	addByIndex(data: T, index: number): number
 	delete(data: T): boolean
+	deleteByIndex(index: number): void
+	getByIndex(index: number): T | undefined
 }
 
 export function createCRUD<T>() {
@@ -11,6 +14,14 @@ export function createCRUD<T>() {
 
 		get data() {
 			return this._data
+		}
+
+		getLength() {
+			return this.data.length
+		}
+
+		getByIndex(index: number) {
+			return this.data[index]
 		}
 
 		add(data: T) {
@@ -28,6 +39,10 @@ export function createCRUD<T>() {
 			if (index === -1) return false
 			this.data.splice(index, 1)
 			return true
+		}
+
+		deleteByIndex(index: number) {
+			this.data.splice(index, 1)
 		}
 	}
 
