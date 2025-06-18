@@ -2,6 +2,7 @@ import { defineComponent, provide, type InjectionKey } from 'vue'
 import { PBlock, CmdBoard } from '../index'
 import { Paper } from '@yak-paper/core'
 import style from './style/page.module.scss'
+import mock from './mock.json' with { type: 'json' }
 
 export const pageInjectKey = Symbol('pageInjectKey') as InjectionKey<{
 	paper: Paper
@@ -12,7 +13,7 @@ export default defineComponent({
 	setup() {
 		const paper = Paper.instance
 		const sections = paper.sections
-		const creator = sections.creator
+		const creator = paper.creator
 
 		// 尝试在创建一个块到最后
 		const tryCreateNewLineToLast = async () => {
@@ -28,7 +29,13 @@ export default defineComponent({
 			creator.createNewLineByIndex(sections.data.length)
 		}
 
-		paper.sections.creator.createNewLineByIndex(0)
+		mock.forEach((item, index) => {
+			creator.createNewLineByIndex(index, {
+				type: 'text',
+				formate: item as any
+			})
+		})
+		// paper.sections.creator.createNewLineByIndex(0)
 
 		provide(pageInjectKey, { paper })
 

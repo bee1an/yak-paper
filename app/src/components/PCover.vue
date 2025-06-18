@@ -47,11 +47,12 @@ if (!store.value.url || store.value.timestamp + (1000 * 60 * 60) / 50 < +new Dat
 		items-center
 		pos-relative
 		bg-gray-1
+		:style="{ backgroundImage: `url(${store.url})` }"
 	>
 		<div pos-absolute pos-bottom-10px pos-right-9xl>
 			<Button type="primary" @click="getNew">get new</Button>
 		</div>
 
-		<img :src="store.url" w-full @dragstart.prevent />
+		<!-- <img :src="store.url" w-full @dragstart.prevent /> -->
 	</div>
 </template>

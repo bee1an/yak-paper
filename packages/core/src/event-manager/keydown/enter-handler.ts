@@ -30,7 +30,7 @@ export class EnterHandler extends BaseHandler {
 			}
 
 			this._notify(
-				'public:sections.creator:createNewLineByIndex',
+				'public:creator:createNewLineByIndex',
 				this._notify('public:sections:findIndexById', id) + 1,
 				{ type }
 			)

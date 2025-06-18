@@ -8,12 +8,13 @@ import {
 import { SelectionManager } from '../selection-manager'
 import type { PaperMediator, PublicNotifyEvent } from './colleague'
 import { CmdBoardManager } from '../cmd-board-manager'
-import { sections, type Sections } from '../sections'
-import { Creator } from '../sections/creator'
+import { Section, sections, type Sections } from '../sections'
 import type { NotifyHandler } from './notify-handler'
 import { InputNotifyHandler } from './input-notify-handler'
 import { KeydownNotifyHandler } from './keydown-notify-handler'
 import { BeforeinputNotifyHandler } from './beforeinput-notify-handler'
+import { Creator } from '../creator'
+import type { TypeName } from '@yak-paper/material'
 
 export class Paper implements PaperMediator {
 	private static _instance: Paper | null = null
@@ -56,6 +57,10 @@ export class Paper implements PaperMediator {
 	 * @description 输入前事件
 	 */
 	beforeinputManager: BeforeinputManager
+	/**
+	 * @description 创建者
+	 */
+	creator: Creator
 
 	private _notifyHandler: NotifyHandler
 
@@ -77,10 +82,12 @@ export class Paper implements PaperMediator {
 
 		this.sections = sections
 		this.sections.setMediator(this)
-		sections.setCreator(Creator.getInstance(this))
 
 		this.beforeinputManager = new BeforeinputManager()
 		this.beforeinputManager.setMediator(this)
+
+		this.creator = new Creator()
+		this.creator.setMediator(this)
 
 		this._notifyHandler = new InputNotifyHandler(this)
 		this._notifyHandler
@@ -103,6 +110,7 @@ export class Paper implements PaperMediator {
 			this.cmdBoardManager.active = true
 			return
 		}
+
 		if (event === 'public:selection:findEditableElement') {
 			return this.selectionManager.findEditableElement()
 		}
@@ -115,11 +123,9 @@ export class Paper implements PaperMediator {
 		if (event === 'public:selection:findFocusedBlockId') {
 			return this.selectionManager.findFocusedBlockId()
 		}
+
 		if (event === 'public:sections:findById') {
 			return this.sections.findById(args[0] as string)
-		}
-		if (event === 'public:sections.creator:createNewLineByIndex') {
-			return this.sections.creator.createNewLineByIndex(...(args as [number, any]))
 		}
 		if (event === 'public:sections:findIndexById') {
 			return this.sections.findIndexById(...(args as [any]))
@@ -135,6 +141,16 @@ export class Paper implements PaperMediator {
 		}
 		if (event === 'public:sections:getByIndex') {
 			return this.sections.getByIndex(...(args as [number]))
+		}
+		if (event === 'public:sections:addByIndex') {
+			return this.sections.addByIndex(...(args as [Section<TypeName>, number]))
+		}
+		if (event === 'public:sections:blurAll') {
+			return this.sections.blurAll()
+		}
+
+		if (event === 'public:creator:createNewLineByIndex') {
+			return this.creator.createNewLineByIndex(...(args as [number, any]))
 		}
 
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars

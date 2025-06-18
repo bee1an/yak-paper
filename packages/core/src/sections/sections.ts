@@ -2,16 +2,10 @@ import { reactive, nextTick } from 'vue'
 import { createCRUD, type CRUD } from '@yak-paper/utils'
 import { type TypeName, type TypeToBlockMap, type TypeToBlockOption } from '@yak-paper/material'
 import { Colleague } from '../paper/colleague'
-import { type AbstractCreator } from './creator'
 
 const _sections = reactive(createCRUD<Section>()) as unknown as CRUD<Section>
 
 class SectionsProxy extends Colleague {
-	creator!: AbstractCreator
-	setCreator(creator: AbstractCreator) {
-		this.creator = creator
-	}
-
 	constructor(public store: CRUD<Section>) {
 		super()
 	}

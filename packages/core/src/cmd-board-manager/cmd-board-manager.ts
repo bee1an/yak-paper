@@ -141,7 +141,7 @@ export class CmdBoardManager extends Colleague {
 
 		// 在下一行创建一个元素
 		this._mediator.notify(
-			'public:sections.creator:createNewLineByIndex',
+			'public:creator:createNewLineByIndex',
 			this._mediator.notify('public:sections:findIndexById', id) + 1,
 			{ type }
 		)

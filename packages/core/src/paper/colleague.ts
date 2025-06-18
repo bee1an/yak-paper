@@ -18,27 +18,24 @@ import type { BeforeinputNotifyEvents } from './beforeinput-notify-handler'
  * 当这个事件是模块内事件时, 则$3需要跟模块内事件名一致且$2不能忽略
  */
 export type PublicNotifyEvent = {
-	/** 获取当前焦点所在元素 */
-	'public:selection:findEditableElement'(): HTMLElement | null
-	/** 获取range对象 */
-	'public:selection:getRange'(): Range | null
 	/** 获取输入法状态 */
 	'public:getInputCompositionState'(): boolean
 	/** 获取命令面板状态 */
 	'public:cmdBoardIsActive'(): boolean
 	/** 设置命令面板状态 */
 	'public:setCmdBoardActive'(): void
+
 	/** 获取当前焦点所在块元素 */
 	'public:selection:findFocusedBlock'(): HTMLElement | null
 	/** 获取当前焦点所在块元素id */
 	'public:selection:findFocusedBlockId'(): string | null | undefined
+	/** 获取当前焦点所在元素 */
+	'public:selection:findEditableElement'(): HTMLElement | null
+	/** 获取range对象 */
+	'public:selection:getRange'(): Range | null
+
 	/** 根据id获取段落 */
 	'public:sections:findById'(id: string): Section<TypeName> | undefined
-	/** 根据id创建新的一行 */
-	'public:sections.creator:createNewLineByIndex'(
-		index: number,
-		option?: Partial<SectionOption>
-	): Promise<void>
 	/** 根据id获取行索引 */
 	'public:sections:findIndexById'(id: string): number
 	/** 找到当前聚焦的section */
@@ -49,6 +46,19 @@ export type PublicNotifyEvent = {
 	'public:sections:getLength'(): number
 	/** 根据id获取section */
 	'public:sections:getByIndex'(index: number): Section<TypeName> | undefined
+	/** 根据id添加 */
+	'public:sections:addByIndex'(
+		section: Section<TypeName>,
+		index: number
+	): Section<TypeName> | undefined
+	/** 失焦所有 */
+	'public:sections:blurAll'(): void
+
+	/** 根据id创建新的一行 */
+	'public:creator:createNewLineByIndex'(
+		index: number,
+		option?: Partial<SectionOption>
+	): Promise<void>
 }
 
 export interface PaperMediator {
