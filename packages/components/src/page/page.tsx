@@ -1,5 +1,5 @@
 import { defineComponent, provide, type InjectionKey } from 'vue'
-import { PBlock, CmdBoard } from '../index'
+import { Block, CmdBoard, Toolbar } from '../index'
 import { Paper } from '@yak-paper/core'
 import style from './style/page.module.scss'
 import mock from './mock.json' with { type: 'json' }
@@ -47,6 +47,7 @@ export default defineComponent({
 		return (
 			<div class={style.page} onClick={tryCreateNewLineToLast}>
 				<CmdBoard />
+				<Toolbar />
 				{/* 编辑宿主 */}
 				<article
 					class={style.host}
@@ -61,7 +62,7 @@ export default defineComponent({
 				>
 					<div class={style.blocks}>
 						{paper.sections.data.map((item) => (
-							<PBlock key={item.id + item.type} id={item.id} />
+							<Block key={item.id + item.type} id={item.id} />
 						))}
 					</div>
 				</article>

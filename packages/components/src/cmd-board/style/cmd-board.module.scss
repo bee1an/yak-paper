@@ -1,7 +1,4 @@
 .board {
-	position: fixed;
-	top: 10px;
-	left: 10px;
 	width: 324px;
 	min-width: 180px;
 	max-width: calc(-24px + 100vw);
@@ -15,14 +12,4 @@
 		rgba(0, 0, 0, 0.06) 0px 2px 4px -1px,
 		rgba(84, 72, 49, 0.08) 0px 0px 0px 1px;
 	overflow: hidden;
-}
-
-.fade-enter-active,
-.fade-leave-active {
-	transition: opacity 0.2s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-	opacity: 0;
 }

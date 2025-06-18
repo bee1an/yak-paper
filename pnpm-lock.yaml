@@ -30,8 +30,8 @@ importers:
         specifier: workspace:*
         version: link:packages/utils
       '@yyui/yy-ui':
-        specifier: 1.0.0-beta.6
-        version: 1.0.0-beta.6(vue@3.5.13(typescript@5.8.2))
+        specifier: 1.0.0-beta.7
+        version: 1.0.0-beta.7(vue@3.5.13(typescript@5.8.2))
       uid:
         specifier: 2.0.2
         version: 2.0.2
@@ -1593,8 +1593,8 @@ packages:
     peerDependencies:
       vue: ^3.5.0
 
-  '@yyui/yy-ui@1.0.0-beta.6':
-    resolution: {integrity: sha512-H+T4LTAKrHSqBUymkGjQXnG34CTbA90xyv9r26GEpflmsDgTRpONEuvrtdV2GX2bF8l8yMpjj8kfBtnei4pejg==}
+  '@yyui/yy-ui@1.0.0-beta.7':
+    resolution: {integrity: sha512-jZYHPJQh6U47fkIdki8+W4wK/tW2L3ihD0uysV3/1EaQKQVW1+fiXosim95YueiQs4QbbBjvOrtSWyVLQ9wYGg==}
     peerDependencies:
       vue: '>=3.2.25'
 
@@ -5526,7 +5526,7 @@ snapshots:
     dependencies:
       vue: 3.5.13(typescript@5.7.2)
 
-  '@yyui/yy-ui@1.0.0-beta.6(vue@3.5.13(typescript@5.8.2))':
+  '@yyui/yy-ui@1.0.0-beta.7(vue@3.5.13(typescript@5.8.2))':
     dependencies:
       '@css-render/plugin-bem': 0.15.14(css-render@0.15.14)
       css-render: 0.15.14

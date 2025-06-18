@@ -1,5 +1,5 @@
-import { defineComponent, Teleport, Transition, inject, withModifiers, computed } from 'vue'
-import { Menu, Scrollbar, px, type MenuItem } from '@yyui/yy-ui'
+import { defineComponent, inject, withModifiers, computed } from 'vue'
+import { Menu, Popover, Scrollbar, type MenuItem } from '@yyui/yy-ui'
 import style from './style/cmd-board.module.scss'
 import { pageInjectKey } from '../page/page'
 import type { TypeName } from '@yak-paper/material'
@@ -23,31 +23,37 @@ export default defineComponent({
 		const { cmdBoardManager } = this.paper
 
 		return (
-			<Teleport to="body">
-				<Transition
-					enterFromClass={style['fade-enter-from']}
-					enterActiveClass={style['fade-enter-active']}
+			<>
+				<Popover
+					placement="bottom-start"
+					trigger="manual"
+					showPopover={this.boradVisible}
+					x={cmdBoardManager.rangeOption?.cursorSite.x}
+					y={cmdBoardManager.rangeOption?.cursorSite.y}
+					showArrow={false}
+					themeOverrides={{
+						boxShadow: undefined,
+						borderRadius: undefined,
+						fontSize: undefined,
+						textColor: undefined,
+						padding: undefined,
+						backgroundColor: undefined
+					}}
 				>
-					{this.boradVisible && (
-						<div
-							class={style.board}
-							style={{
-								left: px(cmdBoardManager.rangeOption?.cursorSite.x),
-								top: px(cmdBoardManager.rangeOption?.cursorSite.y)
-							}}
-							onMousedown={withModifiers(() => null, ['prevent'])} // 阻止默认, 不抢焦点
-						>
-							<Scrollbar contentStyle={{ padding: '4px' }}>
-								<Menu
-									options={cmdBoardManager.suggestions}
-									themeOverrides={{ itemHeight: '35px', marginTop: '2px' }}
-									onItem-click={this.itemClickHandle}
-								/>
-							</Scrollbar>
-						</div>
-					)}
-				</Transition>
-			</Teleport>
+					<div
+						class={style.board}
+						onMousedown={withModifiers(() => null, ['prevent'])} // 阻止默认, 不抢焦点
+					>
+						<Scrollbar contentStyle={{ padding: '4px' }}>
+							<Menu
+								options={cmdBoardManager.suggestions}
+								themeOverrides={{ itemHeight: '35px', marginTop: '2px' }}
+								onItem-click={this.itemClickHandle}
+							/>
+						</Scrollbar>
+					</div>
+				</Popover>
+			</>
 		)
 	}
 })

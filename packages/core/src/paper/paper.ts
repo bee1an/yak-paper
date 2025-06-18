@@ -15,6 +15,7 @@ import { KeydownNotifyHandler } from './keydown-notify-handler'
 import { BeforeinputNotifyHandler } from './beforeinput-notify-handler'
 import { Creator } from '../creator'
 import type { TypeName } from '@yak-paper/material'
+import { ToolbarManager } from '../toolbar-manager'
 
 export class Paper implements PaperMediator {
 	private static _instance: Paper | null = null
@@ -61,6 +62,10 @@ export class Paper implements PaperMediator {
 	 * @description 创建者
 	 */
 	creator: Creator
+	/**
+	 * @description 工具栏管理
+	 */
+	toolbarManager: ToolbarManager
 
 	private _notifyHandler: NotifyHandler
 
@@ -88,6 +93,9 @@ export class Paper implements PaperMediator {
 
 		this.creator = new Creator()
 		this.creator.setMediator(this)
+
+		this.toolbarManager = new ToolbarManager()
+		this.toolbarManager.setMediator(this)
 
 		this._notifyHandler = new InputNotifyHandler(this)
 		this._notifyHandler

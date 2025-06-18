@@ -1,1 +1,1 @@
-export { default as PBlock } from './block'
+export { default as Block } from './block'
