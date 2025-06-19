@@ -32,7 +32,7 @@ export default defineComponent({
 		mock.forEach((item, index) => {
 			creator.createNewLineByIndex(index, {
 				type: 'text',
-				formate: item as any
+				format: item as any
 			})
 		})
 		// paper.sections.creator.createNewLineByIndex(0)
@@ -59,6 +59,7 @@ export default defineComponent({
 					onBeforeinput={(e: Event) => paper.beforeinputManager.handle(e as InputEvent)}
 					onInput={(e: Event) => paper.inputManager.handle(e as InputEvent)}
 					onBlur={paper.blurManager.handle}
+					onMouseup={() => paper.toolbarManager.tryShow()}
 				>
 					<div class={style.blocks}>
 						{paper.sections.data.map((item) => (

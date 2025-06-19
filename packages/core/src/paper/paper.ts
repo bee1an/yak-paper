@@ -16,6 +16,7 @@ import { BeforeinputNotifyHandler } from './beforeinput-notify-handler'
 import { Creator } from '../creator'
 import type { TypeName } from '@yak-paper/material'
 import { ToolbarManager } from '../toolbar-manager'
+import { Formater, type FormatType } from '../formater'
 
 export class Paper implements PaperMediator {
 	private static _instance: Paper | null = null
@@ -66,6 +67,10 @@ export class Paper implements PaperMediator {
 	 * @description 工具栏管理
 	 */
 	toolbarManager: ToolbarManager
+	/**
+	 * @description 格式化
+	 */
+	formater: Formater
 
 	private _notifyHandler: NotifyHandler
 
@@ -96,6 +101,9 @@ export class Paper implements PaperMediator {
 
 		this.toolbarManager = new ToolbarManager()
 		this.toolbarManager.setMediator(this)
+
+		this.formater = Formater.getInstance()
+		this.formater.setMediator(this)
 
 		this._notifyHandler = new InputNotifyHandler(this)
 		this._notifyHandler
@@ -159,6 +167,10 @@ export class Paper implements PaperMediator {
 
 		if (event === 'public:creator:createNewLineByIndex') {
 			return this.creator.createNewLineByIndex(...(args as [number, any]))
+		}
+
+		if (event === 'public:formater:formatSelect') {
+			return this.formater.formatSelect(...(args as [FormatType]))
 		}
 
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars

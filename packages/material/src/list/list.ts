@@ -1,4 +1,4 @@
-import { json2vnode, type BlockAgreer, type BlockEvents, type RawFormate } from '@yak-paper/core'
+import { json2vnode, type BlockAgreer, type BlockEvents, type RawFormat } from '@yak-paper/core'
 import { createId, EventEmitter } from '@yak-paper/utils'
 import { type VNode, type MaybeRef, toValue, useTemplateRef, reactive } from 'vue'
 import { useThemeStyle } from '@yak-paper/composables'
@@ -18,7 +18,7 @@ export interface ListBlockAgreer extends BlockAgreer {
 export interface ListBlockOption {
 	id?: string
 
-	formate?: RawFormate[]
+	format?: RawFormat[]
 }
 
 export type ListBlockEvents = {} & BlockEvents
@@ -103,7 +103,7 @@ export class ListBlock implements ListBlockAgreer {
 	toRaw(): ListBlockOption & { type: 'list' } {
 		return {
 			type: this.type,
-			formate: this._editable.toRaw().formate
+			format: this._editable.toRaw().format
 		}
 	}
 }

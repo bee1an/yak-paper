@@ -130,7 +130,7 @@ export class CmdBoardManager extends Colleague {
 
 		if (
 			section.block!.isEmpty ||
-			(blockRaw.formate!.length === 1 && blockRaw.formate![0].content === TRIGGER_COMMAND_MODE_CHAR)
+			(blockRaw.format!.length === 1 && blockRaw.format![0].content === TRIGGER_COMMAND_MODE_CHAR)
 		) {
 			// 转换逻辑
 			section.transformTo(type)

@@ -4,6 +4,7 @@ import type { Section, SectionOption } from '../sections'
 import type { InputNotifyEvents } from './input-notify-handler'
 import type { KeydownNotifyEvents } from './keydown-notify-handler'
 import type { BeforeinputNotifyEvents } from './beforeinput-notify-handler'
+import type { FormatType } from '../formater'
 
 /**
  * @description 暴露给外部的公共notify事件
@@ -59,6 +60,9 @@ export type PublicNotifyEvent = {
 		index: number,
 		option?: Partial<SectionOption>
 	): Promise<void>
+
+	/** 格式化选中的元素 */
+	'public:formater:formatSelect'(type: FormatType): void
 }
 
 export interface PaperMediator {

@@ -1,2 +1,16 @@
 .toolbar {
+	display: flex;
+}
+
+.icon-wrapper {
+	padding: 6px;
+	border-radius: 6px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+
+	&:hover {
+		background: rgba(55, 53, 47, 0.06);
+	}
 }

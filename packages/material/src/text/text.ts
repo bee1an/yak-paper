@@ -1,5 +1,5 @@
 import { useThemeStyle } from '@yak-paper/composables'
-import { json2vnode, type BlockAgreer, type BlockEvents, type RawFormate } from '@yak-paper/core'
+import { json2vnode, type BlockAgreer, type BlockEvents, type RawFormat } from '@yak-paper/core'
 import themeDefined from './style/theme'
 import themeManager from '../../style'
 import { reactive, toValue, useTemplateRef, type MaybeRef } from 'vue'
@@ -17,7 +17,7 @@ export interface TextBlockAgreer extends BlockAgreer {
 export interface TextBlockOption {
 	id?: string
 
-	formate?: RawFormate[]
+	format?: RawFormat[]
 }
 
 export type TextBlockEvents = {
@@ -92,12 +92,12 @@ export class TextBlock implements TextBlockAgreer {
 	toRaw(): TextBlockOption & { type: 'text' } {
 		return {
 			type: this.type,
-			formate: this._editable.toRaw().formate
+			format: this._editable.toRaw().format
 		}
 	}
 }
 
-// serialize(): RawFormate | null {
+// serialize(): RawFormat | null {
 // 	const dom = this.templateRef
 
 // 	if (!dom) {
@@ -110,6 +110,6 @@ export class TextBlock implements TextBlockAgreer {
 
 // 	return {
 // 		type: this.type,
-// 		formate: Transformer.instance.serializer(dom).formate
+// 		format: Transformer.instance.serializer(dom).format
 // 	}
 // }

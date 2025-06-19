@@ -16,3 +16,9 @@ export const textWrapper = (el: Node) => {
 
 	return el.parentElement
 }
+
+export const getTextNode = (el: Node) => {
+	if (isText(el)) return [el]
+
+	return [...el.childNodes]
+}
