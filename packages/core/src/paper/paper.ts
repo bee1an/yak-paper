@@ -81,7 +81,7 @@ export class Paper implements PaperMediator {
 		this.keydownManager = new KeydownManager()
 		this.keydownManager.setMediator(this)
 
-		this.selectionManager = new SelectionManager()
+		this.selectionManager = SelectionManager.getInstance()
 		this.compositionManager = new CompositionManager(this)
 
 		this.blurManager = new BlurManager()

@@ -1,4 +1,27 @@
+import { getTextNodeBySite } from '@yak-paper/utils'
+
 export class SelectionManager {
+	private static _instance: SelectionManager
+	static getInstance() {
+		if (!this._instance) {
+			this._instance = new SelectionManager()
+		}
+		return this._instance
+	}
+	private constructor() {}
+
+	static selectNodesContent(range: Range, nodes: Node[]) {
+		const startText = getTextNodeBySite(nodes[0], 'first')
+		const endText = getTextNodeBySite(nodes[nodes.length - 1], 'first')
+
+		if (!startText || !endText) return
+
+		const endOffset = endText.textContent!.length
+
+		range.setStart(startText, 0)
+		range.setEnd(endText, endOffset)
+	}
+
 	getSelection() {
 		return window.getSelection()
 	}

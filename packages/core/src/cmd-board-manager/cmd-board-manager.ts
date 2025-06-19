@@ -1,11 +1,9 @@
-import { h, ref } from 'vue'
+import { ref } from 'vue'
 import { Colleague } from '../paper/colleague'
-import type { MenuOption } from '@yyui/yy-ui'
-import Text from './icons/Text.vue'
-import List from './icons/List.vue'
 import type { TypeName } from '@yak-paper/material'
 import { isText } from 'yak-paper'
-interface SugguestOption extends MenuOption {
+interface SugguestOption {
+	key: TypeName
 	value: string[]
 }
 
@@ -15,15 +13,11 @@ export class CmdBoardManager extends Colleague {
 	static readonly suggestList: SugguestOption[] = [
 		{
 			key: 'text',
-			value: ['text'],
-			label: '文本',
-			icon: () => h(Text)
+			value: ['text']
 		},
 		{
 			key: 'list',
-			value: ['list'],
-			label: '列表',
-			icon: () => h(List)
+			value: ['list']
 		}
 	]
 

@@ -1,8 +1,23 @@
-import { defineComponent, inject, withModifiers, computed } from 'vue'
+import { defineComponent, inject, withModifiers, computed, h } from 'vue'
 import { Menu, Popover, Scrollbar, type MenuItem } from '@yyui/yy-ui'
 import style from './style/cmd-board.module.scss'
 import { pageInjectKey } from '../page/page'
 import type { TypeName } from '@yak-paper/material'
+import Text from './icons/Text.vue'
+import List from './icons/List.vue'
+
+const items = {
+	text: {
+		key: 'text',
+		label: '文本',
+		icon: () => h(Text)
+	},
+	list: {
+		key: 'list',
+		label: '列表',
+		icon: () => h(List)
+	}
+} as const
 
 export default defineComponent({
 	name: 'CmdBoard',
@@ -46,7 +61,9 @@ export default defineComponent({
 					>
 						<Scrollbar contentStyle={{ padding: '4px' }}>
 							<Menu
-								options={cmdBoardManager.suggestions}
+								options={cmdBoardManager.suggestions.map((item) => {
+									return items[item.key]
+								})}
 								themeOverrides={{ itemHeight: '35px', marginTop: '2px' }}
 								onItem-click={this.itemClickHandle}
 							/>

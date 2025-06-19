@@ -1,6 +1,7 @@
-import type { HProps } from '@yak-paper/utils'
+import { isEditable, type HProps } from '@yak-paper/utils'
 import { Colleague } from '../paper/colleague'
 import { Fragment, h, mergeProps, render } from 'vue'
+import { SelectionManager } from '../selection-manager'
 
 export const formatType = ['bold', 'underline', 'italic'] as const
 
@@ -70,7 +71,6 @@ export class Formater extends Colleague {
 			const type: FormatType[] = []
 
 			Object.keys((node as HTMLSpanElement).dataset).forEach((key) => {
-				console.log('key', key)
 				if (key.startsWith('format')) {
 					const finded = formatType.find((item) => key.toLowerCase().includes(item))
 
@@ -119,47 +119,111 @@ export class Formater extends Colleague {
 
 		const selected = range.cloneContents().childNodes
 
+		const crossBlock = (selected[0] as HTMLElement).dataset?.blockType
+
+		if (crossBlock) {
+			// TODO 跨行
+			return
+		}
+
+		const startParent = range.startContainer.parentNode as HTMLElement
+		const endParent = range.endContainer.parentNode as HTMLElement
+
+		/**
+		 * 根据选中的内容返回新的格式化配置
+		 *
+		 * 具体实现
+		 * 获取选区内容
+		 * 根据选区内容获取新的配置
+		 * 删除选区内容, 并根据新配置添加内容
+		 *
+		 * 不知道可行性, 此方案不行可以选择方案二, 根据选区开始焦点位置递归替换到结束位置
+		 */
+
 		const selectedFormat = [...selected]
 			.map((node) => {
+				// 如果节点没有文字, 则忽略这个节点
 				if (node.textContent === '') {
 					return null
 				}
 
 				let raw
 
-				if (node.nodeType === Node.TEXT_NODE) {
+				/**
+				 * 如果是第一个元素且焦点的父元素并不是可编辑元素时
+				 *
+				 * 代表现在在一个样式文字中, 当前的节点需要继承父元素的样式(bold之类的)
+				 * 并添加指定样式
+				 */
+				if (startParent === endParent && !isEditable(startParent)) {
+					raw = extendsNodeStyle(startParent)
+
+					raw.content = node.textContent ?? ''
+				}
+				// 如果节点是一个文字节点, 则返回指定样式的配置
+				else if (node.nodeType === Node.TEXT_NODE) {
 					raw = {
 						type: [type],
 						content: node.textContent ?? ''
 					}
 				}
+				// 如果节点是一个span元素, 则当前节点需要新增样式
+				else if (node.nodeType === Node.ELEMENT_NODE && node.nodeName === 'SPAN') {
+					raw = extendsNodeStyle(node)
+				}
 
-				const newRaw = Formater.minialNode2Raw(node) as RawFormat & { type: FormatType[] }
-
-				if (node.nodeType === Node.ELEMENT_NODE && node.nodeName === 'SPAN') {
+				function extendsNodeStyle(node: ChildNode) {
+					const newRaw = Formater.minialNode2Raw(node) as RawFormat & { type: FormatType[] }
 					newRaw.type.push(type)
 
 					newRaw.type = [...new Set(newRaw.type)]
-
-					raw = newRaw
+					return newRaw
 				}
 
 				return Formater.raw2Format(raw!)
 			})
 			.filter((item) => item !== null)
 
+		// 根据格式化数据生成节点
 		const children = Formater.format2Node(selectedFormat)
+
+		// 获取操作完成后的焦点位置
+		const rangeStartNode = children[0]
+		const rangeEndNode = children[children.length - 1]
+
+		/**
+		 * 如果选区的焦点在样式节点中, 则需要将样式节点拆分, 防止节点嵌套
+		 *
+		 * 会在检查完焦点后删除原样式节点并插入一个新的样式节点, 但是内容看不出变化
+		 */
+		const head = getExtraInsert(startParent, 0, range.startOffset)
+		head && children.unshift(...head)
+
+		const tail = getExtraInsert(endParent, range.endOffset)
+		tail && children.push(...tail)
+
+		head && startParent.remove()
+		tail && endParent.remove()
 
 		range.deleteContents()
 
+		// insertNode会将节点添加到开头, 所以需要反转一下
 		children.reverse().forEach((item) => range.insertNode(item))
 
-		const start = children[children.length - 1].childNodes[0]
-		range.setStart(start, 0)
+		// 设置焦点
+		SelectionManager.selectNodesContent(range, [rangeStartNode, rangeEndNode])
 
-		const end = children[0].childNodes[children[0].childNodes.length - 1]
-		const endOffset = end.textContent!.length
-		range.setEnd(end, endOffset)
+		function getExtraInsert(parent: HTMLElement, start: number, end?: number) {
+			if (!isEditable(parent)) {
+				const clone = Formater.minialNode2Raw(parent)
+
+				clone.content = parent.textContent!.slice(start, end)
+
+				if (clone.content === '') return []
+
+				return Formater.format2Node([Formater.raw2Format(clone)])
+			}
+		}
 	}
 }
 
