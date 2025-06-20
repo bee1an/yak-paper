@@ -1,7 +1,49 @@
 import { describe, expect, it } from 'vitest'
-import { getChildrenNode, getTextNodeBySite, isEditable } from '../src/dom'
+import {
+	findChildElementIsEditable,
+	getChildrenNode,
+	getTextNodeBySite,
+	isEditable
+} from '../src/dom'
 
 describe('dom', () => {
+	it('shoud find child element is editable', () => {
+		const container = document.createElement('div')
+
+		const createEditable = () => {
+			const el = document.createElement('div')
+			el.contentEditable = 'true'
+			return el
+		}
+
+		const createNonEditable = () => {
+			const el = document.createElement('div')
+			return el
+		}
+
+		const nonEditable = createNonEditable()
+		nonEditable.append(createEditable())
+
+		container.append(createEditable())
+		container.append(nonEditable)
+		container.append(createEditable())
+
+		expect(findChildElementIsEditable(container)).toMatchInlineSnapshot(`
+			[
+			  <div />,
+			  <div />,
+			]
+		`)
+
+		expect(findChildElementIsEditable(container, { deep: true })).toMatchInlineSnapshot(`
+			[
+			  <div />,
+			  <div />,
+			  <div />,
+			]
+		`)
+	})
+
 	it('shoud return is editable', () => {
 		const editable = document.createElement('div')
 		editable.contentEditable = 'true'

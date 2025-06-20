@@ -37,6 +37,32 @@ export const getTextNodeBySite = (el: Node, site: 'first' | 'last'): Node | null
 	return getTextNodeBySite(el.childNodes[site === 'first' ? 0 : el.childNodes.length - 1], site)
 }
 
+/**
+ * 是否是文字节点
+ */
 export const isEditable = (element: HTMLElement) => {
 	return element.contentEditable === 'true'
+}
+
+/**
+ * 查找元素可编辑的子元素
+ */
+export const findChildElementIsEditable = (
+	el: HTMLElement,
+	option?: { deep?: boolean }
+): HTMLElement[] => {
+	const children = [...el.children]
+
+	return children.reduce((pre, child) => {
+		console.log('111', isEditable(child as HTMLElement))
+		if (isEditable(child as HTMLElement)) {
+			pre.push(child as HTMLElement)
+		}
+
+		if (option?.deep) {
+			pre.push(...findChildElementIsEditable(child as HTMLElement, option))
+		}
+
+		return pre
+	}, [] as HTMLElement[])
 }
