@@ -10,26 +10,29 @@ const api = createApi({
 })
 
 const getNew = () => {
-	api.photos.getRandom({ count: 1 }).then((result) => {
-		let url = '',
-			timestamp = +new Date()
+	api.photos
+		.getRandom({ count: 1 })
+		.then((result) => {
+			let url = '',
+				timestamp = +new Date()
 
-		if (result.errors) {
-			url = ''
-		} else {
-			const newUrl = new URL((result.response as any[])[0].urls.regular)
+			if (result.errors) {
+				url = ''
+			} else {
+				const newUrl = new URL((result.response as any[])[0].urls.regular)
 
-			newUrl.searchParams.set('w', '1200')
-			newUrl.searchParams.set('h', '300')
+				newUrl.searchParams.set('w', '1200')
+				newUrl.searchParams.set('h', '300')
 
-			url = newUrl.toString()
-		}
+				url = newUrl.toString()
+			}
 
-		store.value = {
-			url,
-			timestamp
-		}
-	})
+			store.value = {
+				url,
+				timestamp
+			}
+		})
+		.catch(() => null)
 }
 
 if (!store.value.url || store.value.timestamp + (1000 * 60 * 60) / 50 < +new Date()) getNew()

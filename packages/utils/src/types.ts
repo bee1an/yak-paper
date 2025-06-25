@@ -44,3 +44,16 @@ export type GetAssignPropItem<T extends any[], K, Prop> = T extends [
  * h函数的第二个参数
  */
 export type HProps = Parameters<typeof h>[1]
+
+/**
+ * 解构数组
+ *
+ * 支持多维
+ * number[][] => number
+ */
+
+export type DestructureArray<U> = U extends any[]
+	? U extends (infer U)[]
+		? DestructureArray<U>
+		: never
+	: U

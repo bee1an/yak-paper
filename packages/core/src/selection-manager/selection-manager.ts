@@ -10,6 +10,22 @@ export class SelectionManager {
 	}
 	private constructor() {}
 
+	static selectNodesByOffset(
+		range: Range,
+		nodes: [Node, Node],
+		startOffset: number,
+		endOffset: number
+	) {
+		const startText = getTextNodeBySite(nodes[0], 'first')
+		const endText = getTextNodeBySite(nodes[nodes.length - 1], 'first')
+
+		if (!startText || !endText) return
+
+		range.collapse()
+		range.setStart(startText, startOffset)
+		range.setEnd(endText, endOffset)
+	}
+
 	static selectNodesContent(range: Range, nodes: Node[]) {
 		const startText = getTextNodeBySite(nodes[0], 'first')
 		const endText = getTextNodeBySite(nodes[nodes.length - 1], 'first')

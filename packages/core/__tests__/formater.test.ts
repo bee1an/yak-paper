@@ -1,7 +1,32 @@
 import { describe, expect, it } from 'vitest'
-import { Formater } from '../src/formater/formater'
+import { Formater, type RawFormat } from '../src/formater/formater'
+import { SelectionManager } from '@yak-paper/core/src/selection-manager'
+import { getChildrenNode } from '@yak-paper/utils/src/dom'
 
 describe('formater', () => {
+	const raw = [
+		{
+			type: 'text',
+			content: '她还只是个孩子，躲在教堂的地下室里，听着外面传来的 '
+		},
+		{
+			type: ['bold'],
+			content: '脚步声'
+		},
+		{
+			type: 'text',
+			content: '和低语。那些声音不属于这个世界，它们来自一个被遗忘的'
+		},
+		{
+			type: ['italic'],
+			content: '维度'
+		},
+		{
+			type: 'text',
+			content: '。'
+		}
+	] as RawFormat[]
+
 	// it('shoud format cross block', () => {
 	// 	const container = document.createElement('div')
 
@@ -57,12 +82,115 @@ describe('formater', () => {
 	// 	expect(container.innerHTML).toMatchInlineSnapshot()
 	// })
 
+	it('shoud format same block 2', () => {
+		const editable = document.createElement('div')
+		editable.contentEditable = 'true'
+
+		editable.append(...Formater.format2Node(raw.map((_) => Formater.raw2Format(_))))
+		const range = document.createRange()
+
+		expect(editable.childNodes).toMatchInlineSnapshot(`
+			NodeList [
+			  她还只是个孩子，躲在教堂的地下室里，听着外面传来的 ,
+			  <span
+			    data-format-bold="true"
+			    style="font-weight: bold;"
+			  >
+			    脚步声
+			  </span>,
+			  和低语。那些声音不属于这个世界，它们来自一个被遗忘的,
+			  <span
+			    data-format-italic="true"
+			    style="font-style: italic;"
+			  >
+			    维度
+			  </span>,
+			  。,
+			]
+		`)
+		const instance = Formater.getInstance()
+		// 模拟一个中介者
+		instance.setMediator({
+			notify() {
+				return range
+			}
+		})
+
+		SelectionManager.selectNodesByOffset(
+			range,
+			[editable.childNodes[0], editable.childNodes[0]],
+			editable.childNodes[0].textContent!.length - 3,
+			editable.childNodes[0].textContent!.length
+		)
+		instance.formatSelect('bold')
+		expect(editable.children[0].textContent).toMatchInlineSnapshot(`"来的 脚步声"`)
+
+		SelectionManager.selectNodesByOffset(
+			range,
+			[editable.childNodes[2], editable.childNodes[2]],
+			0,
+			3
+		)
+		instance.formatSelect('bold')
+		expect(editable.children[0].textContent).toMatchInlineSnapshot(`"来的 脚步声和低语"`)
+
+		SelectionManager.selectNodesByOffset(
+			range,
+			[editable.childNodes[0], getChildrenNode(editable.childNodes[1])[0]],
+			editable.childNodes[0].textContent!.length - 3,
+			3
+		)
+		instance.formatSelect('bold')
+		expect(editable.children[0].textContent).toMatchInlineSnapshot(`"外面传来的 脚步声和低语"`)
+
+		SelectionManager.selectNodesByOffset(
+			range,
+			[getChildrenNode(editable.childNodes[1])[0], editable.childNodes[2]],
+			getChildrenNode(editable.childNodes[1])[0].textContent!.length - 3,
+			3
+		)
+		instance.formatSelect('bold')
+		expect(editable.children[0].textContent).toMatchInlineSnapshot(
+			`"外面传来的 脚步声和低语。那些"`
+		)
+
+		SelectionManager.selectNodesByOffset(
+			range,
+			[editable.childNodes[0], editable.childNodes[2]],
+			editable.childNodes[0].textContent!.length - 3,
+			3
+		)
+		instance.formatSelect('bold')
+		expect(editable.children[0].textContent).toMatchInlineSnapshot(
+			`"，听着外面传来的 脚步声和低语。那些声音不"`
+		)
+
+		expect(editable.childNodes).toMatchInlineSnapshot(`
+			NodeList [
+			  她还只是个孩子，躲在教堂的地下室里,
+			  <span
+			    data-format-bold="true"
+			    style="font-weight: bold;"
+			  >
+			    ，听着外面传来的 脚步声和低语。那些声音不
+			  </span>,
+			  属于这个世界，它们来自一个被遗忘的,
+			  <span
+			    data-format-italic="true"
+			    style="font-style: italic;"
+			  >
+			    维度
+			  </span>,
+			  。,
+			]
+		`)
+	})
+
 	it('shoud format same block', () => {
 		const editable = document.createElement('div')
 		editable.contentEditable = 'true'
 
-		editable.innerHTML =
-			'她还只是个孩子，躲在教堂的地下室里，听着外面传来的<span data-format-bold="true" style="font-weight: bold;">脚步声</span>和低语。那些声音不属于这个世界，它们来自一个被遗忘的<span data-format-italic="true" style="font-style: italic;">维度</span>。'
+		editable.append(...Formater.format2Node(raw.map((_) => Formater.raw2Format(_))))
 
 		const range = document.createRange()
 
@@ -78,62 +206,101 @@ describe('formater', () => {
 		})
 
 		instance.formatSelect('bold')
-		expect(editable.innerHTML).toMatchInlineSnapshot(
-			`"她还只是个<span data-format-bold="true" style="font-weight: bold;">孩子，躲在教堂的地下室里，听着外面传来的</span><span data-format-bold="true" style="font-weight: bold;">脚</span><span data-format-bold="true" style="font-weight: bold;">步声</span>和低语。那些声音不属于这个世界，它们来自一个被遗忘的<span data-format-italic="true" style="font-style: italic;">维度</span>。"`
-		)
+		expect(editable.children).toMatchInlineSnapshot(`
+			HTMLCollection [
+			  <span
+			    data-format-bold="true"
+			    style="font-weight: bold;"
+			  >
+			    孩子，躲在教堂的地下室里，听着外面传来的 脚步声
+			  </span>,
+			  <span
+			    data-format-italic="true"
+			    style="font-style: italic;"
+			  >
+			    维度
+			  </span>,
+			]
+		`)
 
 		range.setStart(editable.childNodes[0], 1)
 		range.setEnd(editable.childNodes[0], 2)
 
 		instance.formatSelect('italic')
 
-		expect(editable.innerHTML).toMatchInlineSnapshot(
-			`"她<span data-format-italic="true" style="font-style: italic;">还</span>只是个<span data-format-bold="true" style="font-weight: bold;">孩子，躲在教堂的地下室里，听着外面传来的</span><span data-format-bold="true" style="font-weight: bold;">脚</span><span data-format-bold="true" style="font-weight: bold;">步声</span>和低语。那些声音不属于这个世界，它们来自一个被遗忘的<span data-format-italic="true" style="font-style: italic;">维度</span>。"`
-		)
+		expect(editable.children).toMatchInlineSnapshot(`
+			HTMLCollection [
+			  <span
+			    data-format-italic="true"
+			    style="font-style: italic;"
+			  >
+			    还
+			  </span>,
+			  <span
+			    data-format-bold="true"
+			    style="font-weight: bold;"
+			  >
+			    孩子，躲在教堂的地下室里，听着外面传来的 脚步声
+			  </span>,
+			  <span
+			    data-format-italic="true"
+			    style="font-style: italic;"
+			  >
+			    维度
+			  </span>,
+			]
+		`)
+	})
+
+	it('shoud return node from format', () => {
+		expect(Formater.format2Node(raw.map((_) => Formater.raw2Format(_)))).toMatchInlineSnapshot(`
+			[
+			  她还只是个孩子，躲在教堂的地下室里，听着外面传来的 ,
+			  <span
+			    data-format-bold="true"
+			    style="font-weight: bold;"
+			  >
+			    脚步声
+			  </span>,
+			  和低语。那些声音不属于这个世界，它们来自一个被遗忘的,
+			  <span
+			    data-format-italic="true"
+			    style="font-style: italic;"
+			  >
+			    维度
+			  </span>,
+			  。,
+			]
+		`)
 	})
 
 	it('shoud 2 format', () => {
-		const mock1 = {
-				type: 'text',
-				content: '1'
-			} as const,
-			mock2 = {
-				type: ['bold'],
-				content: '2'
-			} as any,
-			mock3 = {
-				type: ['bold', 'italic', 'underline'],
-				content: '3'
-			} as any
-
-		expect(Formater.raw2Format(mock1)).toMatchInlineSnapshot(`"1"`)
-		expect(Formater.raw2Format(mock2)).toMatchInlineSnapshot(`
-			{
-			  "children": "2",
-			  "props": {
-			    "data-format-bold": true,
-			    "style": {
-			      "fontWeight": "bold",
+		expect(raw.map((_) => Formater.raw2Format(_))).toMatchInlineSnapshot(`
+			[
+			  "她还只是个孩子，躲在教堂的地下室里，听着外面传来的 ",
+			  {
+			    "children": "脚步声",
+			    "props": {
+			      "data-format-bold": true,
+			      "style": {
+			        "fontWeight": "bold",
+			      },
 			    },
+			    "tagName": "span",
 			  },
-			  "tagName": "span",
-			}
-		`)
-		expect(Formater.raw2Format(mock3)).toMatchInlineSnapshot(`
-			{
-			  "children": "3",
-			  "props": {
-			    "data-format-bold": true,
-			    "data-format-italic": true,
-			    "data-format-underline": true,
-			    "style": {
-			      "fontStyle": "italic",
-			      "fontWeight": "bold",
-			      "textDecoration": "underline",
+			  "和低语。那些声音不属于这个世界，它们来自一个被遗忘的",
+			  {
+			    "children": "维度",
+			    "props": {
+			      "data-format-italic": true,
+			      "style": {
+			        "fontStyle": "italic",
+			      },
 			    },
+			    "tagName": "span",
 			  },
-			  "tagName": "span",
-			}
+			  "。",
+			]
 		`)
 	})
 

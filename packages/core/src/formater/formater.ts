@@ -3,6 +3,7 @@ import {
 	getArrayHeadDeepestArray,
 	getArrayTailDeepestArray,
 	isEditable,
+	type AnyFn,
 	type HProps
 } from '@yak-paper/utils'
 import { Colleague } from '../paper/colleague'
@@ -48,7 +49,7 @@ export class Formater extends Colleague {
 			return raw.content
 		}
 
-		return raw.type.reduce((pre, item) => mergeFormat(item, pre), {
+		return raw.type.reduce((pre, item) => Formater.mergeFormat(item, pre), {
 			tagName: 'span',
 			props: {},
 			children: raw.content
@@ -58,17 +59,21 @@ export class Formater extends Colleague {
 	static html2Raw(dom: HTMLElement): { format: RawFormat[] } {
 		const childNodes = [...dom.childNodes]
 
-		const format = childNodes.map((node) => Formater.minialNode2Raw(node))
+		const format = childNodes
+			.map((node) => Formater.minialNode2Raw(node))
+			.filter((item) => item !== null)
 
 		// 返回包含格式化数据的对象
 		return { format }
 	}
 
-	static minialNode2Raw(node: Node): RawFormat {
+	static minialNode2Raw(node: Node): RawFormat | null {
+		if (!node.textContent) return null
+
 		if (node.nodeType === Node.TEXT_NODE) {
 			return {
 				type: 'text' as const,
-				content: node.textContent ?? ''
+				content: node.textContent
 			}
 		}
 
@@ -86,7 +91,7 @@ export class Formater extends Colleague {
 
 			return {
 				type,
-				content: node.textContent ?? ''
+				content: node.textContent
 			}
 		}
 
@@ -118,11 +123,113 @@ export class Formater extends Colleague {
 		return children
 	}
 
-	private _formatSpecifiedNodes(
+	static mergeFormat(type: FormatType, formatObj: FormatObj) {
+		switch (type) {
+			// 生成带粗体样式的数据块格式
+			case 'bold':
+				formatObj.props = mergeProps(formatObj.props!, {
+					'data-format-bold': true,
+					style: {
+						fontWeight: 'bold'
+					}
+				})
+
+				break
+			// 生成带下划线样式的文本格式
+			case 'underline':
+				formatObj.props = mergeProps(formatObj.props!, {
+					'data-format-underline': true,
+					style: {
+						textDecoration: 'underline'
+					}
+				})
+
+				break
+
+			// 生成斜体文本格式
+			case 'italic':
+				formatObj.props = mergeProps(formatObj.props!, {
+					'data-format-italic': true,
+					style: {
+						fontStyle: 'italic'
+					}
+				})
+				break
+			// 类型安全检查，确保处理了所有可能的类型
+			default: {
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
+				const _typeSecurity: never = type
+				throw new Error('Unexpected format type')
+			}
+		}
+
+		return formatObj
+	}
+
+	static mergeRawChildren(raw: RawFormat[]): {
+		rawFormats: RawFormat[]
+		indexMerge: number[][]
+	} {
+		return raw.reduce<{
+			rawFormats: RawFormat[]
+			indexMerge: number[][]
+		}>(
+			(pre, i, index, arr) => {
+				const { rawFormats, indexMerge } = pre
+				const item = { ...i }
+
+				if (rawFormats.length === 0) {
+					rawFormats.push(item)
+					return pre
+				}
+
+				const { type } = arr[index - 1]
+
+				const { type: curType, content } = item
+
+				if (typeof type === 'string') {
+					if (type !== curType) {
+						rawFormats.push(item)
+						return pre
+					}
+
+					// 合并纯文字
+					mergeRaw()
+					return pre
+				}
+
+				const equal = type.every((t) => curType.includes(t))
+
+				if (!equal) {
+					rawFormats.push(item)
+					return pre
+				}
+
+				// 合并样式节点
+				mergeRaw()
+				function mergeRaw() {
+					const merged = indexMerge.find((item) => item.includes(index - 1))
+					merged ? merged.push(index) : indexMerge.push([index - 1, index])
+					rawFormats[rawFormats.length - 1].content += content
+				}
+
+				return pre
+			},
+			{
+				rawFormats: [],
+				indexMerge: []
+			}
+		)
+	}
+
+	/**
+	 * 将指定元素转换为raw
+	 */
+	private _specifiedNodes2Raw(
 		formatType: FormatType,
 		nodes: ChildNode[],
 		extendsParent?: HTMLElement
-	) {
+	): RawFormat[] {
 		return nodes
 			.map((node) => {
 				// 如果节点没有文字, 则忽略这个节点
@@ -132,13 +239,8 @@ export class Formater extends Colleague {
 
 				let raw
 
-				/**
-				 * 如果是第一个元素且焦点的父元素并不是可编辑元素时
-				 *
-				 * 代表现在在一个样式文字中, 当前的节点需要继承父元素的样式(bold之类的)
-				 * 并添加指定样式
-				 */
 				// if (startParent === endParent && !isEditable(startParent)) {
+				// 继承父元素的样式(bold之类的)
 				if (extendsParent) {
 					raw = extendsNodeStyle(extendsParent)
 
@@ -154,6 +256,8 @@ export class Formater extends Colleague {
 				// 如果节点是一个span元素, 则当前节点需要新增样式
 				else if (node.nodeType === Node.ELEMENT_NODE && node.nodeName === 'SPAN') {
 					raw = extendsNodeStyle(node)
+				} else {
+					throw new Error('UnTreated node type')
 				}
 
 				function extendsNodeStyle(node: ChildNode) {
@@ -164,25 +268,135 @@ export class Formater extends Colleague {
 					return newRaw
 				}
 
-				return Formater.raw2Format(raw!)
+				// return Formater.raw2Format(raw!)
+				return raw
 			})
 			.filter((item) => item !== null)
 	}
 
-	private _cloneNodeFormat(node: Node, content: string) {
-		const clone = Formater.minialNode2Raw(node)
+	/**
+	 * 判断开头的合并情况
+	 *
+	 * 开头合并后需要将 焦点位置偏移量 和 焦点节点偏移量 修改
+	 */
+	private _headMerged(
+		indexMerge: number[][],
+		startFocusCursor: number,
+		startFocusOffset: number,
+		headRaw: RawFormat[]
+	) {
+		const startMerged = indexMerge.find((index) => index.includes(startFocusCursor))
 
-		clone.content = content
+		if (startMerged) {
+			/**
+			 * 不关心焦点后合并了多少元素
+			 *
+			 * 这里用find是为了提前结束循环
+			 */
+			startMerged.find((i) => {
+				const breakCondition = i >= startFocusCursor
+				if (!breakCondition) {
+					// 焦点位置偏移量需要增加焦点之前的元素的内容长度
+					startFocusOffset += headRaw[i].content.length
+					// 焦点节点偏移量需要减少焦点之前的元素的个数
+					startFocusCursor--
+				}
+				return breakCondition
+			})
+		}
+		return { startFocusCursor, startFocusOffset }
+	}
 
-		if (clone.content === '') return []
+	/**
+	 * 同理_headMerged
+	 */
+	private _tailMerged(
+		indexMerge: number[][],
+		endFocusCursor: number,
+		endFocusOffset: number,
+		tailRaw: RawFormat[]
+	) {
+		const endMerged = indexMerge.find((index) =>
+			index.includes(tailRaw.length - 1 - endFocusCursor)
+		)
+		if (endMerged) {
+			/**
+			 * 这里的计算方式与_headMerged不同
+			 * 焦点后的元素个数会影响焦点节点指针偏移量
+			 */
+			endMerged.forEach((i) => {
+				// 焦点位置偏移量需要增加将焦点位置之前的元素的内容长度
+				if (i < tailRaw.length - 1 - endFocusCursor) {
+					endFocusOffset += tailRaw[i].content.length
+				}
 
-		return Formater.format2Node([Formater.raw2Format(clone)])
+				// 焦点节点偏移量需要减少焦点**之后**的元素的个数
+				else if (i > tailRaw.length - 1 - endFocusCursor) {
+					endFocusCursor--
+				}
+			})
+		}
+		return { endFocusCursor, endFocusOffset }
+	}
+
+	/**
+	 * 获取开头的补充元素
+	 */
+	private _headSupplement(
+		node: ChildNode | null,
+		raws: RawFormat[],
+		startFocusCursor: number,
+		newContent?: string
+	): [number, AnyFn | null] {
+		let remove = null
+		if (newContent === '' || !node) return [startFocusCursor, remove]
+
+		const head = Formater.minialNode2Raw(node)
+
+		if (!head) return [startFocusCursor, remove]
+
+		newContent && (head.content = newContent)
+
+		raws.unshift(head)
+		// 开头插入了新的元素, 这个元素不会被选中, 则增加偏移量
+		startFocusCursor++
+
+		remove = () => node.remove()
+
+		return [startFocusCursor, remove]
+	}
+
+	/**
+	 * 同理_headSupplement
+	 */
+	private _tailSupplement(
+		node: ChildNode | null,
+		raws: RawFormat[],
+		endFocusCursor: number,
+		newContent?: string
+	): [number, AnyFn | null] {
+		let remove = null
+
+		if (newContent === '' || !node) return [endFocusCursor, remove]
+
+		const tail = Formater.minialNode2Raw(node)
+
+		if (!tail) return [endFocusCursor, remove]
+
+		newContent && (tail.content = newContent)
+
+		raws.push(tail)
+		// 同理_headSupplement
+		endFocusCursor++
+
+		remove = () => node.remove()
+
+		return [endFocusCursor, remove]
 	}
 
 	/**
 	 * 跨行格式化
 	 */
-	// TODO: improve preformance
 	private _crossBlockFormat(
 		range: Range,
 		formatType: FormatType,
@@ -193,9 +407,6 @@ export class Formater extends Colleague {
 			(node) => node.nodeType === 1
 		) as HTMLElement[]
 
-		const startParent = range.startContainer.parentNode as HTMLElement
-		const endParent = range.endContainer.parentNode as HTMLElement
-
 		/**
 		 * 格式化选中的元素中的可编辑元素的子节点
 		 *
@@ -203,57 +414,103 @@ export class Formater extends Colleague {
 		 *
 		 * 第一层表示block
 		 * 第二层表示block中包含的所有editable元素
-		 * 第三层表示editable元素中的所有子节点
+		 * 第三层表示editable元素中的所有子节点的raw配置
 		 */
-
-		const formated = selectedElement.map((element) => {
+		const formatted = selectedElement.map((element) => {
 			return findChildElementIsEditable(element, { deep: true }).map((child) => {
-				return Formater.format2Node(this._formatSpecifiedNodes(formatType, [...child.childNodes]))
+				return this._specifiedNodes2Raw(formatType, [...child.childNodes])
 			})
 		})
 
+		const startParent = range.startContainer.parentNode as HTMLElement
+		const endParent = range.endContainer.parentNode as HTMLElement
+
+		// 获取前后焦点所在的节点
+		const startTargetNode = isEditable(startParent) ? range.startContainer : startParent
+		const endTargetNode = isEditable(endParent) ? range.endContainer : endParent
+
+		// 获取多维数组首尾最深层的数组元素, 并根据返回值获取选区的开始结束节点
+		const headRaw = getArrayHeadDeepestArray(formatted)
+		const tailRaw = getArrayTailDeepestArray(formatted)
+
 		/**
-		 * 获取焦点前后位置的父节点
-		 *
-		 * 如果父节点是可编辑元素, 代表当前焦点在最外层的文字节点中
-		 *
-		 * 如果不是可编辑元素, 则需要克隆父元素样式
+		 * 这里的焦点信息同理_sameBlockFormat
 		 */
-		const startCloneTarget = isEditable(startParent) ? range.startContainer : startParent
-		const endCloneTarget = isEditable(endParent) ? range.endContainer : endParent
+		let startFocusOffset = 0
+		let endFocusOffset = tailRaw[tailRaw.length - 1].content.length
+		let startFocusCursor = 0
+		let endFocusCursor = 0
 
-		// 获取多维数组收尾最深层的数组元素, 并根据返回值获取选区的开始结束节点
-		const headArr = getArrayHeadDeepestArray(formated)
-		const focusStartNode = headArr[0]
-		const tailArr = getArrayTailDeepestArray(formated)
-		const focusEndNode = tailArr[tailArr.length - 1]
-
-		// 需要焦点前后位置的节点克隆一份, 便于替换
-		const head = this._cloneNodeFormat(
-			startCloneTarget,
-			startCloneTarget.textContent!.slice(0, range.startOffset)
+		;[startFocusCursor] = this._headSupplement(
+			startTargetNode as ChildNode,
+			headRaw,
+			startFocusCursor,
+			startTargetNode.textContent!.slice(0, range.startOffset)
 		)
-		headArr.unshift(...head)
-
-		const tail = this._cloneNodeFormat(
-			endCloneTarget,
-			endCloneTarget.textContent!.slice(range.endOffset)
+		;[endFocusCursor] = this._tailSupplement(
+			endTargetNode as ChildNode,
+			tailRaw,
+			endFocusCursor,
+			endTargetNode.textContent!.slice(range.endOffset)
 		)
-		tailArr.push(...tail)
-
-		// 获取开始位置的block
-		let currentBlock = startParent.closest('[data-block-type]')!
 
 		// 如果在检索时直接删除获取插入元素会导致range错误, 所以需要将工作推迟执行
 		const afterWorks: (() => any)[] = []
 
+		let remove: AnyFn | null
+		;[startFocusCursor, remove] = this._headSupplement(
+			startTargetNode.previousSibling,
+			headRaw,
+			startFocusCursor
+		)
+		remove && afterWorks.push(remove)
+		;[endFocusCursor, remove] = this._tailSupplement(
+			endTargetNode.nextSibling,
+			tailRaw,
+			endFocusCursor
+		)
+		remove && afterWorks.push(remove)
+
+		// 合并同类型节点
+		const formattedMerged = formatted.map((item, i) =>
+			item.map((_, index, array) => {
+				const isHead = i === 0 && index === 0
+				const isTail = i === formatted.length - 1 && index === array.length - 1
+
+				const { rawFormats, indexMerge } = Formater.mergeRawChildren(_)
+
+				if (isHead) {
+					;({ startFocusCursor, startFocusOffset } = this._headMerged(
+						indexMerge,
+						startFocusCursor,
+						startFocusOffset,
+						headRaw
+					))
+				} else if (isTail) {
+					;({ endFocusCursor, endFocusOffset } = this._tailMerged(
+						indexMerge,
+						endFocusCursor,
+						endFocusOffset,
+						tailRaw
+					))
+				}
+
+				return rawFormats
+			})
+		)
+
+		// 获取开始位置的block
+		let currentBlock = startParent.closest('[data-block-type]')!
 		/**
 		 * 根据格式化后的数据来获取页面中选中的元素
+		 *
 		 * 这样是准确的, 因为格式化数据是从选中内容获取的
 		 */
-		formated.forEach((item, i) => {
+		const headNodes: ChildNode[] = [],
+			tailNodes: ChildNode[] = []
+		formattedMerged.forEach((item, i) => {
 			findChildElementIsEditable(currentBlock as HTMLElement, { deep: true }).forEach(
-				(el, index) => {
+				(el, index, array) => {
 					const editableFormat = item[index]
 
 					// 删除掉所有与选区相交的元素
@@ -263,14 +520,32 @@ export class Formater extends Colleague {
 
 					// 插入格式化后的新元素
 					afterWorks.push(() => {
+						const isHead = i === 0 && index === 0
+						const isTail = i === formattedMerged.length - 1 && index === array.length - 1
+
 						/**
 						 * 这里如果不是最后一个块元素则直接插到末尾
 						 *
 						 * 如果是最后一个块元素则插到开头, 需要反转一下数据
 						 */
-						i === formated.length - 1
-							? editableFormat.reverse().forEach((item) => el.insertBefore(item, el.childNodes[0]))
-							: el.append(...editableFormat)
+
+						if (isTail) {
+							for (let index = editableFormat.length; index--; ) {
+								const [node] = Formater.format2Node([Formater.raw2Format(editableFormat[index])])
+
+								tailNodes.unshift(node)
+
+								el.insertBefore(node, el.childNodes[0])
+							}
+						} else {
+							const nodes = Formater.format2Node(
+								editableFormat.map((item) => Formater.raw2Format(item))
+							)
+
+							el.append(...nodes)
+
+							isHead && headNodes.push(...nodes)
+						}
 					})
 				}
 			)
@@ -278,11 +553,16 @@ export class Formater extends Colleague {
 			// 遍历完成后检索下一个block
 			currentBlock = currentBlock.nextElementSibling!
 		})
+
 		afterWorks.forEach((c) => c())
 
-		console.log('123', focusStartNode, focusEndNode)
 		// 更新选区
-		SelectionManager.selectNodesContent(range, [focusStartNode, focusEndNode])
+		SelectionManager.selectNodesByOffset(
+			range,
+			[headNodes[startFocusCursor], tailNodes[tailNodes.length - 1 - endFocusCursor]],
+			startFocusOffset,
+			endFocusOffset
+		)
 	}
 
 	/**
@@ -303,48 +583,111 @@ export class Formater extends Colleague {
 		 * 获取选区内容
 		 * 根据选区内容获取新的配置
 		 * 删除选区内容, 并根据新配置添加内容
-		 *
-		 * 不知道可行性, 此方案不行可以选择方案二, 根据选区开始焦点位置递归替换到结束位置
 		 */
-
-		const selectedFormat = this._formatSpecifiedNodes(
+		const selectedRaw = this._specifiedNodes2Raw(
 			formatType,
 			[...selectedNode],
 			startParent === endParent && !isEditable(startParent) ? startParent : undefined
 		)
 
-		// 根据格式化数据生成节点
-		const children = Formater.format2Node(selectedFormat)
-
-		// 获取操作完成后的焦点位置
-		const rangeStartNode = children[0]
-		const rangeEndNode = children[children.length - 1]
+		/**
+		 * 焦点位置的节点
+		 *
+		 * 这个节点一定是可编辑元素的一级子元素
+		 * 他可能是文本元素, 也可能是一个span元素
+		 * 当他是一个文本元素时, 等于startParent
+		 * end同理
+		 *
+		 * 获取这元素的目的是为了将这个元素中没有被选取的内容克隆一份, 并重新添加到操作需要新增的节点中
+		 * 这样做可以防止节点嵌套, 以及合并节点
+		 */
+		const startTargetNode = isEditable(startParent) ? range.startContainer : startParent
+		const endTargetNode = isEditable(endParent) ? range.endContainer : endParent
 
 		/**
-		 * 如果选区的焦点在样式节点中, 则需要将样式节点拆分, 防止节点嵌套
+		 * 焦点位置偏移量
+		 * 选区开始结束位置在节点中的偏移量
 		 *
-		 * 会在检查完焦点后删除原样式节点并插入一个新的样式节点, 但是内容看不出变化
+		 * 原始开始位置应该是格式化后的第一节点的第一个位置, 即0
+		 * 原始结束位置应该是格式化后的最后一节点的最后一个位置, 即content.length
 		 */
-		const head =
-			!isEditable(startParent) &&
-			this._cloneNodeFormat(startParent, startParent.textContent!.slice(0, range.startOffset))
-		head && children.unshift(...head)
+		let startFocusOffset = 0
+		let endFocusOffset = selectedRaw[selectedRaw.length - 1].content.length
 
-		const tail =
-			!isEditable(endParent) &&
-			this._cloneNodeFormat(endParent, endParent.textContent!.slice(range.endOffset))
-		tail && children.push(...tail)
+		/**
+		 * 焦点节点偏移量
+		 * 指向格式化后选区开始和结束的节点的指针偏移量
+		 *
+		 * 原始开始指针指向元素的第一个位置, 偏离量为0
+		 * 原始结束指针指向元素的最后一个位置, 偏离量为0
+		 *
+		 * 这里要记录偏移量是因为最终生成的元素个数与现在的个数不一定一样, 可能存在同类元素合并的情况
+		 */
+		let startFocusCursor = 0
+		let endFocusCursor = 0
 
-		head && startParent.remove()
-		tail && endParent.remove()
+		;[startFocusCursor] = this._headSupplement(
+			startTargetNode as ChildNode,
+			selectedRaw,
+			startFocusCursor,
+			startTargetNode.textContent!.slice(0, range.startOffset)
+		)
+		;[endFocusCursor] = this._tailSupplement(
+			endTargetNode as ChildNode,
+			selectedRaw,
+			endFocusCursor,
+			endTargetNode.textContent!.slice(range.endOffset)
+		)
+
+		let remove: AnyFn | null
+			/**
+			 * 获取前后连接处元素
+			 * 用于合并同类节点
+			 */
+		;[startFocusCursor, remove] = this._headSupplement(
+			startTargetNode.previousSibling,
+			selectedRaw,
+			startFocusCursor
+		)
+		remove?.()
+		;[endFocusCursor, remove] = this._tailSupplement(
+			endTargetNode.nextSibling,
+			selectedRaw,
+			endFocusCursor
+		)
+		remove?.()
+		;(startTargetNode as ChildNode).remove()
+		;(endTargetNode as ChildNode).remove()
+
+		const { rawFormats, indexMerge } = Formater.mergeRawChildren(selectedRaw)
+
+		;({ startFocusCursor, startFocusOffset } = this._headMerged(
+			indexMerge,
+			startFocusCursor,
+			startFocusOffset,
+			selectedRaw
+		))
+		;({ endFocusCursor, endFocusOffset } = this._tailMerged(
+			indexMerge,
+			endFocusCursor,
+			endFocusOffset,
+			selectedRaw
+		))
+
+		// 根据格式化数据生成节点
+		const children = Formater.format2Node(rawFormats.map(Formater.raw2Format))
 
 		range.deleteContents()
 
 		// insertNode会将节点添加到开头, 所以需要反转一下
 		children.reverse().forEach((item) => range.insertNode(item))
 
-		// 设置焦点
-		SelectionManager.selectNodesContent(range, [rangeStartNode, rangeEndNode])
+		SelectionManager.selectNodesByOffset(
+			range,
+			[children[children.length - 1 - startFocusCursor], children[endFocusCursor]],
+			startFocusOffset,
+			endFocusOffset
+		)
 	}
 
 	formatSelect(type: FormatType) {
@@ -360,47 +703,4 @@ export class Formater extends Colleague {
 			? this._crossBlockFormat(range, type, selectedNode)
 			: this._sameBlockFormat(range, type, selectedNode)
 	}
-}
-
-const mergeFormat = (type: FormatType, formatObj: FormatObj) => {
-	switch (type) {
-		// 生成带粗体样式的数据块格式
-		case 'bold':
-			formatObj.props = mergeProps(formatObj.props!, {
-				'data-format-bold': true,
-				style: {
-					fontWeight: 'bold'
-				}
-			})
-
-			break
-		// 生成带下划线样式的文本格式
-		case 'underline':
-			formatObj.props = mergeProps(formatObj.props!, {
-				'data-format-underline': true,
-				style: {
-					textDecoration: 'underline'
-				}
-			})
-
-			break
-
-		// 生成斜体文本格式
-		case 'italic':
-			formatObj.props = mergeProps(formatObj.props!, {
-				'data-format-italic': true,
-				style: {
-					fontStyle: 'italic'
-				}
-			})
-			break
-		// 类型安全检查，确保处理了所有可能的类型
-		default: {
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			const _typeSecurity: never = type
-			throw new Error('Unexpected format type')
-		}
-	}
-
-	return formatObj
 }

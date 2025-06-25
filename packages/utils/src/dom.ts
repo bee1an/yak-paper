@@ -40,8 +40,10 @@ export const getTextNodeBySite = (el: Node, site: 'first' | 'last'): Node | null
 /**
  * 是否是文字节点
  */
-export const isEditable = (element: HTMLElement) => {
-	return element.contentEditable === 'true'
+export const isEditable = (element: Node) => {
+	if (element.nodeType !== Node.ELEMENT_NODE) return false
+
+	return (element as HTMLElement).contentEditable === 'true'
 }
 
 /**
@@ -54,7 +56,6 @@ export const findChildElementIsEditable = (
 	const children = [...el.children]
 
 	return children.reduce((pre, child) => {
-		console.log('111', isEditable(child as HTMLElement))
 		if (isEditable(child as HTMLElement)) {
 			pre.push(child as HTMLElement)
 		}
@@ -65,4 +66,17 @@ export const findChildElementIsEditable = (
 
 		return pre
 	}, [] as HTMLElement[])
+}
+
+/**
+ * 获取最近的可编辑元素
+ */
+export const getClosestEditableElement = (el: Node) => {
+	if (isEditable(el)) return el
+
+	if (el.nodeType === Node.TEXT_NODE) return el.parentElement?.closest('[contenteditable="true"]')
+
+	if (el.nodeType !== Node.ELEMENT_NODE) return null
+
+	return (el as HTMLElement).closest('[contenteditable="true"]')
 }
