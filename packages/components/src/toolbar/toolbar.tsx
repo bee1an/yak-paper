@@ -1,4 +1,4 @@
-import { Popover } from '@yyui/yy-ui'
+import { Popover, Icon } from '@yyui/yy-ui'
 import { defineComponent, h, inject, withModifiers } from 'vue'
 import { pageInjectKey } from '../page/page'
 import Bold from './icons/Bold.vue'
@@ -10,9 +10,9 @@ import type { FormatType } from 'yak-paper'
 const componentMap: {
 	[key in FormatType]?: any
 } = {
-	bold: Bold,
-	italic: Italic,
-	underline: Underline
+	bold: h(Icon, null, () => h(Bold)),
+	italic: h(Icon, null, () => h(Italic)),
+	underline: h(Icon, null, () => h(Underline))
 }
 
 export default defineComponent({
@@ -31,8 +31,8 @@ export default defineComponent({
 			{
 				trigger: 'manual',
 				showPopover: toolbar.visible,
-				x: toolbar.triggerSite.x,
-				y: toolbar.triggerSite.y,
+				x: toolbar.triggerContext.x,
+				y: toolbar.triggerContext.y,
 				placement: 'top-start',
 				showArrow: false,
 				themeOverrides: { padding: '4px' },
@@ -45,7 +45,12 @@ export default defineComponent({
 					const Component = componentMap[k]
 					return (
 						<div class={style['icon-wrapper']} onClick={() => this.toolbar.itemClickHandle(k)}>
-							<Component></Component>
+							<Component
+								size={16}
+								color={
+									toolbar.triggerContext.activeTypes.includes(k) ? 'rgb(35, 131, 226)' : undefined
+								}
+							></Component>
 						</div>
 					)
 				})

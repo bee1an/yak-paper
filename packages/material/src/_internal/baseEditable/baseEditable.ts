@@ -1,10 +1,10 @@
-import { Formater, Paper, type FormatVal, type FormatRaw } from '@yak-paper/core'
+import { Formater, type NodeOption, type NodeRaw, SelectionManager } from '@yak-paper/core'
 import { mergeProps, reactive, toValue, useTemplateRef, type MaybeRef } from 'vue'
 import style from './baseEditable.module.scss'
 import type { HProps, MaybeArray } from '@yak-paper/utils'
 
 interface BaseEditableOptions {
-	format?: FormatRaw[]
+	format?: NodeRaw[]
 	props?: HProps
 }
 
@@ -22,12 +22,12 @@ export class BaseEditable {
 		return toValue(this._templateRef)
 	}
 
-	children: MaybeArray<FormatVal>
+	children: MaybeArray<NodeOption>
 
 	get isEmpty() {
 		if (!this.templateRef) return true
 
-		const { formatRaw } = Formater.editable2Raw(this.templateRef)
+		const { formatRaw } = Formater.editable2raw(this.templateRef)
 
 		return !formatRaw.length
 	}
@@ -46,7 +46,7 @@ export class BaseEditable {
 			return []
 		}
 
-		return params.format?.map(Formater.raw2Format).filter((item) => item !== null) ?? null
+		return params.format?.map(Formater.raw2option).filter((item) => item !== null) ?? null
 	}
 
 	mergeProps(props: HProps | this['props']) {
@@ -56,13 +56,11 @@ export class BaseEditable {
 	focus() {
 		if (!this.templateRef) return
 
-		const selectionManager = Paper.instance.selectionManager
-
-		const selection = selectionManager.getSelection()
+		const selection = SelectionManager.getSelection()
 
 		if (!selection) return
 
-		const range = selectionManager.createRange()
+		const range = SelectionManager.createRange()
 
 		if (this.templateRef.childNodes.length) {
 			range.setStartAfter(this.templateRef.childNodes[0])
@@ -81,6 +79,6 @@ export class BaseEditable {
 	}
 
 	toRaw() {
-		return Formater.editable2Raw(this.templateRef!)
+		return Formater.editable2raw(this.templateRef!)
 	}
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { Formater, type FormatRaw } from '../src/formater/formater'
+import { Formater, type FormatType, type NodeRaw } from '../src/formater/formater'
 import { SelectionManager } from '@yak-paper/core/src/selection-manager'
 import { getChildrenNode } from '@yak-paper/utils/src/dom'
 
@@ -25,7 +25,19 @@ describe('formater', () => {
 			type: 'text',
 			content: '。'
 		}
-	] as FormatRaw[]
+	] as NodeRaw[]
+
+	function formatSelect(range: Range, type: FormatType, formater: Formater) {
+		if (!range) return
+
+		const selectedNode = range.cloneContents().childNodes
+
+		const crossBlock = (selectedNode[0] as HTMLElement).dataset?.blockType
+
+		crossBlock
+			? formater.crossBlockFormat(type, selectedNode)
+			: formater.sameBlockFormat(type, selectedNode)
+	}
 
 	// it('shoud format cross block', () => {
 	// 	const container = document.createElement('div')
@@ -82,11 +94,128 @@ describe('formater', () => {
 	// 	expect(container.innerHTML).toMatchInlineSnapshot()
 	// })
 
+	it('shoud format same block 3', () => {
+		const editable = document.createElement('div')
+		editable.contentEditable = 'true'
+
+		editable.append(...Formater.option2node(raw.map((_) => Formater.raw2option(_))))
+		const range = document.createRange()
+
+		expect(editable.childNodes).toMatchInlineSnapshot(`
+			NodeList [
+			  她还只是个孩子，躲在教堂的地下室里，听着外面传来的 ,
+			  <span
+			    data-format-bold="true"
+			    style="font-weight: bold;"
+			  >
+			    脚步声
+			  </span>,
+			  和低语。那些声音不属于这个世界，它们来自一个被遗忘的,
+			  <span
+			    data-format-italic="true"
+			    style="font-style: italic;"
+			  >
+			    维度
+			  </span>,
+			  。,
+			]
+		`)
+		const instance = Formater.getInstance()
+		// 模拟一个中介者
+		instance.setMediator({
+			notify() {
+				return range
+			}
+		})
+
+		SelectionManager.selectNodesByOffset(
+			range,
+			[editable.childNodes[1], editable.childNodes[1]],
+			1,
+			2
+		)
+		formatSelect(range, 'italic', instance)
+
+		expect(editable.childNodes).toMatchInlineSnapshot(`
+			NodeList [
+			  她还只是个孩子，躲在教堂的地下室里，听着外面传来的 ,
+			  <span
+			    data-format-bold="true"
+			    style="font-weight: bold;"
+			  >
+			    脚
+			  </span>,
+			  <span
+			    data-format-bold="true"
+			    data-format-italic="true"
+			    style="font-weight: bold; font-style: italic;"
+			  >
+			    步
+			  </span>,
+			  <span
+			    data-format-bold="true"
+			    style="font-weight: bold;"
+			  >
+			    声
+			  </span>,
+			  和低语。那些声音不属于这个世界，它们来自一个被遗忘的,
+			  <span
+			    data-format-italic="true"
+			    style="font-style: italic;"
+			  >
+			    维度
+			  </span>,
+			  。,
+			]
+		`)
+
+		SelectionManager.selectNodesByOffset(
+			range,
+			[editable.childNodes[0], editable.childNodes[4]],
+			editable.childNodes[0].textContent!.length - 3,
+			2
+		)
+		formatSelect(range, 'italic', instance)
+
+		expect(editable.childNodes).toMatchInlineSnapshot(`
+			NodeList [
+			  她还只是个孩子，躲在教堂的地下室里，听着外面传,
+			  <span
+			    data-format-italic="true"
+			    style="font-style: italic;"
+			  >
+			    来的 
+			  </span>,
+			  <span
+			    data-format-bold="true"
+			    data-format-italic="true"
+			    style="font-weight: bold; font-style: italic;"
+			  >
+			    脚步声
+			  </span>,
+			  <span
+			    data-format-italic="true"
+			    style="font-style: italic;"
+			  >
+			    和低
+			  </span>,
+			  语。那些声音不属于这个世界，它们来自一个被遗忘的,
+			  <span
+			    data-format-italic="true"
+			    style="font-style: italic;"
+			  >
+			    维度
+			  </span>,
+			  。,
+			]
+		`)
+	})
+
 	it('shoud format same block 2', () => {
 		const editable = document.createElement('div')
 		editable.contentEditable = 'true'
 
-		editable.append(...Formater.format2Node(raw.map((_) => Formater.raw2Format(_))))
+		editable.append(...Formater.option2node(raw.map((_) => Formater.raw2option(_))))
 		const range = document.createRange()
 
 		expect(editable.childNodes).toMatchInlineSnapshot(`
@@ -122,7 +251,7 @@ describe('formater', () => {
 			editable.childNodes[0].textContent!.length - 3,
 			editable.childNodes[0].textContent!.length
 		)
-		instance.formatSelect('bold')
+		formatSelect(range, 'bold', instance)
 		expect(editable.children[0].textContent).toMatchInlineSnapshot(`"来的 脚步声"`)
 
 		SelectionManager.selectNodesByOffset(
@@ -131,7 +260,7 @@ describe('formater', () => {
 			0,
 			3
 		)
-		instance.formatSelect('bold')
+		formatSelect(range, 'bold', instance)
 		expect(editable.children[0].textContent).toMatchInlineSnapshot(`"来的 脚步声和低语"`)
 
 		SelectionManager.selectNodesByOffset(
@@ -140,7 +269,7 @@ describe('formater', () => {
 			editable.childNodes[0].textContent!.length - 3,
 			3
 		)
-		instance.formatSelect('bold')
+		formatSelect(range, 'bold', instance)
 		expect(editable.children[0].textContent).toMatchInlineSnapshot(`"外面传来的 脚步声和低语"`)
 
 		SelectionManager.selectNodesByOffset(
@@ -149,7 +278,7 @@ describe('formater', () => {
 			getChildrenNode(editable.childNodes[1])[0].textContent!.length - 3,
 			3
 		)
-		instance.formatSelect('bold')
+		formatSelect(range, 'bold', instance)
 		expect(editable.children[0].textContent).toMatchInlineSnapshot(
 			`"外面传来的 脚步声和低语。那些"`
 		)
@@ -160,7 +289,7 @@ describe('formater', () => {
 			editable.childNodes[0].textContent!.length - 3,
 			3
 		)
-		instance.formatSelect('bold')
+		formatSelect(range, 'bold', instance)
 		expect(editable.children[0].textContent).toMatchInlineSnapshot(
 			`"，听着外面传来的 脚步声和低语。那些声音不"`
 		)
@@ -190,7 +319,7 @@ describe('formater', () => {
 		const editable = document.createElement('div')
 		editable.contentEditable = 'true'
 
-		editable.append(...Formater.format2Node(raw.map((_) => Formater.raw2Format(_))))
+		editable.append(...Formater.option2node(raw.map((_) => Formater.raw2option(_))))
 
 		const range = document.createRange()
 
@@ -205,7 +334,7 @@ describe('formater', () => {
 			}
 		})
 
-		instance.formatSelect('bold')
+		formatSelect(range, 'bold', instance)
 		expect(editable.children).toMatchInlineSnapshot(`
 			HTMLCollection [
 			  <span
@@ -226,7 +355,7 @@ describe('formater', () => {
 		range.setStart(editable.childNodes[0], 1)
 		range.setEnd(editable.childNodes[0], 2)
 
-		instance.formatSelect('italic')
+		formatSelect(range, 'italic', instance)
 
 		expect(editable.children).toMatchInlineSnapshot(`
 			HTMLCollection [
@@ -253,7 +382,7 @@ describe('formater', () => {
 	})
 
 	it('shoud return node from format', () => {
-		expect(Formater.format2Node(raw.map((_) => Formater.raw2Format(_)))).toMatchInlineSnapshot(`
+		expect(Formater.option2node(raw.map((_) => Formater.raw2option(_)))).toMatchInlineSnapshot(`
 			[
 			  她还只是个孩子，躲在教堂的地下室里，听着外面传来的 ,
 			  <span
@@ -275,7 +404,7 @@ describe('formater', () => {
 	})
 
 	it('shoud 2 format', () => {
-		expect(raw.map((_) => Formater.raw2Format(_))).toMatchInlineSnapshot(`
+		expect(raw.map((_) => Formater.raw2option(_))).toMatchInlineSnapshot(`
 			[
 			  "她还只是个孩子，躲在教堂的地下室里，听着外面传来的 ",
 			  {
@@ -323,7 +452,7 @@ describe('formater', () => {
 			</span>
 		`)
 
-		expect(Formater.editable2Raw(dom)).toMatchInlineSnapshot(`
+		expect(Formater.editable2raw(dom)).toMatchInlineSnapshot(`
 			{
 			  "formatRaw": [
 			    {

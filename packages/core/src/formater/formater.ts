@@ -19,11 +19,11 @@ export type FormatType = 'bold' | 'underline' | 'italic'
  *
  * node(节点): 通常是一个纯文本或者是一个span的样式节点
  * nodeText(节点文本): 如果是span节点则是span的内容, 如果是纯文本则是等于node **还没有使用**
- * raw(原始数据): 对一个节点的原始描述
- * format(格式): 将raw处理为h函数认识的结果
+ * nodeRaw(原始数据): 对一个节点的原始描述
+ * nodeOption(参数): 将raw处理为h函数认识的结果
  */
 
-export interface FormatRaw {
+export interface NodeRaw {
 	type: 'text' | FormatType[]
 
 	/**
@@ -32,13 +32,13 @@ export interface FormatRaw {
 	content: string
 }
 
-export type FormatObj = {
+export type NodeOptionObj = {
 	tagName: string
 
 	children: string
 } & { props: NonNullable<HProps> }
 
-export type FormatVal = FormatObj | string
+export type NodeOption = NodeOptionObj | string
 
 export class Formater extends Colleague {
 	private static _instance: Formater
@@ -56,12 +56,12 @@ export class Formater extends Colleague {
 	/**
 	 * 将raw转换为format
 	 */
-	static raw2Format(raw: FormatRaw): FormatVal {
+	static raw2option(raw: NodeRaw): NodeOption {
 		if (raw.type === 'text') {
 			return raw.content
 		}
 
-		return raw.type.reduce((pre, item) => Formater.mergeFormat(item, pre), {
+		return raw.type.reduce((pre, item) => Formater.mergeOption(item, pre), {
 			tagName: 'span',
 			props: {},
 			children: raw.content
@@ -71,11 +71,11 @@ export class Formater extends Colleague {
 	/**
 	 * 将可编辑元素转换为raw
 	 */
-	static editable2Raw(dom: HTMLElement): { formatRaw: FormatRaw[] } {
+	static editable2raw(dom: HTMLElement): { formatRaw: NodeRaw[] } {
 		const childNodes = [...dom.childNodes]
 
 		const formatRaw = childNodes
-			.map((node) => Formater.node2Raw(node))
+			.map((node) => Formater.node2raw(node))
 			.filter((item) => item !== null)
 
 		// 返回包含格式化数据的对象
@@ -85,7 +85,7 @@ export class Formater extends Colleague {
 	/**
 	 * 将node转换为raw
 	 */
-	static node2Raw(node: Node): FormatRaw | null {
+	static node2raw(node: Node): NodeRaw | null {
 		if (!node.textContent) return null
 
 		if (node.nodeType === Node.TEXT_NODE) {
@@ -119,7 +119,7 @@ export class Formater extends Colleague {
 	/**
 	 * 将format转换为node
 	 */
-	static format2Node(format: FormatVal[]) {
+	static option2node(format: NodeOption[]) {
 		const host = document.createElement('div')
 		render(
 			h(
@@ -147,7 +147,7 @@ export class Formater extends Colleague {
 	/**
 	 * 合并format
 	 */
-	static mergeFormat(type: FormatType, formatObj: FormatObj) {
+	static mergeOption(type: FormatType, formatObj: NodeOptionObj) {
 		switch (type) {
 			// 生成带粗体样式的数据块格式
 			case 'bold':
@@ -193,12 +193,12 @@ export class Formater extends Colleague {
 	/**
 	 * 合并类型相同的raw
 	 */
-	static mergeSameTypeRaw(raw: FormatRaw[]): {
-		FormatRaws: FormatRaw[]
+	static mergeSameTypeRaw(raw: NodeRaw[]): {
+		FormatRaws: NodeRaw[]
 		indexMerge: number[][]
 	} {
 		return raw.reduce<{
-			FormatRaws: FormatRaw[]
+			FormatRaws: NodeRaw[]
 			indexMerge: number[][]
 		}>(
 			(pre, i, index, arr) => {
@@ -225,7 +225,7 @@ export class Formater extends Colleague {
 					return pre
 				}
 
-				const equal = type.every((t) => curType.includes(t))
+				const equal = type.length === curType.length && type.every((t) => curType.includes(t))
 
 				if (!equal) {
 					FormatRaws.push(item)
@@ -235,8 +235,8 @@ export class Formater extends Colleague {
 				// 合并样式节点
 				mergeRaw()
 				function mergeRaw() {
-					const merged = indexMerge.find((item) => item.includes(index - 1))
-					merged ? merged.push(index) : indexMerge.push([index - 1, index])
+					const indexMerged = indexMerge.find((item) => item.includes(index - 1))
+					indexMerged ? indexMerged.push(index) : indexMerge.push([index - 1, index])
 					FormatRaws[FormatRaws.length - 1].content += content
 				}
 
@@ -250,13 +250,13 @@ export class Formater extends Colleague {
 	}
 
 	/**
-	 * 将指定元素转换为raw
+	 * 将指定节点格式化并转换为raw
 	 */
-	private _specifiedNodes2Raw(
+	static formatNodes2raw(
 		formatType: FormatType,
 		nodes: ChildNode[],
 		extendsParent?: HTMLElement
-	): FormatRaw[] {
+	): NodeRaw[] {
 		return nodes
 			.map((node) => {
 				// 如果节点没有文字, 则忽略这个节点
@@ -269,7 +269,7 @@ export class Formater extends Colleague {
 				// if (startParent === endParent && !isEditable(startParent)) {
 				// 继承父元素的样式(bold之类的)
 				if (extendsParent) {
-					raw = extendsNodeStyle(extendsParent)
+					raw = extendsNodeType(extendsParent)
 
 					raw.content = node.textContent ?? ''
 				}
@@ -282,20 +282,19 @@ export class Formater extends Colleague {
 				}
 				// 如果节点是一个span元素, 则当前节点需要新增样式
 				else if (node.nodeType === Node.ELEMENT_NODE && node.nodeName === 'SPAN') {
-					raw = extendsNodeStyle(node)
+					raw = extendsNodeType(node)
 				} else {
 					throw new Error('UnTreated node type')
 				}
 
-				function extendsNodeStyle(node: ChildNode) {
-					const newRaw = Formater.node2Raw(node) as FormatRaw & { type: FormatType[] }
+				function extendsNodeType(node: ChildNode) {
+					const newRaw = Formater.node2raw(node) as NodeRaw & { type: FormatType[] }
 					newRaw.type.push(formatType)
 
 					newRaw.type = [...new Set(newRaw.type)]
 					return newRaw
 				}
 
-				// return Formater.raw2Format(raw!)
 				return raw
 			})
 			.filter((item) => item !== null)
@@ -310,7 +309,7 @@ export class Formater extends Colleague {
 		indexMerge: number[][],
 		startFocusCursor: number,
 		startFocusOffset: number,
-		headRaw: FormatRaw[]
+		headRaw: NodeRaw[]
 	) {
 		const startMerged = indexMerge.find((index) => index.includes(startFocusCursor))
 
@@ -341,7 +340,7 @@ export class Formater extends Colleague {
 		indexMerge: number[][],
 		endFocusCursor: number,
 		endFocusOffset: number,
-		tailRaw: FormatRaw[]
+		tailRaw: NodeRaw[]
 	) {
 		const endMerged = indexMerge.find((index) =>
 			index.includes(tailRaw.length - 1 - endFocusCursor)
@@ -371,14 +370,14 @@ export class Formater extends Colleague {
 	 */
 	private _headSupplement(
 		node: ChildNode | null,
-		raws: FormatRaw[],
+		raws: NodeRaw[],
 		startFocusCursor: number,
 		newContent?: string
 	): [number, AnyFn | null] {
 		let remove = null
 		if (newContent === '' || !node) return [startFocusCursor, remove]
 
-		const head = Formater.node2Raw(node)
+		const head = Formater.node2raw(node)
 
 		if (!head) return [startFocusCursor, remove]
 
@@ -398,7 +397,7 @@ export class Formater extends Colleague {
 	 */
 	private _tailSupplement(
 		node: ChildNode | null,
-		raws: FormatRaw[],
+		raws: NodeRaw[],
 		endFocusCursor: number,
 		newContent?: string
 	): [number, AnyFn | null] {
@@ -406,7 +405,7 @@ export class Formater extends Colleague {
 
 		if (newContent === '' || !node) return [endFocusCursor, remove]
 
-		const tail = Formater.node2Raw(node)
+		const tail = Formater.node2raw(node)
 
 		if (!tail) return [endFocusCursor, remove]
 
@@ -424,13 +423,11 @@ export class Formater extends Colleague {
 	/**
 	 * 跨行格式化
 	 */
-	private _crossBlockFormat(
-		range: Range,
-		formatType: FormatType,
-		selectedNode: NodeListOf<ChildNode>
-	) {
+	crossBlockFormat(formatType: FormatType, contentSelected: NodeListOf<ChildNode>) {
+		const range = this._mediator.notify('public:selection:getRange')!
+
 		// 过滤掉换行节点
-		const selectedElement = Array.from(selectedNode).filter(
+		const selectedElement = Array.from(contentSelected).filter(
 			(node) => node.nodeType === 1
 		) as HTMLElement[]
 
@@ -445,7 +442,7 @@ export class Formater extends Colleague {
 		 */
 		const formatted = selectedElement.map((element) => {
 			return findChildElementIsEditable(element, { deep: true }).map((child) => {
-				return this._specifiedNodes2Raw(formatType, [...child.childNodes])
+				return Formater.formatNodes2raw(formatType, [...child.childNodes])
 			})
 		})
 
@@ -558,15 +555,15 @@ export class Formater extends Colleague {
 
 						if (isTail) {
 							for (let index = editableFormat.length; index--; ) {
-								const [node] = Formater.format2Node([Formater.raw2Format(editableFormat[index])])
+								const [node] = Formater.option2node([Formater.raw2option(editableFormat[index])])
 
 								tailNodes.unshift(node)
 
 								el.insertBefore(node, el.childNodes[0])
 							}
 						} else {
-							const nodes = Formater.format2Node(
-								editableFormat.map((item) => Formater.raw2Format(item))
+							const nodes = Formater.option2node(
+								editableFormat.map((item) => Formater.raw2option(item))
 							)
 
 							el.append(...nodes)
@@ -595,11 +592,9 @@ export class Formater extends Colleague {
 	/**
 	 * 单行格式化
 	 */
-	private _sameBlockFormat(
-		range: Range,
-		formatType: FormatType,
-		selectedNode: NodeListOf<ChildNode>
-	) {
+	sameBlockFormat(formatType: FormatType, contentSelected: NodeListOf<ChildNode>) {
+		const range = this._mediator.notify('public:selection:getRange')!
+
 		const startParent = range.startContainer.parentNode as HTMLElement
 		const endParent = range.endContainer.parentNode as HTMLElement
 
@@ -611,9 +606,9 @@ export class Formater extends Colleague {
 		 * 根据选区内容获取新的配置
 		 * 删除选区内容, 并根据新配置添加内容
 		 */
-		const selectedRaw = this._specifiedNodes2Raw(
+		const selectedRaw = Formater.formatNodes2raw(
 			formatType,
-			[...selectedNode],
+			[...contentSelected],
 			startParent === endParent && !isEditable(startParent) ? startParent : undefined
 		)
 
@@ -702,7 +697,7 @@ export class Formater extends Colleague {
 		))
 
 		// 根据格式化数据生成节点
-		const children = Formater.format2Node(FormatRaws.map(Formater.raw2Format))
+		const children = Formater.option2node(FormatRaws.map(Formater.raw2option))
 
 		range.deleteContents()
 
@@ -715,19 +710,5 @@ export class Formater extends Colleague {
 			startFocusOffset,
 			endFocusOffset
 		)
-	}
-
-	formatSelect(type: FormatType) {
-		const range = this._mediator.notify('public:selection:getRange')
-
-		if (!range) return
-
-		const selectedNode = range.cloneContents().childNodes
-
-		const crossBlock = (selectedNode[0] as HTMLElement).dataset?.blockType
-
-		crossBlock
-			? this._crossBlockFormat(range, type, selectedNode)
-			: this._sameBlockFormat(range, type, selectedNode)
 	}
 }

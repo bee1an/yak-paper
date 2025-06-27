@@ -4,7 +4,8 @@ import type { Section, SectionOption } from '../sections'
 import type { InputNotifyEvents } from './input-notify-handler'
 import type { KeydownNotifyEvents } from './keydown-notify-handler'
 import type { BeforeinputNotifyEvents } from './beforeinput-notify-handler'
-import type { FormatType } from '../formater'
+import type { FormatType, NodeRaw } from '../formater'
+import type { SelectContext } from '../selection-manager'
 
 /**
  * @description 暴露给外部的公共notify事件
@@ -34,6 +35,10 @@ export type PublicNotifyEvent = {
 	'public:selection:findEditableElement'(): HTMLElement | null
 	/** 获取range对象 */
 	'public:selection:getRange'(): Range | null
+	/** 获取选中的内容上下文 */
+	'public:selection:getRangeSelectContext'(): SelectContext | null
+	/** 获取选中的内容上下文 */
+	'public:selection:lastSelectContext'(): SelectContext | null
 
 	/** 根据id获取段落 */
 	'public:sections:findById'(id: string): Section<TypeName> | undefined
@@ -62,7 +67,15 @@ export type PublicNotifyEvent = {
 	): Promise<void>
 
 	/** 格式化选中的元素 */
-	'public:formater:formatSelect'(type: FormatType): void
+	'public:formater:node2raw'(node: Node): NodeRaw | null
+	'public:formater:crossBlockFormat'(
+		formatType: FormatType,
+		contentSelected: NodeListOf<ChildNode>
+	): void
+	'public:formater:sameBlockFormat'(
+		formatType: FormatType,
+		contentSelected: NodeListOf<ChildNode>
+	): void
 }
 
 export interface PaperMediator {

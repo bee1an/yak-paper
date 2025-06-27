@@ -128,16 +128,22 @@ export class Paper implements PaperMediator {
 		}
 
 		if (event === 'public:selection:findEditableElement') {
-			return this.selectionManager.findEditableElement()
+			return SelectionManager.findEditableElement()
 		}
 		if (event === 'public:selection:getRange') {
-			return this.selectionManager.getRange()
+			return SelectionManager.getRange()
 		}
 		if (event === 'public:selection:findFocusedBlock') {
-			return this.selectionManager.findFocusedBlock()
+			return SelectionManager.findFocusedBlock()
 		}
 		if (event === 'public:selection:findFocusedBlockId') {
-			return this.selectionManager.findFocusedBlockId()
+			return SelectionManager.findFocusedBlockId()
+		}
+		if (event === 'public:selection:getRangeSelectContext') {
+			return this.selectionManager.getRangeSelectContext()
+		}
+		if (event === 'public:selection:lastSelectContext') {
+			return this.selectionManager.lastSelectContext
 		}
 
 		if (event === 'public:sections:findById') {
@@ -169,8 +175,14 @@ export class Paper implements PaperMediator {
 			return this.creator.createNewLineByIndex(...(args as [number, any]))
 		}
 
-		if (event === 'public:formater:formatSelect') {
-			return this.formater.formatSelect(...(args as [FormatType]))
+		if (event === 'public:formater:node2raw') {
+			return Formater.node2raw(...(args as [Node]))
+		}
+		if (event === 'public:formater:crossBlockFormat') {
+			return this.formater.crossBlockFormat(...(args as [FormatType, NodeListOf<ChildNode>]))
+		}
+		if (event === 'public:formater:sameBlockFormat') {
+			return this.formater.sameBlockFormat(...(args as [FormatType, NodeListOf<ChildNode>]))
 		}
 
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars

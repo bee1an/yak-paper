@@ -1,4 +1,4 @@
-import { json2vnode, type BlockAgreer, type BlockEvents, type FormatRaw } from '@yak-paper/core'
+import { json2vnode, type BlockAgreer, type BlockEvents, type NodeRaw } from '@yak-paper/core'
 import { createId, EventEmitter } from '@yak-paper/utils'
 import { type VNode, type MaybeRef, toValue, useTemplateRef, reactive } from 'vue'
 import { useThemeStyle } from '@yak-paper/composables'
@@ -18,7 +18,7 @@ export interface ListBlockAgreer extends BlockAgreer {
 export interface ListBlockOption {
 	id?: string
 
-	format?: FormatRaw[]
+	format?: NodeRaw[]
 }
 
 export type ListBlockEvents = {} & BlockEvents

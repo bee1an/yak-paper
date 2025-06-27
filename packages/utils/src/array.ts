@@ -21,3 +21,17 @@ export const getArrayTailDeepestArray = <T>(arr: T[]): DestructureArray<T>[] => 
 
 	return arr as DestructureArray<T>[]
 }
+
+/**
+ * 可以暂停的循环
+ */
+export const eachBreakable = <T>(
+	arr: T[],
+	callback: (item: T, index: number, array: T[]) => boolean | void
+) => {
+	for (let i = 0; i < arr.length; i++) {
+		const item = arr[i]
+		const result = callback(item, i, arr)
+		if (result) break
+	}
+}
