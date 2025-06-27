@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { createApi } from 'unsplash-js'
-import { useStorage } from '@vueuse/core'
+import { useElementSize, useStorage, useWindowSize } from '@vueuse/core'
 import { Button } from '@yyui/yy-ui'
+import { useTemplateRef } from 'vue'
 
 const store = useStorage('URL', { url: '', timestamp: +new Date() })
 
@@ -35,9 +36,9 @@ const getNew = () => {
 		.catch(() => null)
 }
 
-if (!store.value.url || store.value.timestamp + (1000 * 60 * 60) / 50 < +new Date()) getNew()
+// if (!store.value.url || store.value.timestamp + (1000 * 60 * 60) / 50 < +new Date()) getNew()
 
-// if (!url.value) getNew()
+const { width, height } = useElementSize(useTemplateRef('imageWrapper'))
 </script>
 
 <template>
@@ -50,12 +51,21 @@ if (!store.value.url || store.value.timestamp + (1000 * 60 * 60) / 50 < +new Dat
 		items-center
 		pos-relative
 		bg-gray-1
-		:style="{ backgroundImage: `url(${store.url})` }"
+		ref="imageWrapper"
 	>
-		<div pos-absolute pos-bottom-10px pos-right-9xl>
-			<Button type="primary" @click="getNew">get new</Button>
-		</div>
+		<!-- :style="{
+			backgroundImage: `url(${store.url})`
+		}" -->
 
-		<!-- <img :src="store.url" w-full @dragstart.prevent /> -->
+		<!-- <div pos-absolute pos-bottom-10px pos-right-9xl>
+			<Button type="primary" @click="getNew">get new</Button>
+		</div> -->
+
+		<img
+			:src="`https://picsum.photos/seed/${Math.random()}/${width}/${height}`"
+			@error="width++"
+			w-full
+			@dragstart.prevent
+		/>
 	</div>
 </template>
