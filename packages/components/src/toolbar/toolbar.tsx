@@ -44,7 +44,12 @@ export default defineComponent({
 					const k = key as keyof typeof componentMap
 					const Component = componentMap[k]
 					return (
-						<div class={style['icon-wrapper']} onClick={() => this.toolbar.itemClickHandle(k)}>
+						<div
+							class={style['icon-wrapper']}
+							onClick={() =>
+								this.toolbar.itemClickHandle(k, toolbar.triggerContext.activeTypes.includes(k))
+							}
+						>
 							<Component
 								size={16}
 								color={

@@ -1,6 +1,6 @@
 import { reactive, ref } from 'vue'
 import { Colleague } from '../paper/colleague'
-import { formatType, type FormatType } from '../formater'
+import { type FormatType } from '../formater'
 import { eachBreakable } from '@yak-paper/utils'
 
 interface TriggerContext {
@@ -23,14 +23,7 @@ export class ToolbarManager extends Colleague {
 
 	triggerContext: TriggerContext = reactive({ x: 0, y: 0, activeTypes: [] })
 
-	tryShow() {
-		const range = this._mediator.notify('public:selection:getRange')
-
-		if (!range || range.collapsed) {
-			this.visible = false
-			return
-		}
-
+	updateTriggerContext(range: Range) {
 		const {
 			selectedNodes,
 			specialRange: { isInNode, node }
@@ -61,6 +54,18 @@ export class ToolbarManager extends Colleague {
 		const { x, y } = range.getBoundingClientRect()
 
 		Object.assign(this.triggerContext, { x, y, activeTypes })
+	}
+
+	tryShow() {
+		const range = this._mediator.notify('public:selection:getRange')
+
+		if (!range || range.collapsed) {
+			this.visible = false
+			return
+		}
+
+		this.updateTriggerContext(range)
+
 		this.visible = true
 	}
 
@@ -68,7 +73,9 @@ export class ToolbarManager extends Colleague {
 		const { cross, contentSelected } = this._mediator.notify('public:selection:lastSelectContext')!
 
 		cross
-			? this._mediator.notify('public:formater:crossBlockFormat', type, contentSelected)
-			: this._mediator.notify('public:formater:sameBlockFormat', type, contentSelected)
+			? this._mediator.notify('public:formater:crossBlockFormat', type, contentSelected, deformat)
+			: this._mediator.notify('public:formater:sameBlockFormat', type, contentSelected, deformat)
+
+		this.updateTriggerContext(this._mediator.notify('public:selection:getRange')!)
 	}
 }

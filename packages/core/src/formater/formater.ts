@@ -252,9 +252,10 @@ export class Formater extends Colleague {
 	/**
 	 * 将指定节点格式化并转换为raw
 	 */
-	static formatNodes2raw(
+	static convertNodes2raw(
 		formatType: FormatType,
 		nodes: ChildNode[],
+		deformat?: boolean,
 		extendsParent?: HTMLElement
 	): NodeRaw[] {
 		return nodes
@@ -264,7 +265,9 @@ export class Formater extends Colleague {
 					return null
 				}
 
-				let raw
+				let raw: NodeRaw & {
+					type: FormatType[] | 'text'
+				}
 
 				// if (startParent === endParent && !isEditable(startParent)) {
 				// 继承父元素的样式(bold之类的)
@@ -274,7 +277,7 @@ export class Formater extends Colleague {
 					raw.content = node.textContent ?? ''
 				}
 				// 如果节点是一个文字节点, 则返回指定样式的配置
-				else if (node.nodeType === Node.TEXT_NODE) {
+				else if (node.nodeType === Node.TEXT_NODE && !deformat) {
 					raw = {
 						type: [formatType],
 						content: node.textContent ?? ''
@@ -287,11 +290,21 @@ export class Formater extends Colleague {
 					throw new Error('UnTreated node type')
 				}
 
+				if (raw.type.length === 0) {
+					raw.type = 'text'
+				}
+
 				function extendsNodeType(node: ChildNode) {
 					const newRaw = Formater.node2raw(node) as NodeRaw & { type: FormatType[] }
 					newRaw.type.push(formatType)
 
 					newRaw.type = [...new Set(newRaw.type)]
+
+					if (deformat) {
+						const index = newRaw.type.findIndex((type) => type === formatType)
+						newRaw.type.splice(index, 1)
+					}
+
 					return newRaw
 				}
 
@@ -423,7 +436,11 @@ export class Formater extends Colleague {
 	/**
 	 * 跨行格式化
 	 */
-	crossBlockFormat(formatType: FormatType, contentSelected: NodeListOf<ChildNode>) {
+	crossBlockFormat(
+		formatType: FormatType,
+		contentSelected: NodeListOf<ChildNode>,
+		deformat?: boolean
+	) {
 		const range = this._mediator.notify('public:selection:getRange')!
 
 		// 过滤掉换行节点
@@ -442,7 +459,7 @@ export class Formater extends Colleague {
 		 */
 		const formatted = selectedElement.map((element) => {
 			return findChildElementIsEditable(element, { deep: true }).map((child) => {
-				return Formater.formatNodes2raw(formatType, [...child.childNodes])
+				return Formater.convertNodes2raw(formatType, [...child.childNodes], deformat)
 			})
 		})
 
@@ -592,7 +609,11 @@ export class Formater extends Colleague {
 	/**
 	 * 单行格式化
 	 */
-	sameBlockFormat(formatType: FormatType, contentSelected: NodeListOf<ChildNode>) {
+	sameBlockFormat(
+		formatType: FormatType,
+		contentSelected: NodeListOf<ChildNode>,
+		deformat?: boolean
+	) {
 		const range = this._mediator.notify('public:selection:getRange')!
 
 		const startParent = range.startContainer.parentNode as HTMLElement
@@ -606,9 +627,10 @@ export class Formater extends Colleague {
 		 * 根据选区内容获取新的配置
 		 * 删除选区内容, 并根据新配置添加内容
 		 */
-		const selectedRaw = Formater.formatNodes2raw(
+		const selectedRaw = Formater.convertNodes2raw(
 			formatType,
 			[...contentSelected],
+			deformat,
 			startParent === endParent && !isEditable(startParent) ? startParent : undefined
 		)
 

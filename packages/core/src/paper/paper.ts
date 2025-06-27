@@ -179,10 +179,14 @@ export class Paper implements PaperMediator {
 			return Formater.node2raw(...(args as [Node]))
 		}
 		if (event === 'public:formater:crossBlockFormat') {
-			return this.formater.crossBlockFormat(...(args as [FormatType, NodeListOf<ChildNode>]))
+			return this.formater.crossBlockFormat(
+				...(args as [FormatType, NodeListOf<ChildNode>, boolean?])
+			)
 		}
 		if (event === 'public:formater:sameBlockFormat') {
-			return this.formater.sameBlockFormat(...(args as [FormatType, NodeListOf<ChildNode>]))
+			return this.formater.sameBlockFormat(
+				...(args as [FormatType, NodeListOf<ChildNode>, boolean?])
+			)
 		}
 
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -70,11 +70,13 @@ export type PublicNotifyEvent = {
 	'public:formater:node2raw'(node: Node): NodeRaw | null
 	'public:formater:crossBlockFormat'(
 		formatType: FormatType,
-		contentSelected: NodeListOf<ChildNode>
+		contentSelected: NodeListOf<ChildNode>,
+		deformat?: boolean
 	): void
 	'public:formater:sameBlockFormat'(
 		formatType: FormatType,
-		contentSelected: NodeListOf<ChildNode>
+		contentSelected: NodeListOf<ChildNode>,
+		deformat?: boolean
 	): void
 }
 
