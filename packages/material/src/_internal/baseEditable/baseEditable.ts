@@ -1,10 +1,10 @@
-import { Formater, Paper, type FormatVal, type RawFormat } from '@yak-paper/core'
+import { Formater, Paper, type FormatVal, type FormatRaw } from '@yak-paper/core'
 import { mergeProps, reactive, toValue, useTemplateRef, type MaybeRef } from 'vue'
 import style from './baseEditable.module.scss'
 import type { HProps, MaybeArray } from '@yak-paper/utils'
 
 interface BaseEditableOptions {
-	format?: RawFormat[]
+	format?: FormatRaw[]
 	props?: HProps
 }
 
@@ -27,9 +27,9 @@ export class BaseEditable {
 	get isEmpty() {
 		if (!this.templateRef) return true
 
-		const { format } = Formater.html2Raw(this.templateRef)
+		const { formatRaw } = Formater.editable2Raw(this.templateRef)
 
-		return !format.length
+		return !formatRaw.length
 	}
 
 	constructor(params?: BaseEditableOptions) {
@@ -81,6 +81,6 @@ export class BaseEditable {
 	}
 
 	toRaw() {
-		return Formater.html2Raw(this.templateRef!)
+		return Formater.editable2Raw(this.templateRef!)
 	}
 }

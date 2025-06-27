@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { Formater, type RawFormat } from '../src/formater/formater'
+import { Formater, type FormatRaw } from '../src/formater/formater'
 import { SelectionManager } from '@yak-paper/core/src/selection-manager'
 import { getChildrenNode } from '@yak-paper/utils/src/dom'
 
@@ -25,7 +25,7 @@ describe('formater', () => {
 			type: 'text',
 			content: '。'
 		}
-	] as RawFormat[]
+	] as FormatRaw[]
 
 	// it('shoud format cross block', () => {
 	// 	const container = document.createElement('div')
@@ -323,9 +323,9 @@ describe('formater', () => {
 			</span>
 		`)
 
-		expect(Formater.html2Raw(dom)).toMatchInlineSnapshot(`
+		expect(Formater.editable2Raw(dom)).toMatchInlineSnapshot(`
 			{
-			  "format": [
+			  "formatRaw": [
 			    {
 			      "content": "123",
 			      "type": [
