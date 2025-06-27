@@ -1,4 +1,8 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { confetti } from '@/utils/confetti'
+
+confetti()
+</script>
 
 <template>
 	<PCover />

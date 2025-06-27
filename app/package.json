@@ -12,10 +12,12 @@
 	},
 	"dependencies": {
 		"@vueuse/core": "^13.3.0",
+		"canvas-confetti": "1.9.3",
 		"unsplash-js": "7.0.19",
 		"vue": "3.5.13"
 	},
 	"devDependencies": {
+		"@types/canvas-confetti": "1.9.0",
 		"@vitejs/plugin-vue": "5.2.1",
 		"@vitejs/plugin-vue-jsx": "4.1.2",
 		"@vue/tsconfig": "0.7.0",
