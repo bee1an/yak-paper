@@ -5,6 +5,8 @@ import themeDefined from './style/theme'
 import themeManager from '../../style'
 import style from './style/image.module.scss'
 import { createId, EventEmitter } from '@yak-paper/utils'
+import { Popover, type PopoverProps } from '@yyui/yy-ui'
+import { SlotChildren } from '@yak-paper/core/src/agreer/slot-children'
 
 const props = reactive({ theme: 'light' })
 
@@ -67,7 +69,27 @@ export class ImageBlock implements ImageBlockAgreer {
 	}
 
 	private _createChildren(params?: ImageBlockOption) {
-		return [{ renderType: 'img', props: { src: params?.src ?? this.src } }]
+		return [
+			{
+				renderType: Popover,
+				props: {
+					showArrow: false,
+					trigger: 'hover',
+					placement: 'top-end',
+					distanceFromTrigger: 5
+				} as PopoverProps,
+				children: new SlotChildren({
+					trigger: () =>
+						json2vnode({
+							renderType: 'div',
+							props: { style: { width: 'fit-content' } },
+							children: [{ renderType: 'img', props: { src: params?.src ?? this.src } }]
+						}),
+					// TODO
+					default: () => json2vnode({ renderType: 'div', props: null, children: [this.src] })
+				})
+			}
+		]
 	}
 
 	createVNode(): VNode {

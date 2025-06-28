@@ -1,3 +1,3 @@
-export * from './blockAgreer'
-export * from './blockFields'
-export * from './blockMethods'
+export * from './block-agreer'
+export * from './block-fields'
+export * from './block-methods'

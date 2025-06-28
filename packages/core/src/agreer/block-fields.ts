@@ -1,4 +1,5 @@
 import type { EventEmitter, HProps, HType, MaybeArray } from '@yak-paper/utils'
+import type { SlotChildren } from './slot-children'
 
 export type WrapperAinProps = {
 	'data-block-type': string
@@ -6,17 +7,17 @@ export type WrapperAinProps = {
 }
 
 /**
- * @description props 类型
+ * props 类型
  *
  * 获取vue h 函数的参数类型
  */
 export type WrapperPropsType = HProps & WrapperAinProps
 
-/** @description 子元素类型 */
+/** 子元素类型 */
 export type ChildOption = {
-	renderType: string
+	renderType: string | HType
 	props?: HProps
-	children?: MaybeArray<string | ChildOption>
+	children?: MaybeArray<string | ChildOption | SlotChildren>
 }
 
 export type BlockEvents = {
@@ -24,38 +25,24 @@ export type BlockEvents = {
 }
 
 export interface BlockFields {
-	/**
-	 * @description 唯一标识
-	 */
+	/** 唯一标识 */
 	id: string
 
-	/**
-	 * @description 物料类型
-	 */
+	/** 物料类型 */
 	type: string
 
-	/**
-	 * @description 标签名或者组件
-	 */
+	/** 标签名或者组件 */
 	renderType: string | HType
 
-	/**
-	 * @description 属性
-	 */
+	/** 属性 */
 	props: WrapperPropsType
 
-	/**
-	 * @description 子节点
-	 */
-	children: ChildOption[]
+	/** 子节点 */
+	children: ChildOption[] | SlotChildren
 
-	/**
-	 * @description 内容是否是空的
-	 */
+	/** 内容是否是空的 */
 	isEmpty: boolean
 
-	/**
-	 * @description 事件总线
-	 */
+	/** 事件总线 */
 	bus: EventEmitter<BlockEvents>
 }

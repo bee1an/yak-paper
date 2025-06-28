@@ -1,7 +1,10 @@
 import { h, type VNode } from 'vue'
 import type { BlockAgreer, ChildOption } from '../agreer'
+import { SlotChildren } from '../agreer/slot-children'
 
-type CreateChildrenReturnType = undefined | string | VNode | CreateChildrenReturnType[]
+type NonSlotChild = undefined | string | VNode
+
+type CreateChildrenReturnType = (NonSlotChild | NonSlotChild[]) | SlotChildren['slot']
 
 function createChildren(option?: ChildOption['children']): CreateChildrenReturnType {
 	if (!option) {
@@ -13,7 +16,11 @@ function createChildren(option?: ChildOption['children']): CreateChildrenReturnT
 	}
 
 	if (Array.isArray(option)) {
-		return option.map((item) => createChildren(item))
+		return option.map((item) => createChildren(item)) as NonSlotChild[]
+	}
+
+	if (option instanceof SlotChildren) {
+		return option.slot
 	}
 
 	return json2vnode(option)

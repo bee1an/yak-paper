@@ -66,3 +66,8 @@ export type DestructureArray<U> = U extends any[]
  * 嵌套数组
  */
 export type NestedArray<T> = T | NestedArray<T>[]
+
+/**
+ * 可能是函数
+ */
+export type MaybeFn<T> = T | (() => T)
