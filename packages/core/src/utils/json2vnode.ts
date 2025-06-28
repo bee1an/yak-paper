@@ -1,5 +1,5 @@
 import { h, type VNode } from 'vue'
-import type { ChildOption } from '../agreer'
+import type { BlockAgreer, ChildOption } from '../agreer'
 
 type CreateChildrenReturnType = undefined | string | VNode | CreateChildrenReturnType[]
 
@@ -19,6 +19,6 @@ function createChildren(option?: ChildOption['children']): CreateChildrenReturnT
 	return json2vnode(option)
 }
 
-export const json2vnode = (option: ChildOption) => {
-	return h(option.tagName, option.props, createChildren(option.children))
+export const json2vnode = (option: BlockAgreer | ChildOption) => {
+	return h(option.renderType, option.props, createChildren(option.children))
 }

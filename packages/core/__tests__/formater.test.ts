@@ -582,7 +582,7 @@ describe('formater', () => {
 			        "fontWeight": "bold",
 			      },
 			    },
-			    "tagName": "span",
+			    "renderType": "span",
 			  },
 			  "和低语。那些声音不属于这个世界，它们来自一个被遗忘的",
 			  {
@@ -593,7 +593,7 @@ describe('formater', () => {
 			        "fontStyle": "italic",
 			      },
 			    },
-			    "tagName": "span",
+			    "renderType": "span",
 			  },
 			  "。",
 			]

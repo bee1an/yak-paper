@@ -29,7 +29,7 @@ export class TextBlock implements TextBlockAgreer {
 
 	readonly type = 'text'
 
-	readonly tagName = 'section'
+	readonly renderType = 'section'
 
 	readonly props = {
 		'data-block-type': this.type,

@@ -9,7 +9,7 @@ interface BaseEditableOptions {
 }
 
 export class BaseEditable {
-	tagName = 'div'
+	renderType = 'div'
 	props = {
 		class: style.editable,
 		contenteditable: true,

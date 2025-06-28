@@ -26,7 +26,7 @@ export class ImageBlock implements ImageBlockAgreer {
 
 	readonly type = 'image'
 
-	readonly tagName = 'div'
+	readonly renderType = 'div'
 
 	readonly props = {
 		class: style.block,
@@ -67,7 +67,7 @@ export class ImageBlock implements ImageBlockAgreer {
 	}
 
 	private _createChildren(params?: ImageBlockOption) {
-		return [{ tagName: 'img', props: { src: params?.src ?? this.src } }]
+		return [{ renderType: 'img', props: { src: params?.src ?? this.src } }]
 	}
 
 	createVNode(): VNode {

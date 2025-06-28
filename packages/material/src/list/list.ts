@@ -28,7 +28,7 @@ export class ListBlock implements ListBlockAgreer {
 
 	readonly type = 'list'
 
-	readonly tagName = 'li'
+	readonly renderType = 'li'
 
 	readonly props = {
 		class: style.block,
@@ -79,9 +79,9 @@ export class ListBlock implements ListBlockAgreer {
 
 		return [
 			{
-				tagName: 'div',
+				renderType: 'div',
 				props: { class: style.dot, contenteditable: false },
-				children: [{ tagName: 'span' }]
+				children: [{ renderType: 'span' }]
 			},
 			this._editable
 		]

@@ -40,6 +40,11 @@ export type GetAssignPropItem<T extends any[], K, Prop> = T extends [
 	: never
 
 /**
+ * h函数的第一个参数
+ */
+export type HType = Parameters<typeof h>[0]
+
+/**
  * h函数的第二个参数
  */
 export type HProps = Parameters<typeof h>[1]

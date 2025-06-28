@@ -1,4 +1,4 @@
-import type { EventEmitter, HProps, MaybeArray } from '@yak-paper/utils'
+import type { EventEmitter, HProps, HType, MaybeArray } from '@yak-paper/utils'
 
 export type WrapperAinProps = {
 	'data-block-type': string
@@ -14,7 +14,7 @@ export type WrapperPropsType = HProps & WrapperAinProps
 
 /** @description 子元素类型 */
 export type ChildOption = {
-	tagName: string
+	renderType: string
 	props?: HProps
 	children?: MaybeArray<string | ChildOption>
 }
@@ -35,9 +35,9 @@ export interface BlockFields {
 	type: string
 
 	/**
-	 * @description 标签名
+	 * @description 标签名或者组件
 	 */
-	tagName: string
+	renderType: string | HType
 
 	/**
 	 * @description 属性

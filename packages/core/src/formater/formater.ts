@@ -33,7 +33,7 @@ export interface NodeRaw {
 }
 
 export type NodeOptionObj = {
-	tagName: string
+	renderType: string
 
 	children: string
 } & { props: NonNullable<HProps> }
@@ -62,7 +62,7 @@ export class Formater extends Colleague {
 		}
 
 		return raw.type.reduce((pre, item) => Formater.mergeOption(item, pre), {
-			tagName: 'span',
+			renderType: 'span',
 			props: {},
 			children: raw.content
 		})
@@ -129,7 +129,7 @@ export class Formater extends Colleague {
 					if (typeof item === 'string') {
 						return item
 					}
-					return h(item.tagName, item.props, item.children)
+					return h(item.renderType, item.props, item.children)
 				})
 			),
 			host
