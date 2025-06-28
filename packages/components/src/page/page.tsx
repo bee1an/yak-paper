@@ -30,10 +30,7 @@ export default defineComponent({
 		}
 
 		mock.forEach((item, index) => {
-			creator.createNewLineByIndex(index, {
-				type: 'text',
-				format: item as any
-			})
+			creator.createNewLineByIndex(index, item as any)
 		})
 		// paper.sections.creator.createNewLineByIndex(0)
 

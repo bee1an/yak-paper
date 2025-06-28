@@ -18,6 +18,10 @@ export class CmdBoardManager extends Colleague {
 		{
 			key: 'list',
 			value: ['list']
+		},
+		{
+			key: 'image',
+			value: ['image']
 		}
 	]
 
@@ -124,7 +128,9 @@ export class CmdBoardManager extends Colleague {
 
 		if (
 			section.block!.isEmpty ||
-			(blockRaw.format!.length === 1 && blockRaw.format![0].content === TRIGGER_COMMAND_MODE_CHAR)
+			('format' in blockRaw &&
+				blockRaw.format!.length === 1 &&
+				blockRaw.format![0].content === TRIGGER_COMMAND_MODE_CHAR)
 		) {
 			// 转换逻辑
 			section.transformTo(type)

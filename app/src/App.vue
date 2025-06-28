@@ -6,7 +6,7 @@ confetti()
 
 <template>
 	<PCover />
-	<div w-7xl m-auto m-t><PPaperboard /></div>
+	<div w-4xl m-auto m-t><PPaperboard /></div>
 </template>
 
 <style>

@@ -16,6 +16,11 @@ const items = {
 		key: 'list',
 		label: '列表',
 		icon: () => h(List)
+	},
+	image: {
+		key: 'image',
+		label: '图片',
+		icon: () => h(List)
 	}
 } as const
 

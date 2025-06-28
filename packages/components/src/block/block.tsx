@@ -1,5 +1,5 @@
 import { defineComponent, inject } from 'vue'
-import { ListBlock, TextBlock } from '@yak-paper/material'
+import { ImageBlock, ListBlock, TextBlock } from '@yak-paper/material'
 import { pageInjectKey } from '../page/page'
 
 const pBlockProps = {
@@ -24,6 +24,8 @@ export default defineComponent({
 			block = new TextBlock({ ...blockProxy.blockOption })
 		} else if (blockProxy.typeEqualTo('list')) {
 			block = new ListBlock({ ...blockProxy.blockOption })
+		} else if (blockProxy.typeEqualTo('image')) {
+			block = new ImageBlock({ ...blockProxy.blockOption })
 		} else {
 			throw new Error('block type error')
 		}

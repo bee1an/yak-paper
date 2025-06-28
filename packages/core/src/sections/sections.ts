@@ -12,7 +12,11 @@ class SectionsProxy extends Colleague {
 
 	/** 失焦所有 */
 	blurAll() {
-		this.store.data.forEach((item) => item.block?.blur?.())
+		this.store.data.forEach((item) => {
+			if (item.block && 'blur' in item.block) {
+				item.block?.blur?.()
+			}
+		})
 	}
 
 	/** 根据id查找元素 */
@@ -93,7 +97,8 @@ export class Section<T extends TypeName = TypeName> implements AbstractSection<T
 
 	async tryFocus() {
 		if (!this._block || !this.updated) await nextTick()
-		this._block!.focus?.()
+
+		if (this._block && 'focus' in this._block) this._block.focus?.()
 	}
 
 	install(block: TypeToBlockMap[TypeName]) {
